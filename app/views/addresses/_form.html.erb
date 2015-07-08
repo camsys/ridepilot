@@ -1,31 +1,31 @@
 
       <li class="selfclear">
-        <%= form.label :name, "Address Name:" %>
+        <%= form.label :name, translate_helper("address_name") %>
         <%= form.text_field :name %>
       </li>
 
       <li class="selfclear">
-        <%= form.label :building_name, "Building Name:" %>
+        <%= form.label :building_name, translate_helper("building_name") %>
         <%= form.text_field :building_name %>
       </li>
 
       <li class="selfclear">
-        <%= form.label :address, "Address:" %>
+        <%= form.label :address, translate_helper("address") %>
         <%= form.text_field :address %>
       </li>
 
       <li class="selfclear">
-        <%= form.label :city, "City:" %>
+        <%= form.label :city, translate_helper("city") %>
         <%= form.text_field :city %>
       </li>
 
       <li class="selfclear">
-        <%= form.label :state, "State:" %>
+        <%= form.label :state, translate_helper("state") %>
         <%= form.text_field :state, :size=>2 %>
       </li>
 
       <li class="selfclear">
-        <%= form.label :zip, "ZIP:" %>
+        <%= form.label :zip, translate_helper("zip") %>
         <%= form.text_field :zip %>
       </li>
       
@@ -33,22 +33,22 @@
 
       <% if editing_address %>
       <li class="selfclear">
-        <%= form.label :phone_number, "Phone Number:" %>
+        <%= form.label :phone_number, translate_helper("phone_number") %>
         <%= form.text_field :phone_number %>
       </li>
       
       <li class="selfclear">
-        <%= form.label :in_district, "In TriMet District:" %>
-        <%= form.select :in_district, [["Unspecified",nil], ["Yes", true], ["No", false]] %>
+        <%= form.label :in_district, translate_helper("in_district") %>
+        <%= form.select :in_district, [[translate_helper("unspecified"),nil], [translate_helper("yes"), true], [translate_helper("no"), false]] %>
       </li>
       
       <li class="selfclear">
-        <%= form.label :default_trip_purpose, "Default Trip Purpose:" %>
-        <%= form.select :default_trip_purpose, TRIP_PURPOSES, :include_blank => true %>
+        <%= form.label :default_trip_purpose, translate_helper("default_trip_purpose") %>
+        <%= form.select :default_trip_purpose, translate_array_helper(TRIP_PURPOSES_KEYS), :include_blank => true %>
       </li>
       
       <li class="selfclear">
-        <%= form.label :inactive, "Inactive:" %>
+        <%= form.label :inactive, translate_helper("inactive") %>
         <%= form.check_box :inactive %>
       </li>
       <% end %>

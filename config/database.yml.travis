@@ -1,0 +1,20 @@
+development:
+  adapter:  postgis
+  encoding: unicode
+  database: ridepilot_development
+  pool: 5
+  timeout: 5000
+
+test: &test
+  adapter:  postgis
+  encoding: unicode
+  database: ridepilot_test
+  pool: 5
+  timeout: 5000
+
+production:
+  adapter:  postgis
+  encoding: unicode
+  database: ridepilot
+  pool: 5
+  timeout: 5000

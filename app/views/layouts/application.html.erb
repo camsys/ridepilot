@@ -10,11 +10,6 @@
   <%= yield :head %>
 </head>
 <body class="<%= bodytag_class %>">
-  <div id="production-test-warning">
-    <div class="stripes"></div>
-    <span>This is only a <em>preview of production</em> on the new server. To view the live production data, please go to
-      <a href="http://apps.rideconnection.org/ridepilot">apps.rideconnection.org/ridepilot</a>.</span>
-  </div>
   <div id="session-timeout-warning" style="display: none;">
     You will be logged off in <span><!-- countdown place holder
     --></span>&nbsp;seconds due to inactivity.
@@ -76,6 +71,9 @@
     <%= content_for?(:menu_bar) ? yield(:menu_bar) : '' %>
     <%= yield %>
   </div>
+
+  <%= render partial: 'layouts/footer' %>
+  <%= yield :footer%>
 
   <% if current_user %>
     <%= javascript_tag do %>

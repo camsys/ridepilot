@@ -1,14 +1,14 @@
 <div id="page-header">
-  <h1>Customer Listing</h1>
+  <h1><%=translate_helper("customer_listing")%></h1>
 </div>
 
 <%= form_tag found_customers_path, :class=>'customer-search', :method=>:get do %> 
   <label for="customer_id">Search:</label>
   <%= autocomplete_field_tag 'customer_name', params[:term], autocomplete_customers_path, :size => 30, :id_element => "#customer_id", "submit-buttons" => "#show_details #new_trip" %>
   <%= hidden_field_tag 'customer_id' %>
-  <%= submit_tag "Search", :id=>:show_details %>
+  <%= submit_tag translate_helper("search"), :id=>:show_details %>
   <% if can? :create, Trip %>
-  <%= submit_tag "New Trip for This Customer", :id=>:new_trip %>
+  <%= submit_tag translate_helper("new_trip_for_customer"), :id=>:new_trip %>
   <% end %>
 <% end %>
 
@@ -28,4 +28,4 @@
 
 <hr />
 
-<%= link_to 'New Customer', new_customer_path, :class=>'action-bttn' %>
+<%= link_to translate_helper("new_customer"), new_customer_path, :class=>'action-bttn' %>

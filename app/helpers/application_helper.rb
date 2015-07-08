@@ -30,7 +30,7 @@ module ApplicationHelper
   
   def delete_trippable_link(trippable)
     if can? :destroy, trippable
-      link_to trippable.trips.present? ? 'Duplicate' : 'Delete', trippable, :class => 'delete'
+      link_to trippable.trips.present? ? translate_helper("duplicate") : translate_helper("delete"), trippable, :class => 'delete'
     end
   end
   

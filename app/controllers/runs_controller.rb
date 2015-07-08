@@ -53,7 +53,7 @@ class RunsController < ApplicationController
     authorize! :manage, current_provider
  
     @run = Run.new(run_params)
-    @run.provider_id = current_provider_id
+    @run.provider = current_provider
     
     respond_to do |format|
       if @run.save

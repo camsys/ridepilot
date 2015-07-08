@@ -31,12 +31,13 @@ RSpec.describe "CabTrips" do
       
       # TODO This test is failing on master. Uncomment after upgrade. Fix if
       # time allows.
-      # it "doesn't have a link to edit trips on the 3rd, 5th, 6th, and 7th day of the week" do
-      #   page.should have_selector("#cab_trips tr:nth-child(4)", content: "No cab trips")
-      #   page.should have_selector("#cab_trips tr:nth-child(6)", content: "No cab trips")
-      #   page.should have_selector("#cab_trips tr:nth-child(7)", content: "No cab trips")
-      #   page.should have_selector("#cab_trips tr:nth-child(8)", content: "No cab trips")
-      # end
+      it "doesn't have a link to edit trips on the 3rd, 5th, 6th, and 7th day of the week" do
+        pending('failed during rideconnection rails upgrade')
+        page.should have_selector("#cab_trips tr:nth-child(4)", content: "No cab trips")
+        page.should have_selector("#cab_trips tr:nth-child(6)", content: "No cab trips")
+        page.should have_selector("#cab_trips tr:nth-child(7)", content: "No cab trips")
+        page.should have_selector("#cab_trips tr:nth-child(8)", content: "No cab trips")
+      end
     end
   
     describe "GET /cab_trips/edit_multiple" do
@@ -52,7 +53,7 @@ RSpec.describe "CabTrips" do
       it "should update the specified trips" do
         fill_in("cab_trips_#{@t1.id}_attendant_count", with: 1)
         fill_in("cab_trips_#{@t2.id}_attendant_count", with: 2)
-        click_button "Update cab trips"
+        click_button "Update"
         expect(page).to have_content("2 cab trips updated successfully")
       end
     end

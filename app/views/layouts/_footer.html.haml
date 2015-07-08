@@ -1,0 +1,9 @@
+#footer{:role => "contentinfo", :aria => {:label => 'Footer'}}
+  #versionLang.col-xs-12
+    .pull-left
+      - unless Rails.env.production?
+        %span#versionInfo
+          = "Version #{ENV['APP_VERSION'] || Rails.application.config.version}"
+      - else
+        %span#versionInfo= "Version #{Rails.application.config.version}"
+/ end of footer

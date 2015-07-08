@@ -1,6 +1,8 @@
 # Load the Rails application.
 require File.expand_path('../application', __FILE__)
 
+Rails.application.routes.default_url_options[:host] = ENV['RIDEPILOT_HOST']
+
 TRIP_RESULT_CODES = {
   "COMP"  => "Complete",    # the trip was (as far as we know) completed
   "NS"    => "No-show",     # the customer did not show up for the trip
@@ -10,6 +12,7 @@ TRIP_RESULT_CODES = {
 }
 
 TRIP_PURPOSES = ["Life-Sustaining Medical", "Medical", "Nutrition", "Personal/Support Services", "Recreation", "School/Work", "Shopping", "Volunteer Work", "Center"]
+TRIP_PURPOSES_KEYS = ["Life-Sustaining Medical", "Medical", "Nutrition", "Personal/Support Services", "Recreation", "School/Work", "Shopping", "Volunteer Work", "Center"]
 
 SERVICE_LEVELS = ["Wheelchair", "Ambulatory"]
 
@@ -83,8 +86,6 @@ STATE_NAME_TO_POSTAL_ABBREVIATION = {
   "WISCONSIN" => "WI",
   "WYOMING" => "WY"
 }
-
-EMAIL_FROM = "apps@rideconnection.org"
 
 # Initialize the Rails application.
 Rails.application.initialize!

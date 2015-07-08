@@ -48,11 +48,12 @@ RSpec.describe ReportsController do
       
       # TODO This test is failing on master. Uncomment after upgrade. Fix if
       # time allows.
-      # it "reports the proper mileage" do
-      #   assigns(:report)[:total_miles][:stf][:van_bus].should eq(1)
-      #   assigns(:report)[:total_miles][:stf][:taxi].should eq(1)
-      #   assigns(:report)[:total_miles][:rc].should eq(1)
-      # end
+      it "reports the proper mileage" do
+        pending('failed during rideconnection rails upgrade')
+        assigns(:report)[:total_miles][:stf][:van_bus].should eq(1)
+        assigns(:report)[:total_miles][:stf][:taxi].should eq(1)
+        assigns(:report)[:total_miles][:rc].should eq(1)
+      end
     end
     
     describe "rider_information" do

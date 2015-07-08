@@ -1,8 +1,8 @@
 <div id="page-header">
-  <h1>Editing Customer: <%= @customer.name %></h1>
+  <h1><%= translate_helper("editing_customer", customer_name: @customer.name) %></h1>
 </div>
 
-<%= link_to 'Cancel Editing', @customer, :class=>'cancel'  %>
+<%= link_to translate_helper("cancel"), @customer, :class=>'cancel'  %>
 
 <%= form_for @customer, :url=>customer_inactivate_path(@customer), :html=>{:method=>:post} do |f| %>
 
@@ -10,24 +10,24 @@
     <% if @customer.inactivated_date %>
 
       <% if @customer.activated_date %>
-        <strong>Activated:</strong> <%= @customer.activated_date %>
+        <strong><%= translate_helper("activated_date")%></strong><% @customer.activated_date %>
       <% end %>
 
       <span class="separator">|</span>
 
-      <strong>Inactivated:</strong> <%= @customer.inactivated_date %>
+      <strong><%=translate_helper("inactivated_date")%></strong> <%= @customer.inactivated_date %>
 
     <% else %>
 
       <% if @customer.activated_date %>
-        <strong>Activated:</strong> <%= @customer.activated_date %>
+        <strong>translate_helper("activated_date")</strong> <%= @customer.activated_date %>
       <% end %>
 
       <span class="separator">|</span>
 
-      <%= f.label :inactivated_reason, "Inactivation Reason:" %>
+      <%= f.label :inactivated_reason, translate_helper("inactivation_reason") %>
       <%= f.text_field :inactivated_reason %>
-      <%= f.submit "Inactivate" %>
+      <%= f.submit translate_helper("inactivate") %>
 
     <% end %>
   </p>
@@ -38,4 +38,4 @@
 
 <hr />
 
-<%= link_to 'Back', customers_path, :class=>'action-bttn' %>
+<%= link_to translate_helper("back"), customers_path, :class=>'action-bttn' %>

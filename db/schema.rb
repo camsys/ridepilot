@@ -11,11 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150224063651) do
+ActiveRecord::Schema.define(version: 20150703195053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
+  enable_extension "fuzzystrmatch"
   enable_extension "postgis_topology"
 
   create_table "addresses", force: true do |t|
@@ -36,6 +37,7 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.spatial  "the_geom",             limit: {:srid=>4326, :type=>"point", :geographic=>true}
   end
 
+  add_index "addresses", ["provider_id"], :name => "index_addresses_on_provider_id"
   add_index "addresses", ["the_geom"], :name => "index_addresses_on_the_geom", :spatial => true
 
   create_table "customers", force: true do |t|
@@ -68,6 +70,11 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.string   "default_service_level"
   end
 
+  add_index "customers", ["address_id"], :name => "index_customers_on_address_id"
+  add_index "customers", ["default_funding_source_id"], :name => "index_customers_on_default_funding_source_id"
+  add_index "customers", ["mobility_id"], :name => "index_customers_on_mobility_id"
+  add_index "customers", ["provider_id"], :name => "index_customers_on_provider_id"
+
   create_table "device_pool_drivers", force: true do |t|
     t.string   "status"
     t.float    "lat"
@@ -80,8 +87,9 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "vehicle_id"
   end
 
-  add_index "device_pool_drivers", ["device_pool_id"], :name => "index_devices_on_device_pool_id"
-  add_index "device_pool_drivers", ["driver_id"], :name => "index_device_pool_users_on_user_id"
+  add_index "device_pool_drivers", ["device_pool_id"], :name => "index_device_pool_drivers_on_device_pool_id"
+  add_index "device_pool_drivers", ["driver_id"], :name => "index_device_pool_drivers_on_driver_id"
+  add_index "device_pool_drivers", ["vehicle_id"], :name => "index_device_pool_drivers_on_vehicle_id"
 
   create_table "device_pools", force: true do |t|
     t.integer  "provider_id"
@@ -90,6 +98,8 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "device_pools", ["provider_id"], :name => "index_device_pools_on_provider_id"
 
   create_table "drivers", force: true do |t|
     t.boolean  "active"
@@ -102,13 +112,25 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "user_id"
   end
 
+  add_index "drivers", ["provider_id"], :name => "index_drivers_on_provider_id"
+  add_index "drivers", ["user_id"], :name => "index_drivers_on_user_id"
+
   create_table "funding_source_visibilities", force: true do |t|
     t.integer "funding_source_id"
     t.integer "provider_id"
   end
 
+  add_index "funding_source_visibilities", ["funding_source_id"], :name => "index_funding_source_visibilities_on_funding_source_id"
+  add_index "funding_source_visibilities", ["provider_id"], :name => "index_funding_source_visibilities_on_provider_id"
+
   create_table "funding_sources", force: true do |t|
     t.string "name"
+  end
+
+  create_table "locales", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "mobilities", force: true do |t|
@@ -126,12 +148,17 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "funding_source_id"
   end
 
+  add_index "monthlies", ["funding_source_id"], :name => "index_monthlies_on_funding_source_id"
+  add_index "monthlies", ["provider_id"], :name => "index_monthlies_on_provider_id"
+
   create_table "provider_ethnicities", force: true do |t|
     t.integer  "provider_id"
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "provider_ethnicities", ["provider_id"], :name => "index_provider_ethnicities_on_provider_id"
 
   create_table "providers", force: true do |t|
     t.string   "name"
@@ -189,11 +216,23 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.boolean  "customer_informed"
   end
 
+  add_index "repeating_trips", ["customer_id"], :name => "index_repeating_trips_on_customer_id"
+  add_index "repeating_trips", ["driver_id"], :name => "index_repeating_trips_on_driver_id"
+  add_index "repeating_trips", ["dropoff_address_id"], :name => "index_repeating_trips_on_dropoff_address_id"
+  add_index "repeating_trips", ["funding_source_id"], :name => "index_repeating_trips_on_funding_source_id"
+  add_index "repeating_trips", ["mobility_id"], :name => "index_repeating_trips_on_mobility_id"
+  add_index "repeating_trips", ["pickup_address_id"], :name => "index_repeating_trips_on_pickup_address_id"
+  add_index "repeating_trips", ["provider_id"], :name => "index_repeating_trips_on_provider_id"
+  add_index "repeating_trips", ["vehicle_id"], :name => "index_repeating_trips_on_vehicle_id"
+
   create_table "roles", force: true do |t|
     t.integer "user_id"
     t.integer "provider_id"
     t.integer "level"
   end
+
+  add_index "roles", ["provider_id"], :name => "index_roles_on_provider_id"
+  add_index "roles", ["user_id"], :name => "index_roles_on_user_id"
 
   create_table "runs", force: true do |t|
     t.string   "name"
@@ -215,8 +254,24 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "lock_version",             default: 0
   end
 
+  add_index "runs", ["driver_id"], :name => "index_runs_on_driver_id"
   add_index "runs", ["provider_id", "date"], :name => "index_runs_on_provider_id_and_date"
-  add_index "runs", ["provider_id", "scheduled_start_time"], :name => "index_runs_on_provider_id_and_start_time"
+  add_index "runs", ["provider_id", "scheduled_start_time"], :name => "index_runs_on_provider_id_and_scheduled_start_time"
+  add_index "runs", ["vehicle_id"], :name => "index_runs_on_vehicle_id"
+
+  create_table "translation_keys", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "translations", force: true do |t|
+    t.integer  "locale_id"
+    t.integer  "translation_key_id"
+    t.string   "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "travel_time_estimates", id: false, force: true do |t|
     t.integer "from_address_id"
@@ -257,19 +312,27 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.string   "service_level"
   end
 
+  add_index "trips", ["called_back_by_id"], :name => "index_trips_on_called_back_by_id"
+  add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"
+  add_index "trips", ["dropoff_address_id"], :name => "index_trips_on_dropoff_address_id"
+  add_index "trips", ["funding_source_id"], :name => "index_trips_on_funding_source_id"
+  add_index "trips", ["mobility_id"], :name => "index_trips_on_mobility_id"
+  add_index "trips", ["pickup_address_id"], :name => "index_trips_on_pickup_address_id"
   add_index "trips", ["provider_id", "appointment_time"], :name => "index_trips_on_provider_id_and_appointment_time"
   add_index "trips", ["provider_id", "pickup_time"], :name => "index_trips_on_provider_id_and_pickup_time"
+  add_index "trips", ["repeating_trip_id"], :name => "index_trips_on_repeating_trip_id"
+  add_index "trips", ["run_id"], :name => "index_trips_on_run_id"
 
   create_table "users", force: true do |t|
-    t.string   "email",                              default: "", null: false
-    t.string   "encrypted_password",     limit: 128, default: "", null: false
-    t.string   "password_salt",                      default: "", null: false
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
-    t.integer  "sign_in_count",                      default: 0
+    t.integer  "sign_in_count",          default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
+    t.string   "password_salt"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "current_provider_id"
@@ -277,6 +340,7 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.datetime "reset_password_sent_at"
   end
 
+  add_index "users", ["current_provider_id"], :name => "index_users_on_current_provider_id"
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
@@ -296,6 +360,9 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "lock_version",                                default: 0
   end
 
+  add_index "vehicle_maintenance_events", ["provider_id"], :name => "index_vehicle_maintenance_events_on_provider_id"
+  add_index "vehicle_maintenance_events", ["vehicle_id"], :name => "index_vehicle_maintenance_events_on_vehicle_id"
+
   create_table "vehicles", force: true do |t|
     t.string   "name"
     t.integer  "year"
@@ -313,13 +380,17 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.boolean  "reportable"
   end
 
+  add_index "vehicles", ["default_driver_id"], :name => "index_vehicles_on_default_driver_id"
+  add_index "vehicles", ["provider_id"], :name => "index_vehicles_on_provider_id"
+
   create_table "versions", force: true do |t|
-    t.string   "item_type",  null: false
-    t.integer  "item_id",    null: false
-    t.string   "event",      null: false
+    t.string   "item_type",      null: false
+    t.integer  "item_id",        null: false
+    t.string   "event",          null: false
     t.string   "whodunnit"
     t.text     "object"
     t.datetime "created_at"
+    t.text     "object_changes"
   end
 
   add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
