@@ -27,3 +27,15 @@ en:
       long: "%B %d, %Y %H:%M"
     am: "am"
     pm: "pm"
+  #Activerecord
+  activerecord:
+    errors:
+      models:
+        run:
+          attributes:
+            scheduled_end_time:
+              after: "must be after the scheduled start time"
+            actual_end_time:
+              after: "must be after the actual start time"
+            date:
+              invalid_date: "must be a valid date"
