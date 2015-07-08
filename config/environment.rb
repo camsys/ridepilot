@@ -1,6 +1,8 @@
 # Load the Rails application.
 require File.expand_path('../application', __FILE__)
 
+Rails.application.routes.default_url_options[:host] = ENV['RIDEPILOT_HOST']
+
 TRIP_RESULT_CODES = {
   "COMP"  => "Complete",    # the trip was (as far as we know) completed
   "NS"    => "No-show",     # the customer did not show up for the trip
