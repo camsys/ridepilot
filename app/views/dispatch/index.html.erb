@@ -1,17 +1,17 @@
 <form id="refresh" class="">
   <div class="actions" style="border:0; z-index: 1000">
-    <%= submit_tag "Refresh", :onclick => "d.refresh(); return false;" -%>
+    <%= submit_tag translate_helper("dispatch_submit"), :onclick => "d.refresh(); return false;" -%>
   </div>
 </form>
 
 <div id="page-header" style="min-height: 35px">
-  <h1>Dispatcher</h1>
+  <h1><%= translate_helper("dispatcher_heading")%></h1>
   <form id="search" class="">
     <div class="actions" style="border:0;">
-      <%= text_field_tag "address", nil, :title => "Locate Address" -%>
-      <%= submit_tag "Search", :onclick => "locate(); return false;" -%>
+      <%= text_field_tag "address", nil, :title => translate_helper("locate_address") -%>
+      <%= submit_tag translate_helper("search"), :onclick => "locate(); return false;" -%>
       <span>
-        <small>[<a href="javascript:d.clearSearchMarkers()">Clear All Markers</a>]</small>
+        <small>[<a href="javascript:d.clearSearchMarkers()"><%= translate_helper("clear_all_markers")%></a>]</small>
       </span>
       <span id="search-message"></span>
       <span id="search-spinner"></span>
@@ -22,7 +22,7 @@
 
 <div class="column_wrapper">
   <div class="left_column ui-layout-west">
-    <div id="tree">Loading...</div> &nbsp;
+    <div id="tree"><%= translate_helper("loading") %></div> &nbsp;
   </div>
 
   <div id="map-container" class="ui-layout-center">&nbsp;</div>

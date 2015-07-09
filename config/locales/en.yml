@@ -141,3 +141,42 @@ en:
   resend_unlock_header: "Resend unlock instructions"
   submit_new_unlock: "Resend unlock instructions"
   password: "Password"
+  #dispatch
+  dispatch_submit: "Refresh"
+  dispatcher_heading: "Dispatcher"
+  locate_address: "Locate Address"
+  clear_all_markers: "Clear All Markers"
+  loading: "Loading..."
+  #drivers
+  driver_form_error:
+    one: "1 error prohibited this driver from being saved"
+    other: "%{count} errors prohibited this driver from being saved"
+  driver_form_name: "Name"
+  driver_form_active: "Active"
+  driver_form_paid: "Paid"
+  driver_form_associated_user: "Associated User"
+  driver_form_submit: "Submit"
+  edit_driver_heading: "Edit Driver"
+  new_driver_heading: "New Driver"
+  #funding_source
+  funding_source_form_name: "Name"
+  funding_source_label: "Available to:"
+  funding_source_form_submit: "Submit"
+  funding_sources_link_back: "Back to List of Funding Sources"
+  funding_source_index_heading: "Funding Sources"
+  new_funding_source_link:  "New Funding Source"
+  #home
+  providers_link_text: "Providers"
+  customers_link_text: "Customers"
+  funding_sources_link_text: "Funding Sources"
+  trips_link_text: "Trips"
+  runs_link_text: "Runs"
+  reports_link_text: "Reports"
+  current_provider_link_text: "Vehicles, drivers and users"
+  dispatch_link_text: "Dispatch"
+  #footer
+  footer_content: "Footer content here."
+
+
+
+

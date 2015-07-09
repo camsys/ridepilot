@@ -1,10 +1,10 @@
 <ul>
-  <% if can? :edit, "Providers" %><li><%= link_to "Providers", providers_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Customers", customers_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Funding Sources", funding_sources_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Trips", trips_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Runs", runs_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Reports", reports_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Vehicles, drivers and users", provider_path(current_user.current_provider) %></li><% end %>
-  <% if show_dispatch? %><li><%= link_to "Dispatch", dispatch_path %></li><% end %>
+  <% if can? :edit, "Providers" %><li><%= link_to translate_helper("providers_link_text"), providers_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("customers_link_text"), customers_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("funding_sources_link_text"), funding_sources_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("trips_link_text"), trips_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("runs_link_text"), runs_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("reports_link_text"), reports_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("current_provider_link_text"), provider_path(current_user.current_provider) %></li><% end %>
+  <% if show_dispatch? %><li><%= link_to translate_helper("dispatch_link_text"), dispatch_path %></li><% end %>
 </ul>

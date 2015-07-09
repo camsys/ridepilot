@@ -3,12 +3,12 @@
   <fieldset>
     <ol class="section first">
       <li>
-        <%= f.label :name %>
+        <%= f.label :name, translate_helper("funding_source_form_name") %>
         <%= f.text_field :name %>
       </li>
 
       <li>
-        <label>Available to:</label>
+        <label><%=translate_helper("funding_source_label")%></label>
         <ul>
           <% for provider in @providers %>
           <li>
@@ -22,7 +22,7 @@
     </ol>
 
     <div class="actions">
-      <%= f.submit %>
+      <%= f.submit translate_helper("funding_source_form_submit")%>
     </div>
 
 

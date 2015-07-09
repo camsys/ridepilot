@@ -1,6 +1,8 @@
 #footer{:role => "contentinfo", :aria => {:label => 'Footer'}}
+  #footer_text
+    = translate_helper("footer_content")
   #versionLang.col-xs-12
-    .pull-left
+    .pull-right
       - unless Rails.env.production?
         %span#versionInfo
           = "Version #{ENV['APP_VERSION'] || Rails.application.config.version}"
