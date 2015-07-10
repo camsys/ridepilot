@@ -1,3 +1,5 @@
 rc:
   id: 1
   name: Ride Connection
+  dispatch: true
+  scheduling: true

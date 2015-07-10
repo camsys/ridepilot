@@ -37,7 +37,7 @@
         <%= customer.trips.count %>
       </td>
       <td>
-        <%= customer.trips.collect(&:trip_purpose).compact.uniq.sort.join(', ') %>
+        <%= customer.trips.includes(:trip_purpose).pluck("trip_purposes.name").uniq.sort.join(', ') %>
       </td>
       <td>
         <%= customer.trips.collect{|t| t.funding_source.try(:name)}.compact.uniq.sort.join(', ') %>

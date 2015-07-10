@@ -1,5 +1,8 @@
 class Address < ActiveRecord::Base
   belongs_to :provider
+
+  belongs_to :trip_purpose
+  delegate :name, to: :trip_purpose, prefix: :trip_purpose, allow_nil: true
   
   has_many :trips_from, :class_name => "Trip", :foreign_key => :pickup_address_id
   has_many :trips_to, :class_name => "Trip", :foreign_key => :dropoff_address_id
@@ -101,7 +104,7 @@ class Address < ActiveRecord::Base
       :phone_number => phone_number,
       :lat => latitude,
       :lon => longitude,
-      :default_trip_purpose => default_trip_purpose
+      :default_trip_purpose => trip_purpose_name
     }
   end
 

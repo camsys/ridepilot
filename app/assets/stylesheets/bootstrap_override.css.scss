@@ -1,0 +1,11 @@
+.action-button {
+  @extend .btn-primary;
+  text-shadow: none;
+  margin-right: 5px;
+  padding: 3px 6px;
+  min-width: 5em;
+  @media(min-width:$screen-md-min){
+    min-height:34px; //this is the height for breadcrumb;
+  }
+  font-weight: bold;
+}

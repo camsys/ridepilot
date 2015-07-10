@@ -1,0 +1,4 @@
+.col-sm-12
+  = render partial: 'dropdown', locals: {tables: @lookup_tables, table: @lookup_table}
+.col-sm-12
+  = render partial: 'table', locals: {table: @lookup_table}

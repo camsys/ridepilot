@@ -1,16 +1,16 @@
 <div id="page-header">
-  <h1>Reports: Monthly Miscellaneous Data</h1>
+  <h1><%= translate_helper("monthlies_index_heading") %></h1>
 </div>
 
 <% if @monthlies.size == 0 %>
-  <p>No monthly reports yet.</p>
+  <p><%= translate_helper("no_monthly_reports_available") %></p>
 <% else %>
   <table>
     <tr>
-      <th>Month</th>
-      <th>Funding Source</th>
-      <th>Volunteer escort hours</th>
-      <th>Volunteer admin hours</th>
+      <th><%= translate_helper("month") %></th>
+      <th><%= translate_helper("funding_source_column_heading") %></th>
+      <th><%= translate_helper("volunteer_escort_hours") %></th>
+      <th><%= translate_helper("volunteer_admin_hours") %></th>
       <% if can? :edit, Monthly %>
         <th></th>
       <% end %>
@@ -23,7 +23,7 @@
         <td><%= monthly.volunteer_escort_hours.to_i %></td>
         <td><%= monthly.volunteer_admin_hours.to_i %></td>
         <% if can? :edit, monthly %>
-          <td><%= link_to "Edit", edit_monthly_path(monthly) %></td>
+          <td><%= link_to translate_helper("edit"), edit_monthly_path(monthly) %></td>
         <% end %>
       </tr>
     <% end %>
@@ -32,5 +32,5 @@
 
 <% if can? :edit, Monthly %>
   <hr />
-  <p><%= link_to "Add New Monthly Data", new_monthly_path, :class=>'action-bttn new-report' %></p>
+  <p><%= link_to translate_helper("new_monthly_link_text"), new_monthly_path, :class=>'action-bttn new-report' %></p>
 <% end %>

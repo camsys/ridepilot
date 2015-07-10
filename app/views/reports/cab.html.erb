@@ -26,7 +26,7 @@
       <td><%= trip.pickup_time.time %></td>
       <td></td>
       <td><%= trip.customer.name %></td>
-      <td><%= trip.trip_purpose %></td>
+      <td><%= trip.trip_purpose_name %></td>
       <td><%= trip.pickup_address.try(:text) || '(Unspecified Address)' %></td>
       <td><%= trip.dropoff_address.try(:text) || '(Unspecified Address)' %></td>
     </tr>
@@ -35,7 +35,7 @@
         <td><%= trip.pickup_time.time %></td>
         <td class="center">&#x2713;</td>
         <td><%= trip.customer.name %></td>
-        <td><%= trip.trip_purpose %></td>
+        <td><%= trip.trip_purpose_name %></td>
         <td><%= trip.dropoff_address.try(:text) || '(Unspecified Address)' %></td>
         <td><%= trip.pickup_address.try(:text) || '(Unspecified Address)' %></td>
       </tr>

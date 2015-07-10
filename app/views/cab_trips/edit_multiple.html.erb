@@ -1,18 +1,18 @@
 <div id="page-header">
-  <h1>Editing cab trips for <%= @week_start.strftime "%m-%d-%Y" %></h1>
+  <h1>translate_helper("edit_multi_cab_heading", formatted_week: (@week_start.strftime "%m-%d-%Y"))</h1>
 </div>
 
 <%= form_tag update_multiple_cab_trips_path, :method => :put do %>
   <table id="cab_trips">
     <tr class="head">
-      <th>Pickup Time</th>
-      <th>Customer Name</th>
-      <th>In Distict?</th>
-      <th>Purpose</th>
-      <th>Round Trip?</th>
-      <th>Guest Count</th>
-      <th>Attendant Count</th>
-      <th>Result</th>
+      <th>translate_helper("pickup_time")</th>
+      <th>translate_helper("customer_name")</th>
+      <th>translate_helper("in_district")</th>
+      <th>translate_helper("trip_purpose")</th>
+      <th>translate_helper("round_trip")</th>
+      <th>translate_helper("guest_count")</th>
+      <th>translate_helper("attendant_count")</th>
+      <th>translate_helper("result")</th>
       <th></th>
     </tr>
     <% if @cab_trips.size > 0 %>
@@ -22,10 +22,10 @@
         <% end %>
       <% end %>
     <% else %>
-      <tr><td colspan="9">No cab trips on this date</td></th>
+      <tr><td colspan="9">translate_helper("no_cab_trips_on_this_date")</td></th>
     <% end %>
   </table>
   <div class="actions">
-    <%= submit_tag "Update cab trips" %>
+    <%= submit_tag translate_helper("update") %>
   </div>
 <% end %>

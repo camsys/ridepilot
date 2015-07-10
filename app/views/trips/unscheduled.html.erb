@@ -17,7 +17,7 @@
   <tr>
     <td><%= trip.customer.name %></td>
     <td><%= trip.pickup_time.to_s %></td>
-    <td><%= trip.trip_purpose %></td>
+    <td><%= trip.trip_purpose_name %></td>
     <td><%= trip.pickup_address.text %></td>
     <td><%= trip.dropoff_address.text %></td>
     <td><%= button_to 'Confirm', trip_confirm_path(trip) %></td>

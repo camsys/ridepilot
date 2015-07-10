@@ -129,7 +129,7 @@
     <ol class="section second">
       <li class="selfclear">
         <%= f.label :trip_purpose, "Trip Purpose:" %>
-        <%= f.select :trip_purpose, @trip_purposes, :include_blank => true %>
+        <%= f.select :trip_purpose_id, @trip_purposes.map { |tp| [tp.name, tp.id] }, :include_blank => true %>
       </li>
 
       <li class="selfclear passengers group_size">
@@ -208,7 +208,7 @@
     <ol class="section third">
       <li class="selfclear">
         <%= f.label :trip_result, "Result:" %>
-        <%= f.select :trip_result, @trip_results, :include_blank => true %>
+        <%= f.select :trip_result_id, @trip_results, :include_blank => true %>
       </li>
 
       <li class="selfclear donation">
@@ -223,7 +223,7 @@
 
       <li class="selfclear">
         <%= f.label :service_level, "Service Level:" %>
-        <%= f.select :service_level, @service_levels, :include_blank => true %>
+        <%= f.select :service_level_id, @service_levels, :include_blank => true %>
       </li>
 
       <li class="selfclear">

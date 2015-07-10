@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     get "new_user" => "users#new_user"
     get "show_change_password" => "users#show_change_password"
     get "touch_session" => "users#touch_session"
-    post "change_password"  => "users#change_password"
+    patch "change_password"  => "users#change_password"
     post "change_provider" => "users#change_provider"
     post "create_user" => "users#create_user"
   end
@@ -95,4 +95,13 @@ Rails.application.routes.draw do
   get "reports/:action", :controller=>:reports
   get "reports/:action/:id", :controller=>:reports
   get "test_exception_notification" => "application#test_exception_notification"
+
+  resources :lookup_tables, :only => [:index, :show] do 
+    member do
+      post :add_value
+      put :update_value
+      put :destroy_value
+    end
+
+  end
 end

@@ -1,5 +1,5 @@
 <div id="page-header">
-  <h1>Funding Sources</h1>
+  <h1><%= translate_helper("funding_source_index_heading")%></h1>
 </div>
 
 <ul class="funding-sources">
@@ -10,4 +10,4 @@
 
 <hr/>
 
-<%= link_to 'New Funding Source', { :action=>:new }, :class=>'action-bttn' %>
+<%= link_to translate_helper("new_funding_source_link"), { :action=>:new }, :class=>'action-bttn' %>

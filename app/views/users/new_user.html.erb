@@ -27,7 +27,7 @@
 
       <li>
         <%= f.label :permissions, "Permissions:" %>
-        <%= select :role, :level, [["Admin", 100], ["Editor", 50], ["User", 0]] %>
+        <%= select :role, :level, Role.editable_role_array_by_user(current_user) %>
       </li>
     </ol>
 

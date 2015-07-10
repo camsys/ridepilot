@@ -1,7 +1,6 @@
 class NewUserMailer < ActionMailer::Base
-  default :from => EMAIL_FROM
-
-
+  default :from => ENV['SYSTEM_SEND_FROM_ADDRESS']
+  
   def new_user_email(user, password)
     @user     = user
     @password = password

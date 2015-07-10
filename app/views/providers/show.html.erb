@@ -1,17 +1,18 @@
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: false, tab_class: 'vehicles-drivers-users' %>
 <div id="page-header">
-  <h1>Provider: <%= @provider.name %></h1>
+  <h1><%= translate_helper("show_provider_heading", provider: @provider.name) %></h1>
 </div>
 
-<h2 class="section-header">Addresses</h2>
+<h2 class="section-header"><%= translate_helper("show_provider_address_heading") %></h2>
 
 <% form_tag search_addresses_path, :method => :get, :remote => true, :id => "search_addresses" do %>
   <%= hidden_field_tag :provider_id, @provider.id %>
   <fieldset>
     <ol class="section fourth">
       <li>
-        <%= label_tag "Search addresses:" %>
+        <%= label_tag translate_helper("show_provider_search_addresses") %>
         <%= text_field_tag :name %>
-        <%= submit_tag "Search" %>
+        <%= submit_tag translate_helper("search") %>
       </li>
     </ol>
   </fieldset>
@@ -19,22 +20,21 @@
 
 <table id="address_results">
   <tr>
-    <th>Name</th>
-    <th>Building Name</th>
-    <th>Address</th>
-    <th>City</th>
-    <th>State</th>
-    <th>Phone Number</th>
+    <th><%= translate_helper("address_results_name_column") %></th>
+    <th><%= translate_helper("address_results_building_name_column") %></th>
+    <th><%= translate_helper("address") %></th>
+    <th><%= translate_helper("city") %></th>
+    <th><%= translate_helper("state") %></th>
+    <th><%= translate_helper("phone_number") %></th>
     <th></th>
     <% if can? :edit, Vehicle %>
     <th></th>
-    <!-- <th></th> -->
     <% end %>
   </tr>
   <% if @provider.addresses.size == 0 %>
-    <tr><td >No addresses yet.</td></tr>
+    <tr><td ><%= translate_helper("no_addresses_yet") %></td></tr>
   <% else %>
-    <tr><td >Search for an address above.</td></tr>
+    <tr><td ><%= translate_helper("search_for_address") %></td></tr>
   <% end %>
 </table>
 
@@ -43,13 +43,13 @@
 <h2 class="section-header">Users</h2>
 
 <% if @provider.roles.size == 0 %>
-  <p>No users yet.</p>
+  <p><%= translate_helper("no_users_yet") %></p>
 <% else %>
   <table>
     <tr>
-      <th>Email</th>
-      <th>Role</th>
-      <th>Last login</th>
+      <th><%= translate_helper("email") %></th>
+      <th><%= translate_helper("role") %></th>
+      <th><%= translate_helper("last_login") %></th>
       <% if can? :edit, Role %>
       <th></th>
       <th></th>
@@ -61,7 +61,7 @@
       <td class="<%= role.name.downcase %>">
         <%= role.user.email %>
         <% if role.user == current_user %>
-        <span class="separator">|</span> <%= link_to "Change Password", show_change_password_path, :class=>'change-password' %>
+        <span class="separator">|</span> <%= link_to translate_helper("change_password"), show_change_password_path, :class=>'change-password' %>
         <% end %>
       </td>
       <td><%= role.name %></td>
@@ -70,35 +70,30 @@
       <td>
         <%= form_for(role, :url=>provider_change_role_path(@provider.id), :html => { :method => :post }) do |f| %>
           <%= f.hidden_field :id %>
-          <%= f.select :level, [["Admin", 100], ["Editor", 50], ["User", 0]] %>
-          <%= f.submit "Change role" %>
+          <%= f.select :level, Role.editable_role_array_by_user(current_user) %>
+          <%= f.submit translate_helper("change_role") %>
         <% end %>
       </td>
-      <td><%= button_to "Delete", provider_delete_role_path(@provider.id, :role_id=>role.id), :confirm => 'Are you sure?', :class=>'delete' %></td>
+      <td><%= button_to translate_helper("delete"), provider_delete_role_path(@provider.id, :role_id=>role.id), :confirm => translate_helper("delete_role_confirm"), :class=>'delete' %></td>
       <% end %>
     </tr>
     <% end %>
  </table>
 <% end %>
 
-<% if @provider == current_user.current_provider %>
-  <p><%= link_to "Create User", new_user_path, :class=>'new-user action-bttn' %></p>
-<% else %>
-  <p>You are currently logged in to
-  <%= current_user.current_provider.name %>.  To create a user for
-  <%= @provider.name %>, please switch providers by using the dropdown
-  menu at the top of this page.</p>
+<% if is_add_user_allowed?(current_user) %>
+  <p><%= link_to translate_helper("create_user_link_text"), new_user_path, :class=>'new-user action-bttn' %></p>
 <% end %>
 
 <hr />
 
-<h2 class="section-header">Dispatch</h2>
+<h2 class="section-header"><%=translate_helper("dispatch")%></h2>
 <% if can? :edit, @provider %>
   <%= form_tag change_dispatch_provider_path(@provider) do %>
     <fieldset>
       <ol class="section fourth">
         <li>
-          <%= label_tag "Enabled?" %>
+          <%= label_tag translate_helper("enabled") %>
           <%= select_tag "dispatch", options_for_select( [["No", false], ["Yes", true]], @provider.dispatch? ), { :onchange => "form.submit();" } %>
         </li>
       </ol>
@@ -108,13 +103,13 @@
 
 <hr />
 
-<h2 class="section-header">Scheduling</h2>
+<h2 class="section-header"><%=translate_helper("scheduling")%></h2>
 <% if can? :edit, @provider %>
   <%= form_tag change_scheduling_provider_path(@provider) do %>
     <fieldset>
       <ol class="section fourth">
         <li>
-          <%= label_tag "Enabled?" %>
+          <%= label_tag translate_helper("enabled") %>
           <%= select_tag "scheduling", options_for_select( [["No", false], ["Yes", true]], @provider.scheduling? ), { :onchange => "form.submit();" } %>
         </li>
       </ol>
@@ -124,13 +119,13 @@
 
 <hr />
 
-<h2 class="section-header">Add Trips from Runs Pages</h2>
+<h2 class="section-header"><%= translate_helper("add_trips_from_run_pages") %></h2>
 <% if can? :edit, @provider %>
   <%= form_tag change_allow_trip_entry_from_runs_page_provider_path(@provider) do %>
     <fieldset>
       <ol class="section fourth">
         <li>
-          <%= label_tag "Enabled?" %>
+          <%= label_tag translate_helper("enabled") %>
           <%= select_tag "allow_trip_entry_from_runs_page", options_for_select( [["No", false], ["Yes", true]], @provider.allow_trip_entry_from_runs_page? ), { :onchange => "form.submit();" } %>
         </li>
       </ol>
@@ -138,54 +133,54 @@
   <% end %>
 <% end %>
 
-<h2 class="section-header">Reimbursement Rates</h2>
+<h2 class="section-header"><%= translate_helper("reimbursement_rates") %></h2>
 <% if can? :edit, @provider %>
   <%= form_tag change_reimbursement_rates_provider_path(@provider) do %>
     <fieldset>
       <ol class="section first">
-        <li><h2>Per-Ride Reimbursement Rates</h2></li>
+        <li><h2><%= translate_helper("reimbursement_rates_heading") %></h2></li>
         <li>
-          <%= label_tag :oaa3b_per_ride_reimbursement_rate, "OAA III B" %>
+          <%= label_tag :oaa3b_per_ride_reimbursement_rate, translate_helper("oaa3b_per_ride_reimbursement_rate") %>
           <%= number_field_tag :oaa3b_per_ride_reimbursement_rate, number_with_precision(@provider.oaa3b_per_ride_reimbursement_rate, :precision => 2), :size => 4, :min => "0", :max => "9999", :step => "0.01" %>
         </li>
         <li>
-          <%= label_tag :ride_connection_per_ride_reimbursement_rate, "Ride Connection" %>
+          <%= label_tag :ride_connection_per_ride_reimbursement_rate, translate_helper("ride_connection_per_ride_reimbursement_rate") %>
           <%= number_field_tag :ride_connection_per_ride_reimbursement_rate, number_with_precision(@provider.ride_connection_per_ride_reimbursement_rate, :precision => 2), :size => 4, :min => "0", :max => "9999", :step => "0.01" %>
         </li>
         <li>
-          <%= label_tag :trimet_per_ride_reimbursement_rate, "Tri-Met" %>
+          <%= label_tag :trimet_per_ride_reimbursement_rate, translate_helper("tri_met_per_ride_reimbursement_rate") %>
           <%= number_field_tag :trimet_per_ride_reimbursement_rate, number_with_precision(@provider.trimet_per_ride_reimbursement_rate, :precision => 2), :size => 4, :min => "0", :max => "9999", :step => "0.01" %>
         </li>
         <li>
-          <%= label_tag :stf_van_per_ride_reimbursement_rate, "USDOT STF Van" %>
+          <%= label_tag :stf_van_per_ride_reimbursement_rate, translate_helper("stf_van_per_ride_reimbursement_rate") %>
           <%= number_field_tag :stf_van_per_ride_reimbursement_rate, number_with_precision(@provider.stf_van_per_ride_reimbursement_rate, :precision => 2), :size => 4, :min => "0", :max => "9999", :step => "0.01" %>
         </li>
       </ol>
       <ol class="section second">
-        <li><h2>Taxi Per-Ride Reimbursement Rates</h2></li>
+        <li><h2><%= translate_helper("taxi_per_ride_reimbursement_rates") %></h2></li>
         <li>
-          <%= label_tag :stf_taxi_per_ride_administrative_fee, "Administrative Fee" %>
+          <%= label_tag :stf_taxi_per_ride_administrative_fee, translate_helper("administrative_fee") %>
           <%= number_field_tag :stf_taxi_per_ride_administrative_fee, number_with_precision(@provider.stf_taxi_per_ride_administrative_fee, :precision => 2), :size => 4, :min => "0", :max => "9999", :step => "0.01" %>
         </li>
         <li>
-          <%= label_tag :stf_taxi_per_ride_ambulatory_load_fee, "Ambulatory Load Fee" %>
+          <%= label_tag :stf_taxi_per_ride_ambulatory_load_fee, translate_helper("ambulatory_load_fee") %>
           <%= number_field_tag :stf_taxi_per_ride_ambulatory_load_fee, number_with_precision(@provider.stf_taxi_per_ride_ambulatory_load_fee, :precision => 2), :size => 4, :min => "0", :max => "9999", :step => "0.01" %>
         </li>
         <li>
-          <%= label_tag :stf_taxi_per_ride_wheelchair_load_fee, "Wheelchair Load Fee" %>
+          <%= label_tag :stf_taxi_per_ride_wheelchair_load_fee, translate_helper("wheelchair_load_fee") %>
           <%= number_field_tag :stf_taxi_per_ride_wheelchair_load_fee, number_with_precision(@provider.stf_taxi_per_ride_wheelchair_load_fee, :precision => 2), :size => 4, :min => "0", :max => "9999", :step => "0.01" %>
         </li>
         <li>
-          <%= label_tag :stf_taxi_per_mile_ambulatory_reimbursement_rate, "Ambulatory Mileage Rate" %>
+          <%= label_tag :stf_taxi_per_mile_ambulatory_reimbursement_rate, translate_helper("ambulatory_reimbursement_rate") %>
           <%= number_field_tag :stf_taxi_per_mile_ambulatory_reimbursement_rate, number_with_precision(@provider.stf_taxi_per_mile_ambulatory_reimbursement_rate, :precision => 2), :size => 4, :min => "0", :max => "9999", :step => "0.01" %>
         </li>
         <li>
-          <%= label_tag :stf_taxi_per_mile_wheelchair_reimbursement_rate, "Wheelchair Mileage Rate" %>
+          <%= label_tag :stf_taxi_per_mile_wheelchair_reimbursement_rate, translate_helper("wheelchair_reimbursement_rate") %>
           <%= number_field_tag :stf_taxi_per_mile_wheelchair_reimbursement_rate, number_with_precision(@provider.stf_taxi_per_mile_wheelchair_reimbursement_rate, :precision => 2), :size => 4, :min => "0", :max => "9999", :step => "0.01" %>
         </li>
       </ol>
       <div class="actions">
-        <%= submit_tag "Save Reimbursement Rates" %>
+        <%= submit_tag translate_helper("submit_reimbursement_rates") %>
       </div>
     </fieldset>
   <% end %>
@@ -193,15 +188,15 @@
 
 <% if @provider.dispatch? && can?(:edit, DevicePool) %>
   <% if @provider.device_pools.size == 0 %>
-    <p>No device pools yet.</p>
+    <p><%= translate_helper("no_device_pool") %></p>
   <% else %>
     <table>
       <tr>
-        <th>Name</th>
+        <th><%= translate_helper("name") %></th>
         <th></th>
         <th></th>
         <th></th>
-        <th>Drivers</th>
+        <th><%= translate_helper("drivers") %></th>
       </tr>
       <% for device_pool in @provider.device_pools.sort {|a,b| a.name <=> b.name} %>
         <tr>
@@ -209,18 +204,18 @@
           <td><span class="device-pool-color" style="background-color:#<%= device_pool.color %>;"> </span></td>
           <td>
             <% if can? :edit, device_pool %>
-              <%= link_to "Edit", edit_device_pool_path(device_pool), :class => "edit" %>
+              <%= link_to translate_helper("edit"), edit_device_pool_path(device_pool), :class => "edit" %>
             <% end %>
           </td>
           <td>
             <% if can? :delete, device_pool %>
-              <%= link_to "Delete", device_pool, :confirm => 'Are you sure?', :method => "delete", :class => "delete" %>
+              <%= link_to translate_helper("delete"), device_pool, :confirm => translate_helper("device_pool_delete_confirm"), :method => "delete", :class => "delete" %>
             <% end %>
           </td>
           <td>
             <table>
             <% if device_pool.device_pool_drivers.length == 0 %>
-              <tr class="empty"><td>No drivers yet.</td><td></td></tr>
+              <tr class="empty"><td><%= translate_helper("no_drivers") %></td><td></td></tr>
             <% else %>
               <% for device_pool_driver in device_pool.device_pool_drivers.sort {|a,b| a.name <=> b.name} %>
                 <%= render "device_pool_drivers/device_pool_driver_row", :device_pool_driver => device_pool_driver %>
@@ -228,15 +223,15 @@
             <% end %>
             </table>
             <% if @provider == current_user.current_provider && can?( :create, DevicePoolDriver ) %>
-              <p><%= link_to "Add Driver", "#", :class=>'action-bttn add_device_pool_driver' %></p>
+              <p><%= link_to translate_helper("add_driver_to_device_pool"), "#", :class=>'action-bttn add_device_pool_driver' %></p>
               <p style="display:none;">
                 <%= select_tag "new_device_pool_driver_#{device_pool.id}", new_device_pool_members_options(@unassigned_drivers), :class => "new_device_pool_driver" %>
-                <%= link_to "Add", device_pool_device_pool_drivers_path(device_pool), :class => "add_driver_to_pool" %>
+                <%= link_to translate_helper("add_driver_to_device_pool"), device_pool_device_pool_drivers_path(device_pool), :class => "add_driver_to_pool" %>
               </p>
-              <p><%= link_to "Add Vehicle", "#", :class=>'action-bttn add_device_pool_vehicle' %></p>
+              <p><%= link_to translate_helper("add_vehicle_to_device_pool"), "#", :class=>'action-bttn add_device_pool_vehicle' %></p>
               <p style="display:none;">
                 <%= select_tag "new_device_pool_driver_#{device_pool.id}", new_device_pool_members_options(@unassigned_vehicles), :class => "new_device_pool_vehicle" %>
-                <%= link_to "Add", device_pool_device_pool_drivers_path(device_pool), :class => "add_vehicle_to_pool" %>
+                <%= link_to translate_helper("add_vehicle_to_device_pool"), device_pool_device_pool_drivers_path(device_pool), :class => "add_vehicle_to_pool" %>
               </p>
             <% end %>
           </td>
@@ -246,12 +241,9 @@
   <% end %>
   
   <% if @provider == current_user.current_provider %>
-    <p><%= link_to "Create Device Pool", new_device_pool_path, :class=>'action-bttn' %>
+    <p><%= link_to translate_helper("new_device_pool_link_text"), new_device_pool_path, :class=>'action-bttn' %>
   <% else %>
-    <p>You are currently logged in to
-    <%= current_user.current_provider.name %>.  To create a device pool for
-    <%= @provider.name %>, please switch providers by using the dropdown
-    menu at the top of this page.</p>
+    <%= translate_helper("switch_providers_to_add_device_pool", current_provider: current_user.current_provider.name, provider: @provider.name) %>
   <% end %>
 <% end %>
 
@@ -260,13 +252,13 @@
 <h2 class="section-header">Drivers</h2>
 
 <% if @provider.drivers.size == 0 %>
-  <p>No drivers yet.</p>
+  <p><%= translate_helper("no_drivers") %></p>
 <% else %>
   <table>
     <tr>
-      <th>Name</th>
-      <th>Active</th>
-      <th>Paid</th>
+      <th><%= translate_helper("name") %></th>
+      <th><%= translate_helper("active") %></th>
+      <th><%= translate_helper("driver_paid") %></th>
       <% if can? :edit, Driver %>
       <th></th>
       <th></th>
@@ -275,11 +267,11 @@
     <% for driver in @provider.drivers %>
     <tr>
       <td class="<%= driver.active ? 'active' : 'inactive' %>"><%= driver.name %></td>
-      <td><%= driver.active ? "Active" : "Inactive" %></td>
-      <td><%= driver.paid ? "Paid" : "Volunteer" %></td>
+      <td><%= driver.active ? translate_helper("active") : translate_helper("inactive") %></td>
+      <td><%= driver.paid ? translate_helper("driver_paid") : translate_helper("volunteer") %></td>
       <% if can? :edit, Driver %>
-      <td><%= link_to "Edit", edit_driver_path(driver), :class=>'edit edit-driver' %></td>
-      <td><%= link_to "Delete", driver, :confirm => 'Are you sure?', :method => :delete, :class=>'delete' %></td>
+      <td><%= link_to translate_helper("edit"), edit_driver_path(driver), :class=>'edit edit-driver' %></td>
+      <td><%= link_to translate_helper("delete"), driver, :confirm => translate_helper("delete_driver_confirm"), :method => :delete, :class=>'delete' %></td>
       <% end %>
     </tr>
     <% end %>
@@ -287,12 +279,9 @@
 <% end %>
 
 <% if @provider == current_user.current_provider %>
-  <p><%= link_to "Create Driver", new_driver_path, :class=>'new-driver action-bttn' %>
+  <p><%= link_to translate_helper("new_driver_link_text"), new_driver_path, :class=>'new-driver action-bttn' %>
 <% else %>
-  <p>You are currently logged in to
-  <%= current_user.current_provider.name %>.  To create a driver for
-  <%= @provider.name %>, please switch providers by using the dropdown
-  menu at the top of this page.</p>
+  <%= translate_helper("switch_providers_to_create_driver", current_provider: current_user.current_provider.name, provider: @provider.name) %>
 <% end %>
 
 <hr />
@@ -300,18 +289,18 @@
 <h2 class="section-header">Vehicles</h2>
 
 <% if @provider.vehicles.size == 0 %>
-  <p>No vehicles yet.</p>
+  <p><%= translate_helper("no_vehicles") %></p>
 <% else %>
   <table>
     <tr>
-      <th>Name</th>
-      <th>Year</th>
-      <th>Make</th>
-      <th>Model</th>
-      <th>License Plate</th>
-      <th>VIN</th>
-      <th>Location</th>
-      <th>Default Driver</th>
+      <th><%= translate_helper("name") %></th>
+      <th><%= translate_helper("vehicle_year") %></th>
+      <th><%= translate_helper("vehicle_make") %></th>
+      <th><%= translate_helper("vehicle_model") %></th>
+      <th><%= translate_helper("license_plate") %></th>
+      <th><%= translate_helper("vin") %></th>
+      <th><%= translate_helper("vehicle_location") %></th>
+      <th><%= translate_helper("default_driver") %></th>
       <th></th>
       <% if can? :edit, Vehicle %>
       <th></th>
@@ -334,10 +323,10 @@
       <td><%= vehicle.vin %></td>
       <td><%= vehicle.garaged_location %></td>
       <td><%= vehicle.default_driver.try :name %></td>
-      <td><%= vehicle.active ? "Active" : "Inactive" %></td>
+      <td><%= vehicle.active ? translate_helper("active") : translate_helper("inactive") %></td>
       <% if can? :edit, Vehicle %>
-      <td><%= link_to "Edit", edit_vehicle_path(vehicle), :class=>'edit edit-vehicle' %></td>
-      <td><%= link_to "Delete", vehicle, :confirm => 'Are you sure?', :method => :delete, :class=>'delete' %></td>
+      <td><%= link_to translate_helper("edit"), edit_vehicle_path(vehicle), :class=>'edit edit-vehicle' %></td>
+      <td><%= link_to translate_helper("delete"), vehicle, :confirm => translate_helper("delete_vehicle_confirmation"), :method => :delete, :class=>'delete' %></td>
       <% end %>
     </tr>
     <% end %>
@@ -345,23 +334,20 @@
 <% end %>
 
 <% if @provider == current_user.current_provider %>
-  <p><%= link_to "Create Vehicle", new_vehicle_path, :class=>'new-vehicle action-bttn' %></p>
+  <p><%= link_to translate_helper("new_vehicle_link_text"), new_vehicle_path, :class=>'new-vehicle action-bttn' %></p>
 <% else %>
-  <p>You are currently logged in to
-  <%= current_user.current_provider.name %>.  To create a vehicle for
-  <%= @provider.name %>, please switch providers by using the dropdown
-  menu at the top of this page.</p>
+  <%= translate_helper("switch_providers_to_create_vehicle", current_provider: current_user.current_provider.name, provider: @provider.name) %>
 <% end %>
 <hr />
 
 <h2 class="section-header">Ethnicities</h2>
 
 <% if @provider.ethnicities.size == 0 %>
-  <p>No ethnicities yet.</p>
+  <p><%= translate_helper("no_ethnicities") %></p>
 <% else %>
   <table>
     <tr>
-      <th>Name</th>
+      <th><%= translate_helper("name") %></th>
       <% if can? :edit, ProviderEthnicity %>
         <th></th>
         <th></th>
@@ -377,8 +363,8 @@
           <% end %>
         </td>
         <% if can? :edit, ProviderEthnicity %>
-          <td><%= link_to "Edit", edit_provider_ethnicity_path(ethnicity), :class=>'edit edit-ethnicity' %></td>
-          <td><%= link_to "Delete", ethnicity, :confirm => 'Are you sure?', :method => :delete, :class=>'delete' %></td>
+          <td><%= link_to translate_helper("edit"), edit_provider_ethnicity_path(ethnicity), :class=>'edit edit-ethnicity' %></td>
+          <td><%= link_to translate_helper("delete"), ethnicity, :confirm => translate_helper("delete_provider_ethnicity_confirm"), :method => :delete, :class=>'delete' %></td>
         <% end %>
       </tr>
     <% end %>
@@ -386,16 +372,13 @@
 <% end %>
 
 <% if @provider == current_user.current_provider %>
-  <p><%= link_to "Create Ethnicity", new_provider_ethnicity_path, :class=>'new action-bttn' %></p>
+  <p><%= link_to translate_helper("new_ethnicity_link_text"), new_provider_ethnicity_path, :class=>'new action-bttn' %></p>
 <% else %>
-  <p>You are currently logged in to
-  <%= current_user.current_provider.name %>.  To create an ethnicity for
-  <%= @provider.name %>, please switch providers by using the dropdown
-  menu at the top of this page.</p>
+  <%= translate_helper("switch_providers_to_create_ethnicity", current_provider: current_user.current_provider.name, provider: @provider.name) %>
 <% end %>
 <hr />
 
-<h2 class="section-header">Region Boundaries</h2>
+<h2 class="section-header"><%= translate_helper("region_heading") %></h2>
 
 <div id="region">
   <div id="region-form">
@@ -416,30 +399,30 @@
     %>
     <% form_tag save_region_provider_path do %>
       <table>
-      <tr><th colspan="2"><h3>Northwest Corner</h4></th></tr>
+      <tr><th colspan="2"><h3><%= translate_helper("northwest_corner") %></h3></th></tr>
       <tr>
-        <td><%= label_tag "Latitude:" %></td>
+        <td><%= label_tag translate_helper("latitude") %></td>
         <td>
           <%= text_field_tag :region_north, nw_y %>
           <span class="hint">(e.g. 45.971)</span>
         </td>
       <tr>
-        <td><%= label_tag "Longitude:" %></td>
+        <td><%= label_tag translate_helper("longitude") %></td>
         <td>
           <%= text_field_tag :region_west, nw_x %>
           <span class="hint">(e.g. -123.358)</span>
         </td>
       </tr>
-      <tr><th colspan="2"><h3>Southeast Corner</h4></th></tr>
+      <tr><th colspan="2"><h3><%= translate_helper("southeast_corner") %></h3></th></tr>
       <tr>
-        <td><%= label_tag "Latitude:" %></td>
+        <td><%= label_tag translate_helper("latitude") %></td>
         <td>
           <%= text_field_tag :region_south, se_y %>
           <span class="hint">(e.g. 45.342)</span>
         </td>
       </tr>
       <tr>
-        <td><%= label_tag "Longitude:" %></td>
+        <td><%= label_tag translate_helper("longitude") %></td>
         <td>
           <%= text_field_tag :region_east, se_x %>
           <span class="hint">(e.g. -121.922)</span>
@@ -447,7 +430,7 @@
       </tr>
       <tr>
         <td></td>
-        <td><%= submit_tag "Save Region" %></td>
+        <td><%= submit_tag translate_helper("save_region_submit") %></td>
       </tr>
       </table>
     <% end %>
@@ -460,7 +443,7 @@
 
 <hr />
 
-<h2 class="section-header">Dispatch View</h2>
+<h2 class="section-header"><%= translate_helper("dispatch_view_heading") %></h2>
 
 <div id="viewport">
   <div id="viewport-form">
@@ -474,25 +457,25 @@
     %>
     <% form_tag save_viewport_provider_path do %>
       <table>
-      <tr><th colspan="2"><h3>Map Center</h4></th></tr>
+      <tr><th colspan="2"><h3><%= translate_helper("map_center") %></h3></th></tr>
       <tr>
-        <td><%= label_tag "Latitude:" %></td>
+        <td><%= label_tag translate_helper("latitude") %></td>
         <td>
           <%= text_field_tag :viewport_lat, center_lat %>
           <span class="hint">(e.g. 45.523)</span>
         </td>
       <tr>
-        <td><%= label_tag "Longitude:" %></td>
+        <td><%= label_tag translate_helper("longitude") %></td>
         <td>
           <%= text_field_tag :viewport_lng, center_lng %>
           <span class="hint">(e.g. -122.676)</span>
         </td>
       </tr>
       <tr>
-        <th colspan="2">Zoom Level</th>
+        <th colspan="2"><%= translate_helper("zoom_level") %></th>
       </tr>
       <tr>
-        <td><%= label_tag "Zoom:" %></td>
+        <td><%= label_tag translate_helper("zoom") %></td>
         <td>
           <%= select_tag :viewport_zoom, options_for_select(@zoom_choices,
                 [@provider.viewport_zoom.to_s, @provider.viewport_zoom.to_s]) %>
@@ -501,7 +484,7 @@
       </tr>
       <tr>
         <td></td>
-        <td><%= submit_tag "Save Viewport" %></td>
+        <td><%= submit_tag translate_helper("save_viewport_submit") %></td>
       </tr>
       </table>
     <% end %>

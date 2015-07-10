@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  has_many   :roles
+  has_many   :roles, dependent: :destroy
   belongs_to :current_provider, :class_name=>"Provider", :foreign_key => :current_provider_id
   has_one    :driver
   has_one    :device_pool_driver, :through => :driver
@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
   end
   
   def super_admin?
-    return admin? && current_provider == Provider.ride_connection
+    !roles.system_admins.empty?
   end
 
   def admin?

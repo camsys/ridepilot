@@ -19,7 +19,7 @@
     <% end %>
   </td>
   <td>
-    <%= trip.trip_purpose %>
+    <%= trip.trip_purpose_name %>
   </td>
   <td>
     <%= trip_fields.check_box :round_trip %>
@@ -40,7 +40,7 @@
     </td>
   <% end %>
   <td>
-    <%= trip_fields.select :trip_result, @trip_results, :include_blank => true %>
+    <%= trip_fields.select :trip_result_id, @trip_results, :include_blank => true %>
   </td>
   <td class="nowrap">
     <%= link_to "Edit Trip", [:edit,trip], :class => "edit" %>

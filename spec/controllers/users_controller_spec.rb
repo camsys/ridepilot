@@ -178,9 +178,9 @@ RSpec.describe UsersController, type: :controller do
         }.to change { @current_user.reload.current_provider_id }.from(@old_provider.id).to(@new_provider.id)
       end
 
-      it "redirects to the come_from param" do
-        post :change_provider, {:provider_id => @new_provider.id, :come_from => "/providers"}
-        expect(response).to redirect_to("/providers")
+      it "redirects to the new provider page" do
+        post :change_provider, {:provider_id => @new_provider.id}
+        expect(response).to redirect_to("/providers/#{@new_provider.id}")
       end
     end
 
@@ -195,9 +195,9 @@ RSpec.describe UsersController, type: :controller do
         }.not_to change { @current_user.reload.current_provider_id }
       end
 
-      it "redirects to the come_from param" do
-        post :change_provider, {:provider_id => @new_provider.id, :come_from => "/providers"}
-        expect(response).to redirect_to("/providers")
+      it "redirects to the new provider page" do
+        post :change_provider, {:provider_id => @new_provider.id}
+        expect(response).to redirect_to("/providers/#{@new_provider.id}")
       end
     end
   end

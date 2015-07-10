@@ -1,7 +1,7 @@
 <%= form_for @driver do |f| %>
   <% if @driver.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@driver.errors.count, "error") %> prohibited this driver from being saved:</h2>
+      <h2><%= translate_helper("driver_form_error", count: @driver.errors.count) %></h2>
 
       <ul>
       <% @driver.errors.full_messages.each do |msg| %>
@@ -14,28 +14,28 @@
   <fieldset class="new-driver">
     <ol class="section first">
       <li>
-        <%= f.label :name %>
+        <%= f.label :name, translate_helper("driver_form_name") %>
         <%= f.text_field :name %>
       </li>
 
       <li>
-        <%= f.label :active %>
+        <%= f.label :active, translate_helper("driver_form_active") %>
         <%= f.select :active, [["Active", "true"], ["Inactive", "false"]], {:selected => @driver.active.to_s} %>
       </li>
 
       <li>
-        <%= f.label :paid %>
+        <%= f.label :paid, translate_helper("driver_form_paid") %>
         <%= f.select :paid, [["Paid", "true"], ["Volunteer", "false"]], {:selected => @driver.paid.to_s} %>
       </li>
       
       <li>
-        <%= f.label :user_id, "Associated User" %>
+        <%= f.label :user_id, translate_helper("driver_form_associated_user") %>
         <%= f.collection_select :user_id, @available_users, :id, :email, :include_blank => true %>
       </li>
     </ol>
 
     <div class="actions">
-      <%= f.submit %>
+      <%= f.submit translate_helper("driver_form_submit") %>
     </div>
 
 <% end %> 

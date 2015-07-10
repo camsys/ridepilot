@@ -3,33 +3,33 @@
   <fieldset>
     <ol class="section first">
       <li>
-        <%= f.label :name %>
+        <%= f.label :name, translate_helper("provider_form_name") %>
         <%= f.text_field :name %>
       </li>
 
       <li>
-        <%= f.label :logo %>
+        <%= f.label :logo, translate_helper("provider_form_logo") %>
         <%= f.file_field :logo %>
       </li>
       
       <li>
-        <%= f.label :dispatch, "Dispatch enabled" %>
+        <%= f.label :dispatch, translate_helper("provider_form_dispatch") %>
         <%= f.check_box :dispatch %>
       </li>
       
       <li>
-        <%= f.label :scheduling, "Scheduling enabled" %>
+        <%= f.label :scheduling, translate_helper("provider_form_scheduling") %>
         <%= f.check_box :scheduling %>
       </li>
       
       <li>
-        <%= f.label :allow_trip_entry_from_runs_page %>
+        <%= f.label :allow_trip_entry_from_runs_page, translate_helper("provider_form_trip_entry_from_runs") %>
         <%= f.check_box :allow_trip_entry_from_runs_page %>
       </li>
     </ol>
 
     <div class="actions">
-      <%= f.submit %>
+      <%= f.submit translate_helper("provider_form_submit") %>
     </div>
   </fieldset>
 

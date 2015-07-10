@@ -1,0 +1,16 @@
+= button_tag :type => 'button', id: 'addLookupTableValue', "data-target" => "#addLookupTableValueDialog", "data-toggle" => "modal", :class => "btn action-button" do
+  = translate_helper(:add)
+#addLookupTableValueDialog.modal.fade.col-sm-12{"aria-describedby" => translate_helper(:add_value), :role => "dialog", "aria-hidden" => 'true', :tabindex => "-1"}
+  .modal-dialog
+    .modal-content
+      = form_for :lookup_table, url: add_value_lookup_table_path(table), method: :post do |f|
+        .modal-header
+          = button_tag class: 'btn action-button pull-right', data: {dismiss: 'modal'} do
+            = translate_helper(:cancel)
+          = button_tag translate_helper(:ok), type: :submit, style: "margin-right: 5px;", class: "btn action-button pull-right"
+          .modal-title{:style => "text-align:left;"}
+            %strong
+              = translate_helper(:site_title)
+        .modal-body{:style => "text-align:left;"}
+          = f.label :value, translate_helper("value")
+          = text_field_tag :value, nil, class: 'form-control'

@@ -1,8 +1,7 @@
 <%= form_for(@provider_ethnicity) do |f| %>
   <% if @provider_ethnicity.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@provider_ethnicity.errors.count, "error") %> prohibited this provider_ethnicity from being saved:</h2>
-
+      <h2><%= translate_helper("provider_ethnicity_form_error_message", count: @provider_ethnicity.errors.count)%></h2>
       <ul>
       <% @provider_ethnicity.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -15,14 +14,14 @@
 
     <ol class="section first">
       <li>
-        <%= f.label :name %>
+        <%= f.label :name, translate_helper("provider_ethnicity_form_name") %>
         <%= f.text_field :name %>
       </li>
 
     </ol>
 
     <div class="actions">
-      <%= f.submit %>
+      <%= f.submit translate_helper("provider_ethnicity_form_submit") %>
     </div>
 
   </fieldset>

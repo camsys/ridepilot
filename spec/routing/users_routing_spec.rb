@@ -22,7 +22,7 @@ RSpec.describe UsersController, type: :routing do
     end
 
     it "routes to #change_password" do
-      expect(:post => "/change_password").to route_to("users#change_password")
+      expect(:patch => "/change_password").to route_to("users#change_password")
     end
 
     it "routes to #change_provider" do

@@ -41,8 +41,8 @@
   </li>
   
   <li class="selfclear">
-    <%= label_tag "#{prefix}_default_trip_purpose", "Default Trip Purpose:" %>
-    <%= select_tag "#{prefix}_default_trip_purpose", options_for_select(TRIP_PURPOSES, address.default_trip_purpose), :include_blank => true %>
+    <%= label_tag "#{prefix}_trip_purpose", "Trip Purpose:" %>
+    <%= select_tag "#{prefix}_trip_purpose_id", options_for_select(TripPurpose.all.map { |tp| [tp.name, tp.id] }, address.trip_purpose_id), :include_blank => true %>
   </li>
 
   <li class="selfclear">

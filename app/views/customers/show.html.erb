@@ -1,12 +1,12 @@
 <div id="page-header">
-  <h1>Customer: <%= @customer.name %></h1>
+  <h1>translate_helper("customer") <%= @customer.name %></h1>
 </div>
 
 <div class="profile-actions selfclear">
-  <%= link_to 'New Trip', new_trip_path(:customer_id=>@customer.id), :class=>'new-trip'  %>
+  <%= link_to translate_helper("new_trip_link_text"), new_trip_path(:customer_id=>@customer.id), :class=>'new-trip'  %>
   <span class="separator">|</span>
   <div class="manage">
-    <%= link_to 'Edit', edit_customer_path(@customer), :class=>'edit' %>
+    <%= link_to translate_helper("edit"), edit_customer_path(@customer), :class=>'edit' %>
     <%= delete_trippable_link(@customer) %>
   </div>
 </div>
@@ -15,10 +15,10 @@
   <div id="confirm-destroy" style="display:none;">
     <%= form_for @customer, :html => { :method => "delete" } do |form| %>
       <fieldset>
-        <legend>Associate this customer's trips with another customer.</legend>
+        <legend><% translate_helper("reassociate_customer_trips") %></legend>
         <ol class="section">
           <li>
-          <%= label_tag "Customer Name:" %>
+          <%= label_tag translate_helper("customer_name") %>
           <%= autocomplete_field_tag 'customer_name', '', autocomplete_customers_path, :size => 30, :id_element => "#customer_id", "submit-buttons" => "#show_details #new_trip" %>
           <%= hidden_field_tag 'customer_id' %>
           </li>
@@ -33,82 +33,82 @@
 
 <dl>
   <% if @customer.group %>
-    <dt>Group name:</dt>
+    <dt><%= translate_helper("group_name")%></td>
     <dd><%= @customer.first_name %></dd>
   <% else %>
-    <dt>First name:</dt>
+    <dt><%= translate_helper("first_name")%></td>
     <dd><%= @customer.first_name %></dd>
 
-    <dt>Middle initial:</dt>
+    <dt><%= translate_helper("middle_initial")%></td>
     <dd><%= @customer.middle_initial %></dd>
 
-    <dt>Last name:</dt>
+    <dt><%= translate_helper("last_name")%></td>
     <dd><%= @customer.last_name %></dd>
   <% end %>
 
-  <dt>Phone number 1:</dt>
+  <dt><%= translate_helper("phone_number")%></td>
   <dd><%= @customer.phone_number_1 %></dd>
 
-  <dt>Phone number 2:</dt>
+  <dt><%= translate_helper("alternate_phone_number")%></td>
   <dd><%= @customer.phone_number_2 %></dd>
 
-  <dt>Address:</dt>
+  <dt><%= translate_helper("address")%></td>
   <dd><%= @customer.address ? raw(format_newlines @customer.address.text) : '' %></dd>
 
-  <dt>Email:</dt>
+  <dt><%= translate_helper("email")%></td>
   <dd><%= @customer.email %></dd>
 </dl>
 
 <dl>
-  <dt>Activated date:</dt>
+  <dt><%= translate_helper("activated_date")%></td>
   <dd><%= @customer.activated_date %></dd>
 
-  <dt>Inactivated date:</dt>
+  <dt><%= translate_helper("inactivated_date")%></td>
   <dd><%= @customer.inactivated_date %></dd>
 
-  <dt>Inactivated reason:</dt>
+  <dt><%= translate_helper("inactivated_reason")%></td>
   <dd><%= @customer.inactivated_reason %></dd>
 
   <% unless @customer.group %>
-    <dt>Birth date:</dt>
+    <dt><%= translate_helper("date_of_birth")%></td>
     <dd><%= @customer.birth_date %></dd>
   <% end %>
 
-  <dt>Mobility:</dt>
+  <dt><%= translate_helper("mobility")%></td>
   <dd><%= @customer.mobility.name if @customer.mobility %></dd>
 
-  <dt>Mobility notes:</dt>
+  <dt><%= translate_helper("mobility_notes")%></td>
   <dd><%= @customer.mobility_notes %></dd>
 
-  <dt>Medicaid eligible:</dt>
+  <dt><%= translate_helper("medicaid_eligible")%></td>
   <dd><%= @customer.medicaid_eligible %></dd>
 
-  <dt>ADA eligible:</dt>
+  <dt><%= translate_helper("ada_eligible")%></td>
   <dd><%= @customer.ada_eligible %></dd>
 </dl>
 
 <dl>
-  <dt>Default Funding Source:</dt>
+  <dt><%= translate_helper("default_funding_source")%></td>
   <dd><%= @customer.default_funding_source.try(:name) %></dd>
   
-  <dt>Default Service Level:</dt>
-  <dd><%= @customer.default_service_level %></dd>
+  <dt><%= translate_helper("default_service_level")%></td>
+  <dd><%= @customer.service_level_name %></dd>
   
   <% unless @customer.group %>
-    <dt>Ethnicity:</dt>
+    <dt><%= translate_helper("ethnicity")%></td>
     <dd><%= @customer.ethnicity %></dd>
   <% end %>
   
-  <dt>Prime number:</dt>
+  <dt><%= translate_helper("prime_number")%></td>
   <dd><%= @customer.prime_number %></dd>
   
-  <dt>Emergency contact notes:</dt>
+  <dt><%= translate_helper("emergency_contact_notes")%></td>
   <dd><%= @customer.emergency_contact_notes %></dd>
 
-  <dt>Private notes:</dt>
+  <dt><%= translate_helper("private_notes")%></td>
   <dd><%= @customer.private_notes %></dd>
 
-  <dt>Public notes:</dt>
+  <dt><%= translate_helper("public_notes")%></td>
   <dd><%= @customer.public_notes %></dd>
 </dl>
 
@@ -120,19 +120,19 @@
 
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <th>Pickup Time</th>
-    <th>Result</th>
+    <th><%=translate_helper("pickup_time")%></th>
+    <th><%=translate_helper("result")%></th>
   </tr>
   <% if @trips.present? %>
     <% for trip in @trips %>
     <tr>
       <td><%= link_to trip.pickup_time.strftime('%m-%d-%Y %I:%M%P'), edit_trip_path(trip) %></td>
-      <td><%= TRIP_RESULT_CODES[trip.trip_result] %></td>
+      <td><%= trip.trip_result_name %></td>
     </tr>
     <% end %>
   <% else %>
     <tr>
-      <td>No trips yet.</td>
+      <td>translate_helper("no_trips_yet")</td>
     </tr>
   <% end %>
 </table>
@@ -140,4 +140,4 @@
 <%= will_paginate @trips %>
 
 <hr />
-<%= link_to 'Back', customers_path, :class=>'action-bttn' %>
+<%= link_to translate_helper("back"), customers_path, :class=>'action-bttn' %>

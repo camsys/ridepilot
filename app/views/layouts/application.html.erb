@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>
-    <%= content_for?(:title) ? yield(:title) : "RidePilot" %>
+    <%= content_for?(:title) ? yield(:title) : translate_helper("application_title") %>
   </title>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag 'application' %>
@@ -10,24 +10,17 @@
   <%= yield :head %>
 </head>
 <body class="<%= bodytag_class %>">
-  <div id="production-test-warning">
-    <div class="stripes"></div>
-    <span>This is only a <em>preview of production</em> on the new server. To view the live production data, please go to
-      <a href="http://apps.rideconnection.org/ridepilot">apps.rideconnection.org/ridepilot</a>.</span>
-  </div>
   <div id="session-timeout-warning" style="display: none;">
-    You will be logged off in <span><!-- countdown place holder
-    --></span>&nbsp;seconds due to inactivity.
-    <a id="session-resume" href="#">Click here to stay logged in.</a>
+    <%= translate_helper("session_timeout_warning") %>
   </div>
   <div id="header">
     <div class="wrap selfclear">
-      <%= link_to "RidePilot", root_path, :id => "logo" %>
+      <%= link_to translate_helper("logo_text"), root_path, :id => "logo" %>
       <div id="login-area">
         <% if current_user %>
           <a href="#"><%= current_user.email %></a> 
           <span class="separator">|</span>
-          <%= link_to "Log out", destroy_user_session_path, method: :delete %>
+          <%= link_to translate_helper("log_out_link_text"), destroy_user_session_path, method: :delete %>
           <span class="separator">|</span>
           Logged in to 
           <% if @provider_map.size > 1 %>
@@ -48,19 +41,19 @@
   <div id="crossbar">
     <div class="wrap selfclear">
       <ul id="primary-nav" class="selfclear">
-        <% if show_scheduling? %><li class="trips"><%= link_to "Trips", trips_path %></li><% end %>
-        <% if show_scheduling? %><li class="runs"><%= link_to "Runs", runs_path %></li><% end %>
-        <% if show_scheduling? %><li class="cab_trips"><%= link_to "Cab trips", cab_trips_path %></li><% end %>
-        <% if show_scheduling? %><li class="customers"><%= link_to "Customers", customers_path %></li><% end %>
-        <% if show_scheduling? %><li class="reports"><%= link_to "Reports", reports_path %></li><% end %>
-        <% if show_dispatch?   %><li class="dispatch"><%= link_to "Dispatch", dispatch_path %></li><% end %>
+        <% if show_scheduling? %><li class="trips"><%= link_to translate_helper("application_trips_link_text"), trips_path %></li><% end %>
+        <% if show_scheduling? %><li class="runs"><%= link_to translate_helper("application_runs_link_text"), runs_path %></li><% end %>
+        <% if show_scheduling? %><li class="cab_trips"><%= link_to translate_helper("application_cabs_link_text"), cab_trips_path %></li><% end %>
+        <% if show_scheduling? %><li class="customers"><%= link_to translate_helper("application_customers_link_text"), customers_path %></li><% end %>
+        <% if show_scheduling? %><li class="reports"><%= link_to translate_helper("application_reports_link_text"), reports_path %></li><% end %>
+        <% if show_dispatch?   %><li class="dispatch"><%= link_to translate_helper("application_dispatch_link_text"), dispatch_path %></li><% end %>
       </ul>
       <ul id="secondary-nav" class="selfclear">
         <% if current_user && can?(:read, current_user) %>
-          <li class="admin"><%= link_to "Admin", root_path %></li>
+          <li class="admin"><%= link_to translate_helper("application_admin_link_text"), root_path %></li>
         <% end %>
         <% if current_user && can?(:read, Provider) %>
-          <li class="vehicles-drivers-users"><%= link_to "Settings", provider_path(current_user.current_provider) %></li>
+          <li class="vehicles-drivers-users"><%= link_to translate_helper("application_settings_link_text"), provider_path(current_user.current_provider) %></li>
         <% end %>
       </ul>
     </div><!-- /.wrap -->
@@ -77,11 +70,17 @@
     <%= yield %>
   </div>
 
+  <%= render partial: 'layouts/footer' %>
+  <%= yield :footer%>
+
   <% if current_user %>
     <%= javascript_tag do %>
       $(document).ready(function(){
         idleTimer = new IdleTimer();
         idleTimer.start();
+
+        // this is to fix modal dialog under the fade mask
+        $('.modal').appendTo("body") 
       });
     <% end %>
   <% end %>

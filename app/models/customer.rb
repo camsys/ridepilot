@@ -5,6 +5,9 @@ class Customer < ActiveRecord::Base
   belongs_to :default_funding_source, :class_name=>'FundingSource'
   has_many   :trips, :dependent => :destroy
 
+  belongs_to :service_level
+  delegate :name, to: :service_level, prefix: :service_level, allow_nil: true
+
   validates_presence_of :first_name
   validates_associated :address
   accepts_nested_attributes_for :address
@@ -62,7 +65,7 @@ class Customer < ActiveRecord::Base
       :group                     => group,
       :address_data              => address_data,
       :default_funding_source_id => default_funding_source_id,
-      :default_service_level     => default_service_level
+      :default_service_level     => service_level_name
     }
   end
   

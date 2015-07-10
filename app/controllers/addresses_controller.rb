@@ -67,7 +67,7 @@ class AddressesController < ApplicationController
 
       #only addresses within one decimal degree of the trimet district
       addresses = addresses.find_all { |address|
-        point = RGeo::Geos.factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f, 4326)
+        point = RGeo::Geographic.spherical_factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f, 4326)
         Region.count(:conditions => ["name='TriMet' and st_distance(the_geom, ?) <= 1", point]) > 0
       }
 
@@ -83,7 +83,7 @@ class AddressesController < ApplicationController
                     :city => address['city'],
                     :state => STATE_NAME_TO_POSTAL_ABBREVIATION[address['state'].upcase],
                     :zip => address['postcode'],
-                    :the_geom => RGeo::Geos.factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f, 4326)
+                    :the_geom => RGeo::Geographic.spherical_factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f, 4326)
                     )
         address_obj.json
 
@@ -98,12 +98,12 @@ class AddressesController < ApplicationController
   def edit; end
   
   def create
-    the_geom       = params[:lat].to_s.size > 0 ? RGeo::Geos.factory(srid: 4326).point(params[:lon].to_f, params[:lat].to_f, 4326) : nil
+    the_geom       = params[:lat].to_s.size > 0 ? RGeo::Geographic.spherical_factory(srid: 4326).point(params[:lon].to_f, params[:lat].to_f, 4326) : nil
     prefix         = params['prefix'] || ""
     address_params = {}
 
     # Some kind of faux strong parameters...
-    for param in ['name', 'building_name', 'address', 'city', 'state', 'zip', 'phone_number', 'in_district', 'default_trip_purpose']
+    for param in ['name', 'building_name', 'address', 'city', 'state', 'zip', 'phone_number', 'in_district', 'trip_purpose_id']
       address_params[param] = params[prefix + "_" + param]
     end
 
@@ -123,7 +123,7 @@ class AddressesController < ApplicationController
       attrs = address.attributes
       attrs[:label] = address.text.gsub(/\s+/, ' ')
       attrs[:prefix] = prefix
-      attrs.merge!('phone_number' => address.phone_number, 'trip_purpose' => address.default_trip_purpose ) if prefix == "dropoff"
+      attrs.merge!('phone_number' => address.phone_number, 'trip_purpose' => address.trip_purpose ) if prefix == "dropoff"
       render :json => attrs.to_json
     else
       errors = address.errors.messages
@@ -167,6 +167,6 @@ class AddressesController < ApplicationController
   private
   
   def address_params
-    params.require(:address).permit(:name, :building_name, :address, :city, :state, :zip, :in_district, :provider_id, :phone_number, :inactive, :default_trip_purpose)
+    params.require(:address).permit(:name, :building_name, :address, :city, :state, :zip, :in_district, :provider_id, :phone_number, :inactive, :trip_purpose_id)
   end
 end

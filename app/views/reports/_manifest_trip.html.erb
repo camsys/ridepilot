@@ -33,7 +33,7 @@
         Run: <%= trip.run_text %><span class='address_separator'></span>
       </td>
       <td>
-        Result: <%= trip.trip_result.present? ? trip.trip_result : "Pending" %>
+        Result: <%= trip.trip_result_name || "Pending" %>
       </td>
     </tr>
   <% end %>

@@ -13,7 +13,7 @@ module ApplicationHelper
   end
   
   def display_trip_result(trip_result)
-    TRIP_RESULT_CODES[trip_result] || "Pending"
+    trip_result.try(:name) || "Pending"
   end
   
   def format_time_for_listing(time)
@@ -30,7 +30,7 @@ module ApplicationHelper
   
   def delete_trippable_link(trippable)
     if can? :destroy, trippable
-      link_to trippable.trips.present? ? 'Duplicate' : 'Delete', trippable, :class => 'delete'
+      link_to trippable.trips.present? ? translate_helper("duplicate") : translate_helper("delete"), trippable, :class => 'delete'
     end
   end
   
@@ -86,5 +86,9 @@ module ApplicationHelper
     }
 
     return weekday_abbrevs[weekday]
+  end
+
+  def is_add_user_allowed?(user)
+    user.present? && ( user.admin? || user.super_admin?)
   end
 end
