@@ -1,4 +1,4 @@
-<tr>
+ <tr>
   <td>
     <%= trip.pickup_time.strftime("%l:%M %p") %>
   </td>
@@ -19,7 +19,7 @@
     <% end %>
   </td>
   <td>
-    <%= trip.trip_purpose %>
+    <%= trip.trip_purpose_name %>
   </td>
   <td>
     <%= trip_fields.check_box :round_trip %>
@@ -40,17 +40,17 @@
     </td>
   <% end %>
   <td>
-    <%= trip_fields.select :trip_result, @trip_results, :include_blank => true %>
+    <%= trip_fields.select :trip_result_id, @trip_results, :include_blank => true %>
   </td>
   <td class="nowrap">
-    <%= link_to "Edit Trip", [:edit,trip], :class => "edit" %>
+    <%= link_to translate_helper("edit_trip_link_text"), [:edit,trip], :class => "edit" %>
   </td>
   <% if show_edit_run_link %>
     <td class="nowrap">
       <% if trip.run.present? %>
-        <%= link_to("Edit Run", [:edit,trip.run], :class => "edit") %>
+        <%= link_to(translate_helper("edit_run_link_text"), [:edit,trip.run], :class => "edit") %>
       <% elsif trip.cab %>
-        Cab Trip
+        <%= translate_helper("cab_trip") %>
       <% end %>
     </td>
   <% end %>

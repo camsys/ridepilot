@@ -1,20 +1,20 @@
 <div id="page-header">
-  <h1>Reports: Donations</h1>
+  <h1><%= translate_helper("donation_report_heading") %></h1>
 </div>
 
 <%= form_for @query, :url=>url_for(:action=>:donations), :html=>{:method=>:get} do |f| %>
   <fieldset>
     <p>
       <%= f.date_select  :start_date, :discard_day=>true %>
-      <%= f.submit "Report" %>
+      <%= f.submit translate_helper("donation_report_submit") %>
     </p>
   </fieldset>
 <% end %>
 
 <table>
 <tr>
-<th>Customer</th>
-<th>Total Donations</th>
+<th><%= translate_helper("customer") %></th>
+<th><%= translate_helper("total_donations") %></th>
 </tr>
 
 <% for customer in @customers %>
@@ -26,7 +26,7 @@
 <% end %>
 
 <tr>
-<td>Total</td>
+<td><%= translate_helper("total") %></td>
 <td><%= @total %></td>
 </tr>
 </table>

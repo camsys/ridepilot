@@ -6,47 +6,47 @@
   <fieldset>
   <ol class="section">
   <li class="selfclear">
-    <%= label_tag "#{prefix}_name", "Address Name:" %>
+    <%= label_tag "#{prefix}_name", translate_helper("address_name") %>
     <%= text_field_tag "#{prefix}_name", address.name %>
   </li>
 
   <li class="selfclear">
-    <%= label_tag "#{prefix}_building_name", "Building Name:" %>
+    <%= label_tag "#{prefix}_building_name", translate_helper("building_name") %>
     <%= text_field_tag "#{prefix}_building_name", address.building_name %>
   </li>
 
   <li class="selfclear">
-    <%= label_tag "#{prefix}_address", "Address:" %>
+    <%= label_tag "#{prefix}_address", translate_helper("address") %>
     <%= text_field_tag "#{prefix}_address", address.address %>
   </li>
 
   <li class="selfclear">
-    <%= label_tag "#{prefix}_city", "City:" %>
+    <%= label_tag "#{prefix}_city", translate_helper("city") %>
     <%= text_field_tag "#{prefix}_city", address.city %>
   </li>
 
   <li class="selfclear">
-    <%= label_tag "#{prefix}_state", "State:" %>
+    <%= label_tag "#{prefix}_state", translate_helper("state") %>
     <%= text_field_tag "#{prefix}_state", address.state, :size=>2 %>
   </li>
 
   <li class="selfclear">
-    <%= label_tag "#{prefix}_zip", "ZIP:" %>
+    <%= label_tag "#{prefix}_zip", translate_helper("zip") %>
     <%= text_field_tag "#{prefix}_zip", address.zip %>
   </li>
   
   <li class="selfclear">
-    <%= label_tag "#{prefix}_phone_number", "Phone Number:" %>
+    <%= label_tag "#{prefix}_phone_number", translate_helper("phone_number") %>
     <%= text_field_tag "#{prefix}_phone_number", address.phone_number %>
   </li>
   
   <li class="selfclear">
-    <%= label_tag "#{prefix}_default_trip_purpose", "Default Trip Purpose:" %>
-    <%= select_tag "#{prefix}_default_trip_purpose", options_for_select(TRIP_PURPOSES, address.default_trip_purpose), :include_blank => true %>
+    <%= label_tag "#{prefix}_trip_purpose", translate_helper("trip_purpose") %>
+    <%= select_tag "#{prefix}_trip_purpose_id", options_for_select(TripPurpose.all.map { |tp| [tp.name, tp.id] }, address.trip_purpose_id), :include_blank => true %>
   </li>
 
   <li class="selfclear">
-    <%= label_tag "#{prefix}_in_district", "In TriMet District:" %>
+    <%= label_tag "#{prefix}_in_district", translate_helper("in_district") %>
     <%= select_tag "#{prefix}_in_district", options_for_select([["Yes", "true"], ["No", "false"]], address.in_district ? "true" : "false") %>
   </li>
   </ol>

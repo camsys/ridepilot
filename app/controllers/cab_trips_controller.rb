@@ -19,7 +19,7 @@ class CabTripsController < ApplicationController
     authorize! :manage, current_provider
     @drivers = Driver.where(:provider_id => current_provider_id)
     @vehicles = Vehicle.active.where(:provider_id => current_provider_id)
-    @trip_results = TRIP_RESULT_CODES.map { |k,v| [v,k] }
+    @trip_results = TripResult.pluck(:name, :code)
     @cab_trips = Trip.for_provider(current_provider_id).for_cab.for_date(Time.at params[:start].to_i)
     respond_to do |format|
       format.html

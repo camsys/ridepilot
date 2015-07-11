@@ -1,37 +1,38 @@
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'reports' %>
 <div id="page-header">
-  <h1>Reports</h1>
+  <h1><%= translate_helper("reports_heading") %></h1>
 </div>
 
 <ul class="reports">
-  <li><%= link_to "Service Summary", :action=>:service_summary %></li>
-  <li><%= link_to "Age & Ethnicity", :action=>:age_and_ethnicity %></li>
-  <li><%= link_to "Vehicles", :action=>:vehicles_monthly %></li>
-  <li><%= link_to "Donations", :action=>:donations %></li>
-  <li><%= link_to "Cab Log", :action=>:cab %></li>
-  <li><%= link_to "Monthly Miscellaneous Data", monthlies_path %></li>
+  <li><%= link_to translate_helper("service_summary_link_text"), :action=>:service_summary %></li>
+  <li><%= link_to translate_helper("age_and_ethnicity_link_text"), :action=>:age_and_ethnicity %></li>
+  <li><%= link_to translate_helper("vehicles_link_text"), :action=>:vehicles_monthly %></li>
+  <li><%= link_to translate_helper("donations_link_text"), :action=>:donations %></li>
+  <li><%= link_to translate_helper("cab_log_link_text"), :action=>:cab %></li>
+  <li><%= link_to translate_helper("monthly_misc_link_text"), monthlies_path %></li>
 </ul>
 
 <hr />
 
-<h2 class="section-header">Export Trips as CSV </h2>
+<h2 class="section-header"><%= translate_helper("export_trips_as_csv") %></h2>
 
 <%= form_for @trips_query, :url=>url_for(:action=>:export_trips_in_range), :html=>{:method=>:get} do |f| %>
   <fieldset>
     <%= f.date_select  :start_date, :order => [:month,:day,:year] %>
-    through 
+    <%= translate_helper("through") %> 
     <%= f.date_select  :before_end_date, :order => [:month,:day,:year] %>
-    <%= f.submit "Export" %>
+    <%= f.submit translate_helper("export") %>
   </fieldset>
 <% end %>
 
 <hr />
 
-<h2 class="section-header">Clackamas County Transportation Consortium Summary Report</h2>
+<h2 class="section-header"><%= translate_helper("cctc_summary_label") %></h2>
 
 <%= form_for @trips_query, :url=>url_for(:action=>:cctc_summary_report), :html=>{:method=>:get} do |f| %>
   <fieldset>
     <%= f.date_select :start_date, :order => [:month,:year] %>
-    <%= f.submit "Show" %>
+    <%= f.submit translate_helper("show") %>
   </fieldset>
 <% end %>
 
@@ -42,7 +43,7 @@
 <%= form_for @driver_query, :url=>url_for(:action=>:daily_trips), :html=>{:method=>:get} do |f| %>
   <fieldset>
     <%= f.date_select  :start_date %>
-    <%= f.submit "Show" %>
+    <%= f.submit translate_helper("show") %>
   </fieldset>
 <% end %>
 
@@ -53,9 +54,9 @@
 <%= form_for @trips_query, :url=>url_for(:action=>:customer_receiving_trips_in_range), :html=>{:method=>:get} do |f| %>
   <fieldset>
     <%= f.date_select  :start_date, :order => [:month,:day,:year] %>
-    through 
+    <%= translate_helper("through") %>  
     <%= f.date_select  :before_end_date, :order => [:month,:day,:year] %>
-    <%= f.submit "Show" %>
+    <%= f.submit translate_helper("show") %>
   </fieldset>
 <% end %>
 
@@ -65,37 +66,37 @@
 
 <%= form_for @driver_query, :url=>url_for(:action=>:daily_manifest), :html=>{:method=>:get} do |f| %>
   <fieldset>
-    <h3>Daily Manifest</h3>
+    <h3><%= translate_helper("daily_manifest_label") %> </h3>
     <%= f.date_select  :start_date %>
     <%= f.collection_select :driver_id, @drivers_with_cab, :id, :name %>
-    <%= f.submit "Show" %>
+    <%= f.submit translate_helper("show") %>
   </fieldset>
 <% end %>
 
 <%= form_for @driver_query, :url=>url_for(:action=>:daily_manifest_with_cab), :html=>{:method=>:get} do |f| %>
   <fieldset>
-    <h3>Daily Manifest with Cab Summary</h3>
+    <h3><%= translate_helper("daily_manifest_with_cab_summary_label") %></h3>
     <%= f.date_select  :start_date %>
     <%= f.collection_select :driver_id, @drivers, :id, :name %>
-    <%= f.submit "Show" %>
+    <%= f.submit translate_helper("show") %>
   </fieldset>
 <% end %>
 
 <%= form_for @driver_query, :url=>url_for(:action=>:daily_manifest_by_half_hour), :html=>{:method=>:get} do |f| %>
   <fieldset>
-    <h3>Daily Manifest By Half Hour</h3>
+    <h3><%= translate_helper("daily_manifest_by_half_hour_label") %></h3>
     <%= f.date_select  :start_date %>
     <%= f.collection_select :driver_id, @drivers_with_cab, :id, :name %>
-    <%= f.submit "Show" %>
+    <%= f.submit translate_helper("show") %>
   </fieldset>
 <% end %>
 
 <%= form_for @driver_query, :url=>url_for(:action=>:daily_manifest_by_half_hour_with_cab), :html=>{:method=>:get} do |f| %>
   <fieldset>
-    <h3>Daily Manifest By Half Hour with Cab Summary</h3>
+    <h3><%= translate_helper("daily_manifest_by_half_hour_with_cab_summary_label") %></h3>
     <%= f.date_select  :start_date %>
     <%= f.collection_select :driver_id, @drivers, :id, :name %>
-    <%= f.submit "Show" %>
+    <%= f.submit translate_helper("show") %>
   </fieldset>
 <% end %>
 
@@ -105,22 +106,21 @@
 
 <%= form_for @trips_query, :url=>url_for(:action=>:show_trips_for_verification), :html=>{:method=>:get} do |f| %>
   <fieldset class="select-month">
-    <h3>Verify trips</h3>
+    <h3><%= translate_helper("verify_trips") %> </h3>
     <%= f.date_select  :start_date, :order => [:month,:day,:year] %>
-    through 
+    <%= translate_helper("through") %>  
     <%= f.date_select  :before_end_date, :order => [:month,:day,:year] %>
     <%= f.select       :trip_display, TRIP_VERIFICATION_DISPLAY_OPTIONS %>
-    <%= f.submit "Show" %>
+    <%= f.submit translate_helper("show") %>
   </fieldset>
 <% end %>
 
 <%= form_for @trips_query, :url=>url_for(:action=>:show_runs_for_verification), :html=>{:method=>:get} do |f| %>
   <fieldset class="select-month">
-    <h3>Verify runs</h3>
+    <h3><%= translate_helper("verify_runs") %></h3>
     <%= f.date_select  :start_date, :order => [:month,:day,:year] %>
-    through 
+    <%= translate_helper("through") %>  
     <%= f.date_select  :before_end_date, :order => [:month,:day,:year] %>
-    <%= f.submit "Show" %>
+    <%= f.submit translate_helper("show") %>
   </fieldset>
 <% end %>
-

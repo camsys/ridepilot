@@ -14,12 +14,12 @@
 
 <table class="trips" <% if display %>style="display:<%= display %>;" <% end %>>
   <tr>
-    <th>Pickup Time</th>
-    <th>Customer</th>
-    <th>Pickup Address</th>
-    <th>Drop Off Address</th>
-    <th>Run</th>
-    <th>Called Back?</th>
+    <th><%= translate_helper("pickup_time") %></th>
+    <th><%= translate_helper("customer") %></th>
+    <th><%= translate_helper("pickup_address") %></th>
+    <th><%= translate_helper("dropoff_address") %></th>
+    <th><%= translate_helper("run") %></th>
+    <th><%= translate_helper("trip_called_back") %></th>
     <th>Result</th>
   </tr>
 

@@ -168,7 +168,7 @@ first_name, first_name, first_name, first_name,
       :ada_eligible,
       :birth_date,
       :default_funding_source_id,
-      :default_service_level,
+      :service_level_id,
       :email,
       :emergency_contact_notes,
       :ethnicity,
@@ -217,6 +217,6 @@ first_name, first_name, first_name, first_name,
     @mobilities = Mobility.all
     @ethnicity_names = (current_provider.ethnicities.collect(&:name) + [@customer.ethnicity]).compact.sort.uniq
     @funding_sources = FundingSource.by_provider(current_provider)
-    @service_levels = SERVICE_LEVELS
+    @service_levels = ServiceLevel.pluck(:name, :id)
   end
 end

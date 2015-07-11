@@ -1,5 +1,5 @@
 <div id="page-header">
-  <h1>Editing Run: <%= @run.date.to_s(:long) %></h1>
+  <h1><%= translate_helper("editing_run_heading", run_date: @run.date.to_s(:long)) %></h1>
 </div>
 
 <%= form_for @run do |f| %>
@@ -9,14 +9,14 @@
     <table class="ride_trips">
       <thead>
         <tr>
-          <th>Pickup Time</th>
-          <th>Customer Name</th>
-          <th>In District?</th>
-          <th>Purpose</th>
-          <th>Round Trip?</th>
-          <th>Guest Count</th>
-          <th>Attendant Count</th>
-          <th>Result</th>
+          <th>translate_helper("pickup_time")</th>
+          <th>translate_helper("customer_name")</th>
+          <th>translate_helper("in_district")</th>
+          <th>translate_helper("trip_purpose")</th>
+          <th>translate_helper("round_trip")</th>
+          <th>translate_helper("guest_count")</th>
+          <th>translate_helper("attendant_count")</th>
+          <th>translate_helper("result")</th>
           <th></th>
         </tr>
       </thead>
@@ -28,13 +28,13 @@
     </table>
     <hr />
     <% if can?(:create, Trip) && current_user.current_provider.allow_trip_entry_from_runs_page? %>
-      <%= link_to 'New Trip', new_trip_path(:start => @run.date.to_time.to_i, :run_id => @run.id), :class=>'action-bttn new', :id => 'trip_entry_from_run_page' %>
+      <%= link_to translate_helper("new_trip"), new_trip_path(:start => @run.date.to_time.to_i, :run_id => @run.id), :class=>'action-bttn new', :id => 'trip_entry_from_run_page' %>
       <span id="search-spinner"></span>
     <% end %>
   </fieldset>
 
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit translate_helper("submit_run") %>
   </div>
 <% end %>
 

@@ -46,14 +46,14 @@ class RunsController < ApplicationController
 
   def edit
     setup_run
-    @trip_results = TRIP_RESULT_CODES.map { |k,v| [v,k] }
+    @trip_results = TripResult.pluck(:name, :code)
   end
 
   def create
     authorize! :manage, current_provider
  
     @run = Run.new(run_params)
-    @run.provider_id = current_provider_id
+    @run.provider = current_provider
     
     respond_to do |format|
       if @run.save
@@ -88,7 +88,7 @@ class RunsController < ApplicationController
         format.xml  { head :ok }
       else
         setup_run
-        @trip_results = TRIP_RESULT_CODES.map { |k,v| [v,k] }
+        @trip_results = TripResult.pluck(:name, :code)
         
         format.html { render :action => "edit" }
         format.xml  { render :xml => @run.errors, :status => :unprocessable_entity }
@@ -173,9 +173,9 @@ class RunsController < ApplicationController
       :repetition_vehicle_id,
       :round_trip,
       :run_id,
-      :service_level,
-      :trip_purpose,
-      :trip_result,
+      :service_level_id,
+      :trip_purpose_id,
+      :trip_result_id,
       :vehicle_id,
       customer_attributes: [:id]
     ])

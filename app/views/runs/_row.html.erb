@@ -2,8 +2,8 @@
   <td><%= run.date.to_s(:long) %></td>
   <td><%= run.scheduled_start_time.try(:to_s,:time_only) %></td>
   <td><%= run.scheduled_end_time.try(:to_s,:time_only) %></td>
-  <td><%= run.vehicle ? run.vehicle.name : 'no vehicle' %></td>
-  <td><%= run.driver  ? run.driver.name : 'no driver' %></td>
-  <td><%= run.complete ? 'Complete' : 'Incomplete' %></td>
-  <td><% if can? :edit, run %><%= link_to 'Edit', edit_run_path(run), :class => :edit %><% end %></td>
+  <td><%= run.vehicle ? run.vehicle.name : translate_helper('no_vehicle') %></td>
+  <td><%= run.driver  ? run.driver.name : translate_helper('no_driver') %></td>
+  <td><%= run.complete ? translate_helper('complete') : translate_helper('incomplete') %></td>
+  <td><% if can? :edit, run %><%= link_to translate_helper("edit"), edit_run_path(run), :class => :edit %><% end %></td>
 </tr>

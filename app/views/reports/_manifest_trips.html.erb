@@ -3,7 +3,7 @@
     <div class="time-group">
       <h3><%= time.strftime('%l:%M %P') %></h3>
       <% for trip in these_trips %>
-        <%= render 'manifest_trip', :trip => trip, :show_status => false %>
+        <%= render translate_helper("manifest_trip_link_text"), :trip => trip, :show_status => false %>
       <% end %>
     </div>
   <% end %>

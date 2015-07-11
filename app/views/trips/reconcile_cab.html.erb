@@ -1,14 +1,14 @@
 <div id="page-header">
-  <h1>Reconcile Cab Log</h1>
+  <h1><%= translate_helper("reconcile_cab_log") %></h1>
 </div>
 
 <table>
   <tr>
-    <th>Pickup Time</th>
-    <th>Customer</th>
-    <th>Pickup Address</th>
-    <th>Dropoff Address</th>
-    <th>Result</th>
+    <th><%= translate_helper("pickup_time") %></th>
+    <th><%= translate_helper("customer") %></th>
+    <th><%= translate_helper("pickup_address") %></th>
+    <th><%= translate_helper("dropoff_address") %></th>
+    <th><%= translate_helper("trip_result") %></th>
     <th></th>
   </tr>
 
@@ -20,7 +20,7 @@
     <td><%= trip.dropoff_address.text %></td>
     <td><%= display_trip_result trip.trip_result %></td>
 
-    <td><%= button_to 'Mark as no-show', trip_no_show_path(trip) %></td>
+    <td><%= button_to translate_helper("mark_as_no_show", trip_no_show_path(trip) %></td>
 
   </tr>
 <% end %>

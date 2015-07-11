@@ -6,6 +6,7 @@ class RepeatingTrip < ActiveRecord::Base
   belongs_to :pickup_address, :class_name=>"Address"
   belongs_to :dropoff_address, :class_name=>"Address"
   belongs_to :repeating_trip
+  belongs_to :trip_purpose
 
   validates_date :pickup_time
   validates_date :appointment_time

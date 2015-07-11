@@ -1,14 +1,14 @@
-<% content_for(:title){"Manifest #{@date.strftime('%v')}"} %>
+<% content_for(:title){translate_helper("daily_manifest_title") + " #{@date.strftime('%v')}"} %>
 <% i = 0 %>
 <% for driver, trips in @trips %>
   <% i += 1 %>
 
-  <h1>Transportation Manifest</h1>
-  <h2><%= format_date_for_daily_manifest @date %> &mdash; <%= driver.present? ? driver.name : 'Unspecified driver' %></h2>
+  <h1><%= translate_helper("daily_manifest_heading") %></h1>
+  <h2><%= format_date_for_daily_manifest @date %> &mdash; <%= driver.present? ? driver.name : translate_helper("unspecified_driver") %></h2>
   
   <% if @cab_trips %>
     <div class="cab-summary">
-      <h2>Cab Trips</h2>
+      <h2><%= translate_helper("cab_trips") %></h2>
       <%= render 'manifest_trips', :trips => @cab_trips %>
     </div>
   <% end %>

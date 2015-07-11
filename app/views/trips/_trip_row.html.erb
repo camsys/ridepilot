@@ -1,13 +1,13 @@
 <tr class="trip">
   <td>
     <% if can? :edit, trip %>
-      <%= link_to(format_time_for_listing(trip.pickup_time), edit_trip_path(trip), "data-remote"=>true, :title=>"Click to edit trip") %>
+      <%= link_to(format_time_for_listing(trip.pickup_time), edit_trip_path(trip), "data-remote"=>true, :title=>translate_helper("edit_trip_link_text")) %>
     <% else %>
       <%= format_time_for_listing trip.pickup_time %>
     <% end %>
   </td>
   <td>
-    <%= link_to trip.customer.name, trip.customer, :title => "Click to view customer record" %>
+    <%= link_to trip.customer.name, trip.customer, :title => translate_helper("view_customer_record_link_text") %>
   </td>
   <td>
     <%= trip.pickup_address.try :address %>

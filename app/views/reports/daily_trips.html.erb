@@ -1,5 +1,5 @@
-<% content_for(:title){"Day's Trips #{@date.strftime('%v')}"} %>
-<h1>Day's Trips</h1>
+<% content_for(:title){translate_helper("daily_trips_title") + " #{@date.strftime('%v')}"} %>
+<h1><%= translate_helper("daily_trips_heading") %></h1>
 <h2><%= format_date_for_daily_manifest @date %></h2>
 
 <% @trips.group_by(&:pickup_time).each do |time, trips| %>

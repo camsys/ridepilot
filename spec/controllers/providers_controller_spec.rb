@@ -145,6 +145,7 @@ RSpec.describe ProvidersController, type: :controller do
   end
 
   describe "POST #change_scheduling" do
+    
     it "updates the scheduling flag on the requested provider" do
       expect {
         post :change_scheduling, {:id => @current_user.current_provider.id, :scheduling => false}

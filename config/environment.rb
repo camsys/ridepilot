@@ -1,6 +1,9 @@
 # Load the Rails application.
 require File.expand_path('../application', __FILE__)
 
+Rails.application.routes.default_url_options[:host] = ENV['RIDEPILOT_HOST']
+
+#Deprecated; Values have been moved to trip_results table
 TRIP_RESULT_CODES = {
   "COMP"  => "Complete",    # the trip was (as far as we know) completed
   "NS"    => "No-show",     # the customer did not show up for the trip
@@ -9,8 +12,10 @@ TRIP_RESULT_CODES = {
   "UNMET" => "Unmet Need"   # a trip that was outside of the service parameters (too early, too late, too far, etc).
 }
 
+#Deprecated; Values have been moved to trip_purposes table
 TRIP_PURPOSES = ["Life-Sustaining Medical", "Medical", "Nutrition", "Personal/Support Services", "Recreation", "School/Work", "Shopping", "Volunteer Work", "Center"]
 
+#Deprecated; Values have been moved to service_levels table
 SERVICE_LEVELS = ["Wheelchair", "Ambulatory"]
 
 TRIP_VERIFICATION_DISPLAY_OPTIONS = ['All Trips','Cab Trips','Not Cab Trips']
@@ -83,8 +88,6 @@ STATE_NAME_TO_POSTAL_ABBREVIATION = {
   "WISCONSIN" => "WI",
   "WYOMING" => "WY"
 }
-
-EMAIL_FROM = "apps@rideconnection.org"
 
 # Initialize the Rails application.
 Rails.application.initialize!

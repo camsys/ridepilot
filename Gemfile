@@ -19,6 +19,9 @@ gem 'therubyracer',  platforms: :ruby
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
+gem 'translation_engine', github: 'camsys/translation_engine'
+#gem 'translation_engine', path: '~/code/translation_engine'
+
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'
 
@@ -33,6 +36,7 @@ gem 'cancancan', '~> 1.10.1'
 gem 'devise', '~> 3.4.1'
 
 # RADAR v3.x will support ActiveRecord 4.2
+gem 'rgeo'
 gem 'activerecord-postgis-adapter', '~> 2.2.1'
 
 gem 'whenever', '~> 0.9.4', :require => false
@@ -49,23 +53,41 @@ gem 'will_paginate', '~> 3.0.7'
 gem 'attribute_normalizer', '~> 1.2.0'
 
 # For change tracking and auditing
-gem 'paper_trail', '~> 3.0.6'
+gem 'paper_trail', '~> 4.0.0.rc'
 
 gem 'rails-jquery-autocomplete', '~> 1.0.0'
 
 # RADAR Not updated since 2011
 gem 'schedule_atts', :git => 'git://github.com/zpearce/Schedule-Attributes.git'
 
+gem 'haml'
+
+# ENV var management
+gem 'figaro'
+
+# datatables
+gem 'jquery-datatables-rails', '~> 3.3.0'
+
+# bootstrap
+gem 'bootstrap-sass', '~> 3.3.5'
+
+# soft-delete
+gem "paranoia", "~> 2.0"
+
+group :integration, :qa, :production do 
+  gem 'rails_12factor'
+  gem 'unicorn'
+  gem 'rack-timeout'
+end
+
 group :development do
+  # preview mail in dev
+  gem "letter_opener"
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem "spring-commands-rspec"
-  
-  # Use Capistrano for deployment
-  gem 'capistrano', '~> 3.4'
-  gem 'capistrano-rvm', '~> 0.1', require: false
-  gem 'capistrano-rails', '~> 1.1', require: false
-  gem 'capistrano-secrets-yml', '~> 1.0', require: false
+  gem 'better_errors'
+  gem 'binding_of_caller'
 end
 
 group :production do

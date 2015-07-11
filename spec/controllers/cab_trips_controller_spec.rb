@@ -19,12 +19,12 @@ RSpec.describe CabTripsController, type: :controller do
     
     it "assigns all currently accessible drivers as @drivers" do
       get :edit_multiple
-      expect(assigns(:drivers)).to eq(@drivers)
+      expect(assigns(:drivers)).to match_array(@drivers)
     end
     
     it "assigns all currently accessible vehicles as @vehicles" do
       get :edit_multiple
-      expect(assigns(:vehicles)).to eq(@vehicles)
+      expect(assigns(:vehicles)).to match_array(@vehicles)
     end
     
     it "assigns all currently accessible cab trips as @cab_trips" do

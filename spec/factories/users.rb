@@ -37,7 +37,7 @@ FactoryGirl.define do
       end
       
       after(:create) do |super_admin|
-        create(:role, :user => super_admin, :provider => super_admin.current_provider, :level => 100) unless super_admin.roles.any?
+        create(:role, :user => super_admin, :provider => super_admin.current_provider, :level => 200) unless super_admin.roles.any?
       end
     end
   end

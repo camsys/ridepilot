@@ -1,13 +1,13 @@
-<%= content_for :title, "Age and Ethnicity: #{@provider.name}, #{@start_date.strftime("%B %Y")}" %>
+<%= content_for :title, translate_helper("age_and_ethnicity_page_title", provider:@provider.name, start_date: @start_date.strftime("%B %Y")) %>
 <div id="page-header">
-  <h1>Reports: Unduplicated Age &amp; Ethnicity</h1>
+  <h1><%= translate_helper("age_and_ethnicity_report_heading") %></h1>
 </div>
 
 <%= form_for @query, :url=>url_for(:action=>:age_and_ethnicity), :html=>{:method=>:get} do |f| %>
   <fieldset class="select-month">
     <p>
       <%= f.date_select  :start_date, :order => [:month,:year] %>
-      <%= f.submit "Report" %>
+      <%= f.submit translate_helper("report") %>
     </p>
   </fieldset>
 <% end %>
@@ -16,37 +16,37 @@
 
 <table>
   <tr>
-    <th class="table-header">Unduplicated Age & Ethnicity Report</th>
+    <th class="table-header"><%= translate_helper("age_and_ethnicity_table_heading") %></th>
   </tr>
 </table>
 
 <table>
   <tr>
-    <th class="table-header">Age</th>
-    <th class="data">Current Month</th>
-    <th class="data">Fiscal YTD</th>
+    <th class="table-header"><%= translate_helper("age") %></th>
+    <th class="data"><%= translate_helper("current_month") %></th>
+    <th class="data"><%= translate_helper("fiscal_ytd") %></th>
   </tr>
 
   <tr>
-    <td>Unduplicated number of persons 60 years and older</td>
+    <td><%= translate_helper("unduplicated_60_and_older") %></td>
     <td class="numeric"><%= @this_month_sixty_plus %></td>
     <td class="numeric"><%= @this_year_sixty_plus %></td>
   </tr>
 
   <tr>
-    <td>Unduplicated number of persons 59 years and younger</td>
+    <td><%= translate_helper("unduplicated_59_and_younger") %></td>
     <td class="numeric"><%= @this_month_less_than_sixty %></td>
     <td class="numeric"><%= @this_year_less_than_sixty %></td>
   </tr>
 
   <tr>
-    <td>Unduplicated number of persons age unknown</td>
+    <td><%= translate_helper("unduplicated_unknown_age") %></td>
     <td class="numeric"><%= @this_month_unknown_age %></td>
     <td class="numeric"><%= @this_year_unknown_age %></td>
   </tr>
 
   <tr>
-    <td class="total">Total Unduplicated Individuals</td>
+    <td class="total"><%= translate_helper("total_unduplicated_individuals") %></td>
     <td class="numeric total"><%= @this_month_unknown_age + @this_month_sixty_plus + @this_month_less_than_sixty %></td>
     <td class="numeric total"><%= @this_year_unknown_age + @this_year_sixty_plus + @this_year_less_than_sixty  %></td>
   </tr>
@@ -54,9 +54,9 @@
 
 <table>
   <tr>
-    <th class="table-header">Ethnic Heritage</th>
-    <th class="data">Current Month</th>
-    <th class="data">Fiscal YTD</th>
+    <th class="table-header"><%= translate_helper("ethnic_heritage") %></th>
+    <th class="data"><%= translate_helper("current_month") %></th>
+    <th class="data"><%= translate_helper("fiscal_ytd") %></th>
   </tr>
 
   <% for ethnicity in @counts_by_ethnicity.keys.sort %>
@@ -68,7 +68,7 @@
     </tr>
   <% end %>
   <tr>
-    <td class="total">Total Unduplicated Individuals</td>
+    <td class="total"><%= translate_helper("total_unduplicated_individuals") %></td>
     <td class="numeric total"><%= @counts_by_ethnicity.values.map{|x| x['month']}.sum %></td>
     <td class="numeric total"><%= @counts_by_ethnicity.values.map{|x| x['year']}.sum %></td>
   </tr>

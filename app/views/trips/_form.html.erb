@@ -1,7 +1,7 @@
 <%= form_for @trip, :html => (@remote ? {"data-remote" => true} : {} ) do |f| %>
   <% if @trip.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@trip.errors.count, "error") %> prohibited this trip from being saved:</h2>
+      <h2><%= translate_helper("trip_form_error_message", count: @trip.errors.count)%></h2>
 
       <ul>
       <% @trip.errors.full_messages.each do |msg| %>
@@ -19,28 +19,28 @@
 
     <ol class="section first">
       <li class="selfclear">
-        <label for="customer">Customer:</label>
+        <label for="customer"><%= translate_helper("customer") %></label>
         <%= render "customer", :f => f, :trip => @trip %>
       </li> 
       
       <li class="selfclear timepicker">
-        <%= f.label :pickup_time, "Pickup Time:" %>
+        <%= f.label :pickup_time, translate_helper("pickup_time") %>
         <%= f.text_field :pickup_time, :value => @trip.pickup_time.try(:to_s, :form) %>
       </li>
 
       <li class="selfclear timepicker">
-        <%= f.label :appointment_time, "Appointment Time:" %>
+        <%= f.label :appointment_time, translate_helper("appointment_time") %>
         <%= f.text_field :appointment_time, :value => @trip.appointment_time.try(:to_s, :form) %>
       </li>
 
       <% unless add_new_trip_via_run_page? %>
         <li class="selfclear">
-          <%= f.label :round_trip, "Round Trip:" %>
+          <%= f.label :round_trip, translate_helper("round_trip") %>
           <%= f.check_box :round_trip %>
         </li>
 
         <li class="selfclear">
-          <%= f.label :pickup_address_label, "Pickup Address:" %>
+          <%= f.label :pickup_address_label, translate_helper("pickup_address") %>
           <%= autocomplete_field_tag "pickup_search_address", @trip.pickup_address.try(:text), autocomplete_addresses_path, 
             :size => 30, 
             :id_element => "#trip_pickup_address_id", 
@@ -55,7 +55,7 @@
 
       <li class="selfclear">
         <%= f.fields_for :customer do |c| %>
-          <%= c.label :phone_number_1, "Customer Phone:" %>
+          <%= c.label :phone_number_1, translate_helper("customer_phone") %>
           <%= c.text_field :phone_number_1, :class => :full %>
         <% end %>
         <% if @trip.customer.try(:id).blank? %>
@@ -67,7 +67,7 @@
         <div style="height: 200px"><!-- just a spacer to keep the columns in line -->&nbsp;</div>
       <% else %>
         <li class="selfclear">
-          <%= f.label :dropoff_address_label, "Dropoff Address:" %>
+          <%= f.label :dropoff_address_label, translate_helper("dropoff_address") %>
           <%= autocomplete_field_tag "dropoff_search_address", @trip.dropoff_address.try(:text), autocomplete_addresses_path, 
             :size                => 30, 
             :update_elements     => {
@@ -83,7 +83,7 @@
         </li>
 
         <li class="selfclear">
-          <label for="dropoff_phone">Dropoff Phone:</label>
+          <label for="dropoff_phone"><%= translate_helper("dropoff_phone") %></label>
           <input type="text" size="30" name="dropoff_phone" id="dropoff_phone" value="<%= @trip.dropoff_address.try(:phone_number) %>" readonly="readonly" class="full"/>
         </li>
       
@@ -94,29 +94,30 @@
                  So, we'll just put all the repeating stuff into
                  plain params and handle it in the controller
               -->
-            <label for="repeats_id">Repetition:</label>
+            <label for="repeats_id"><%= translate_helper("repetition") %></label>
             <ul>
               <li>
-                <%= f.check_box :repeats_mondays %> M&nbsp;
-                <%= f.check_box :repeats_tuesdays %> T&nbsp;
-                <%= f.check_box :repeats_wednesdays %> W&nbsp;
-                <%= f.check_box :repeats_thursdays %> R&nbsp;
-                <%= f.check_box :repeats_fridays %> F&nbsp;
+                <%- day_names = TranslationEngine.translate_text("date.day_names").split(",") %>
+                <%= f.check_box :repeats_mondays %> <%= day_names[1][0] %> &nbsp;
+                <%= f.check_box :repeats_tuesdays %> <%= day_names[2][0] %>&nbsp;
+                <%= f.check_box :repeats_wednesdays %> <%= day_names[3][0] %>&nbsp;
+                <%= f.check_box :repeats_thursdays %> <%= day_names[4][0] %>&nbsp;
+                <%= f.check_box :repeats_fridays %> <%= day_names[5][0] %>&nbsp;
               </li>
               <li>
                 every <%= f.text_field :repetition_interval, :size => 2 %> week(s)
               </li>
 
               <li class="selfclear">
-                <%= f.label :repetition_vehicle_id, "Vehicle:" %>
+                <%= f.label :repetition_vehicle_id, translate_helper("repetition_vehicle") %>
                 <%= f.collection_select :repetition_vehicle_id, @repeating_vehicles, :id, :name, :include_blank => true %>
               </li>
               <li class="selfclear">
-                <%= f.label :repetition_driver_id, "Driver:" %>
+                <%= f.label :repetition_driver_id, translate_helper("repetition_driver") %>
                 <%= f.collection_select :repetition_driver_id, @drivers, :id, :name, :include_blank => true %>
               </li>
               <li class="selfclear">
-                <%= f.label :repetition_customer_informed, "Mark as Called Back:" %>
+                <%= f.label :repetition_customer_informed, translate_helper("mark_as_called_back") %>
                 <%= f.check_box :repetition_customer_informed %>
               </li>
 
@@ -128,35 +129,35 @@
     
     <ol class="section second">
       <li class="selfclear">
-        <%= f.label :trip_purpose, "Trip Purpose:" %>
-        <%= f.select :trip_purpose, @trip_purposes, :include_blank => true %>
+        <%= f.label :trip_purpose, translate_helper("trip_purpose") %>
+        <%= f.select :trip_purpose_id, @trip_purposes.map { |tp| [tp.name, tp.id] }, :include_blank => true %>
       </li>
 
       <li class="selfclear passengers group_size">
         <% if @customer.try(:id).present? %>
           <% if @customer.group %>
-            <%= f.label :group_size, "Group Size:" %>
+            <%= f.label :group_size, translate_helper("group_size") %>
             <%= f.text_field :group_size %>
           <% else %>
-            <%= f.label :guest_count, "Passengers:" %>
+            <%= f.label :guest_count, translate_helper("passengers") %>
             <ul>
               <li>
-                <span class="nobreak"><%= f.text_field :guest_count %>&nbsp;Guests&nbsp;</span>
-                <span class="nobreak"><%= f.text_field :attendant_count %>&nbsp;Attendants</span>
+                <span class="nobreak"><%= f.text_field :guest_count %>&nbsp;<%=translate_helper("guests") %>&nbsp;</span>
+                <span class="nobreak"><%= f.text_field :attendant_count %>&nbsp;<%= translate_helper("attendants") %></span>
               </li>
             </ul>
           <% end %>
         <% else %>
             <%= hidden_field_tag "trip_group" %>
-            <%= f.label :group_size, "Group Size:" %>
+            <%= f.label :group_size, translate_helper("group_size") %>
             <%= f.text_field :group_size %>
           </li>
           <li class="selfclear passengers">
-            <%= f.label :guest_count, "Passengers:" %>
+            <%= f.label :guest_count, translate_helper("passengers") %>
             <ul>
               <li>
                 <span class="nobreak"><%= f.text_field :guest_count %>&nbsp;Guests&nbsp;</span>
-                <span class="nobreak"><%= f.text_field :attendant_count %>&nbsp;Attendants</span>
+                <span class="nobreak"><%= f.text_field :attendant_count %>&nbsp;<%= translate_helper("attendants") %></span>
               </li>
             </ul>
         <% end %>
@@ -164,86 +165,86 @@
       
       <% if add_new_trip_via_run_page? %>
         <li class="selfclear">
-          <%= f.label :run_id, "Run:" %>
+          <%= f.label :run_id, translate_helper("run") %>
           <span><%= @trip.run.try(:label) %></span>
           <%= f.hidden_field :run_id %>
         </li>      
       <% else %>
         <li class="selfclear">
-          <%= f.label :run_id, "Run:" %>
+          <%= f.label :run_id, translate_helper("run") %>
           <%= f.collection_select :run_id, @runs, :id, :label, :include_blank => true %>
-          <%= link_to_if @trip.run.present?, "", [:edit, @trip.run], :class => :details, :onclick => "window.open(this.href); return false;"  %>
+          <%= link_to("run", edit_run_path(@trip.run), :class => :details, :onclick => "window.open(this.href); return false;") if (@trip.run.present? && @trip.run.id.present?) %>
           <strong>OR</strong>
         </li>
       
         <li class="selfclear">
-          <%= f.label :vehicle_id, "Vehicle:" %>
+          <%= f.label :vehicle_id, translate_helper("vehicle") %>
           <%= f.select :vehicle_id,
               options_for_select( @vehicles.map { |v| [v.name, v.id, {'data-driver-id' => v.try(:default_driver_id) } ] }, @trip.run.present? ? nil : @trip.vehicle_id ),
               :include_blank => true %>
         </li>
 
         <li class="selfclear">
-          <%= f.label :driver_id, "Driver:" %>
+          <%= f.label :driver_id, translate_helper("driver") %>
           <%= f.select :driver_id, options_from_collection_for_select( @drivers, :id, :name, @trip.run.present? ? nil : @trip.driver_id ), :include_blank => true %>
         </li>
       <% end %>
 
       <li class="selfclear">
-        <%= f.label :mileage, "Cab Mileage:" %>
+        <%= f.label :mileage, translate_helper("cab_mileage") %>
         <%= f.text_field :mileage, :size => 3 %>
       </li>
 
       <li class="selfclear">
-        <%= f.label :medicaid_eligible, "Medicaid Eligible:" %>
+        <%= f.label :medicaid_eligible, translate_helper("medicaid_eligible")  %>
         <%= f.check_box :medicaid_eligible %>
       </li>
 
       <li class="selfclear">
-        <label for="customer_private_notes">Customer Private Notes:</label>
+        <label for="customer_private_notes"><%= translate_helper("customer_private_notes") %></label>
         <textarea rows="20" name="customer_private_notes" id="customer_private_notes" cols="40" readonly="readonly"><%= @customer.try :private_notes %></textarea>
       </li>
     </ol>
 
     <ol class="section third">
       <li class="selfclear">
-        <%= f.label :trip_result, "Result:" %>
-        <%= f.select :trip_result, @trip_results, :include_blank => true %>
+        <%= f.label :trip_result, translate_helper("trip_result") %>
+        <%= f.select :trip_result_id, @trip_results, :include_blank => true %>
       </li>
 
       <li class="selfclear donation">
-        <%= f.label :donation, "Donation:" %>
+        <%= f.label :donation, translate_helper("trip_donation") %>
         <%= f.text_field :donation, :size => 8 %>
       </li>
 
       <li class="selfclear">
-        <%= f.label :funding_source_id, "Funding Source:" %>
+        <%= f.label :funding_source_id, translate_helper("funding_source") %>
         <%= f.collection_select :funding_source_id, @funding_sources, :id, :name %>
       </li>
 
       <li class="selfclear">
-        <%= f.label :service_level, "Service Level:" %>
-        <%= f.select :service_level, @service_levels, :include_blank => true %>
+        <%= f.label :service_level, translate_helper("trip_service_level") %>
+        <%= f.select :service_level_id, @service_levels, :include_blank => true %>
       </li>
 
       <li class="selfclear">
-        <%= f.label :mobility_id, "Mobility Req.:" %>
+        <%= f.label :mobility_id, translate_helper("trip_mobility_requirements") %>
         <%= f.collection_select :mobility_id, @mobilities, :id, :name %>
       </li>
 
       <li class="selfclear">
-        <label for="mobility_notes">Mobility Notes:</label>
+        <label for="mobility_notes"><%= translate_helper("trip_mobility_notes") %></label>
         <textarea rows="20" name="mobility_notes" id="mobility_notes" cols="40" readonly="readonly"><%= @customer.try :mobility_notes %></textarea>
       </li>
     </ol>
 
     <ol class="section fourth double">
       <li class="selfclear">
-        <%= f.label :notes, "Trip Notes:" %>
+        <%= f.label :notes, translate_helper("trip_notes") %>
         <%= f.text_area :notes %>
       </li>
       <li class="selfclear">
-        <%= f.label :customer_informed, "Called Back:" %>
+        <%= f.label :customer_informed, translate_helper("trip_called_back") %>
         <%= f.check_box :customer_informed %>
         <% if @trip.customer_informed %>
           <%= "on #{@trip.called_back_at}" if @trip.called_back_at.present? %>
@@ -255,13 +256,13 @@
     <div class="actions">
       <%= f.submit %>
     </div>
-    <%= link_to('Delete Trip', @trip, :confirm => 'Are you sure?', :method => :delete, :remote => true, :id => 'trip_delete', :class=>'delete') if !@trip.new_record? && can?(:destroy, @trip) %>
+    <%= link_to(translate_helper("delete_trip"), @trip, :confirm => translate_helper("delete_trip_confirm"), :method => :delete, :remote => true, :id => 'trip_delete', :class=>'delete') if !@trip.new_record? && can?(:destroy, @trip) %>
   </fieldset>
   <hr />
   <% if @remote %>
-    <%= link_to "Back to View Trips", trips_path, :class => 'action-bttn', :onclick => "window.history.back(); return false;" %>
+    <%= link_to translate_helper("back_to_view_trips"), trips_path, :class => 'action-bttn', :onclick => "window.history.back(); return false;" %>
   <% else %>
-    <%= link_to 'Back to View Trips', trips_path, :class=>'action-bttn' %>
+    <%= link_to translate_helper("back_to_view_trips"), trips_path, :class=>'action-bttn' %>
   <% end %>
   
 <% end %>

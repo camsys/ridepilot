@@ -1,10 +1,10 @@
 <div id="page-header">
-  <h1>Edit Ethnicity</h1>
+  <h1><%= translate_helper("edit_ethnicity_heading") %></h1>
 </div>
 
 <%= render 'form' %>
 
 <% if current_user && can?(:edit, Provider) %>
 <hr />
-<%= link_to 'Back', provider_path(current_user.current_provider), :class=>'action-bttn' %>
+<%= link_to translate_helper("back"), provider_path(current_user.current_provider), :class=>'action-bttn' %>
 <% end %>

@@ -1,0 +1,4 @@
+- is_primary_nav = true if !defined? is_primary_nav
+:javascript
+  tabContainerId = (#{is_primary_nav} ? 'primary-nav' : 'secondary-nav');
+  $('#' + tabContainerId + ' .#{tab_class} a').addClass('active');

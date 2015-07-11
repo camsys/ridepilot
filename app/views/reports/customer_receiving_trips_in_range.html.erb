@@ -1,6 +1,6 @@
-<%= content_for :title, "Customers receiving trips in range:#{@query.try(:start_date).try(:strftime, ": %B %Y")}#{@query.try(:start_date).try(:strftime, " - %B %Y")}" %>
+<%= content_for :title, (translate_helper("crtr_report_title") + "#{@query.try(:start_date).try(:strftime, ": %B %Y")}#{@query.try(:start_date).try(:strftime, " - %B %Y")}") %>
 <div id="page-header">
-<h1>Verify Runs<%= @query.try(:start_date).try(:strftime, ": %B %Y") %><%= @query.try(:start_date).try(:strftime, " - %B %Y") %></h1>
+<h1><%= translate_helper("crtr_verify_runs")%><%= @query.try(:start_date).try(:strftime, ": %B %Y") %><%= @query.try(:start_date).try(:strftime, " - %B %Y") %></h1>
 </div>
 
 <% if @query %> 
@@ -8,9 +8,9 @@
     <fieldset class="select-month">
       <p>
         <%= f.date_select  :start_date, :order => [:month,:day,:year] %>
-        through 
+        <%= translate_helper("crtr_through")%> 
         <%= f.date_select  :before_end_date, :order => [:month,:day,:year] %>
-        <%= f.submit "Update" %>
+        <%= f.submit translate_helper("Update") %>
       </p>
     </fieldset>
   <% end %>
@@ -18,11 +18,11 @@
 
 <table>
   <tr>
-    <th>Customer</th>
-    <th>DOB</th>
-    <th>Trips received</th>
-    <th>Trip purposes</th>
-    <th>Trip funding sources</th>
+    <th><%= translate_helper("customer") %></th>
+    <th><%= translate_helper("date_of_birth") %></th>
+    <th><%= translate_helper("trips_received") %></th>
+    <th><%= translate_helper("trip_purposes") %></th>
+    <th><%= translate_helper("trip_funding_sources") %></th>
   </tr>
   
   <% @customers.each do |customer| %>
@@ -37,7 +37,7 @@
         <%= customer.trips.count %>
       </td>
       <td>
-        <%= customer.trips.collect(&:trip_purpose).compact.uniq.sort.join(', ') %>
+        <%= customer.trips.includes(:trip_purpose).pluck("trip_purposes.name").uniq.sort.join(', ') %>
       </td>
       <td>
         <%= customer.trips.collect{|t| t.funding_source.try(:name)}.compact.uniq.sort.join(', ') %>

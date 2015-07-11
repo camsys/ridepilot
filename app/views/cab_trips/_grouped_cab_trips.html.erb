@@ -5,7 +5,7 @@
     </td>
     <td>
       <% if @grouped_cab_trips.has_key?(day.to_s) && @grouped_cab_trips[day.to_s].size %>
-        <%= link_to "Edit #{pluralize(@grouped_cab_trips[day.to_s].size, "cab trip")}", edit_multiple_cab_trips_path(start: day.in_time_zone.to_i) %>
+        <%= link_to translate_helper("edit_x_cab_trips",count: (@grouped_cab_trips[day.to_s].size)), edit_multiple_cab_trips_path(start: day.in_time_zone.to_i) %>
       <% else %>
         No trips
       <% end %>

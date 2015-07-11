@@ -4,7 +4,7 @@ FactoryGirl.define do
     association :dropoff_address, factory: :address
     pickup_time { Time.now + 1.week }
     appointment_time { pickup_time + 30.minutes }
-    trip_purpose "Medical"
+    trip_purpose
     customer
     
     factory :cab_trip do

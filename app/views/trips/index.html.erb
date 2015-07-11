@@ -1,5 +1,6 @@
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'trips' %>
 <div id="page-header">
-  <h1>View Trips</h1>
+  <h1><%= translate_helper("view_trips") %></h1>
   <%= render :partial => 'weekday_select' %>
   <div class="clearfix"></div>
 </div>
@@ -10,7 +11,7 @@
 
 <hr />
 
-<%= link_to 'New Trip', new_trip_path, :class=>'action-bttn new' %>
+<%= link_to translate_helper("new_trip_link_text"), new_trip_path, :class=>'action-bttn new' %>
 
 <%= render 'javascript' %>
 

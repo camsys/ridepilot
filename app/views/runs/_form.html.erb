@@ -1,6 +1,6 @@
 <% if @run.errors.any? %>
   <div id="error_explanation">
-    <h2><%= pluralize(@run.errors.count, "error") %> prohibited this run from being saved:</h2>
+    <h2><%= translate_helper("runs_form_error_message", count: @run.errors.count)%></h2>
 
     <ul>
     <% @run.errors.full_messages.each do |msg| %>
@@ -14,59 +14,59 @@
   <ol class="section first">
     <% if @run.new_record? %>
       <li>
-        <%= f.label :date %>
+        <%= f.label :date, translate_helper("date") %>
         <%= f.text_field :date, :size => 10, :class => "datepicker" %>
       </li>
     <% end %>
     <li>
-      <%= f.label :vehicle %>
+      <%= f.label :vehicle, translate_helper("vehicle") %>
       <%= f.collection_select :vehicle_id, @vehicles, :id, :name %>
     </li>
     <li>
-      <%= f.label :driver %>
+      <%= f.label :driver, translate_helper("driver") %>
       <%= f.collection_select :driver_id, @drivers, :id, :name %>
     </li>
   </ol>
   <ol class="section second">
     <li>
-      <%= f.label :scheduled_start_time %>
+      <%= f.label :scheduled_start_time, translate_helper("scheduled_start_time") %>
       <%= f.text_field :scheduled_start_time, :size => 8, 
           :value => @run.scheduled_start_time.try(:to_s, :time_only), "data-behavior" => "time-picker" %>
     </li>
     <li>
-      <%= f.label :scheduled_end_time %>
+      <%= f.label :scheduled_end_time, translate_helper("scheduled_end_time") %>
       <%= f.text_field :scheduled_end_time, :size => 8, 
           :value => @run.scheduled_end_time.try(:to_s, :time_only), "data-behavior" => "time-picker" %>
     </li>
     <li>
-      <%= f.label :actual_start_time %>
+      <%= f.label :actual_start_time, translate_helper("actual_start_time") %>
       <%= f.text_field :actual_start_time, :size => 8, 
           :value => @run.actual_start_time.try(:to_s, :time_only), "data-behavior" => "time-picker" %>
     </li>
     <li>
-      <%= f.label :actual_end_time %>
+      <%= f.label :actual_end_time, translate_helper("actual_end_time") %>
       <%= f.text_field :actual_end_time, :size => 8, 
           :value => @run.actual_end_time.try(:to_s, :time_only), "data-behavior" => "time-picker" %>
     </li>
   </ol>
   <ol class="section third">
     <li>
-      <%= f.label :start_odometer %>
+      <%= f.label :start_odometer, translate_helper("start_odometer") %>
       <%= f.text_field :start_odometer %>
     </li>
     <li>
-      <%= f.label :end_odometer %>
+      <%= f.label :end_odometer, translate_helper("end_odometer") %>
       <%= f.text_field :end_odometer %>
     </li>
     <li>
-      <%= f.label :unpaid_driver_break_time %>
+      <%= f.label :unpaid_driver_break_time, translate_helper("unpaid_break_time") %>
       <%= f.text_field :unpaid_driver_break_time %>
     </li>
     <li>
-      <%= f.label :paid %>
+      <%= f.label :paid, translate_helper("paid") %>
       <%= f.select :paid, [["Yes", "true"], ["No", "false"]], {:selected => @run.paid.to_s } %>
     </li>
   </ol>
 
-  <%= link_to('Delete Run (does not delete trips)', @run, :confirm => 'Are you sure?', :method => :delete, :id => 'run_delete', :class=>'delete') if !@run.new_record? && can?(:destroy, @run) %>
+  <%= link_to(translate_helper("delete_run_link_text"), @run, :confirm => translate_helper("delete_run_confirm"), :method => :delete, :id => 'run_delete', :class=>'delete') if !@run.new_record? && can?(:destroy, @run) %>
 </fieldset>

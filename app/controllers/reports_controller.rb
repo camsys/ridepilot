@@ -121,8 +121,8 @@ class ReportsController < ApplicationController
         .includes(:customer, :pickup_address, :dropoff_address).completed
 
     by_purpose = {}
-    TRIP_PURPOSES.each do |purpose|
-      by_purpose[purpose] = {'purpose' => purpose, 'in_district' => 0, 'out_of_district' => 0}
+    TripPurpose.all.each do |purpose|
+      by_purpose[purpose.name] = {'purpose' => purpose.name, 'in_district' => 0, 'out_of_district' => 0}
     end
     @total = {'in_district' => 0, 'out_of_district' => 0}
 
@@ -140,8 +140,8 @@ class ReportsController < ApplicationController
     end
 
     @trips_by_purpose = []
-    TRIP_PURPOSES.each do |purpose|
-      @trips_by_purpose << by_purpose[purpose]
+    TripPurpose.all.each do |purpose|
+      @trips_by_purpose << by_purpose[purpose.name]
     end
 
     #compute monthly totals
@@ -164,7 +164,7 @@ class ReportsController < ApplicationController
   def show_trips_for_verification
     query_params = params[:query] || {}
     @query = Query.new(query_params)
-    @trip_results = TRIP_RESULT_CODES.map { |k,v| [v,k] }
+    @trip_results = TripResult.pluck(:name, :code)
 
     unless @trips.present?
       @trips = Trip.for_provider(current_provider_id).for_date_range(@query.start_date,@query.end_date).
@@ -179,7 +179,7 @@ class ReportsController < ApplicationController
     if @trips.empty?
       redirect_to({:action => :show_trips_for_verification}, :notice => "Trips updated successfully" )
     else
-      @trip_results = TRIP_RESULT_CODES.map { |k,v| [v,k] }
+      @trip_results = TripResult.pluck(:name, :code)
       render :action => :show_trips_for_verification
     end
   end
@@ -380,7 +380,7 @@ class ReportsController < ApplicationController
 
     @query = Query.new(params[:query])
     date_range = @query.start_date..@query.end_date
-    @customers = Customer.joins(:trips).where('trips.pickup_time' => date_range).includes(:trips).uniq()
+    @customers = Customer.unscoped.joins(:trips).where('trips.pickup_time' => date_range).includes(:trips).uniq()
   end
 
   def cctc_summary_report
@@ -552,16 +552,16 @@ class ReportsController < ApplicationController
       },
       rides_not_given: {
         turndowns: {
-          rc: trip_queries[:in_range][:rc].where(trip_result: "TD").count,
-          stf: trip_queries[:in_range][:stf][:all].where(trip_result: "TD").count,
+          rc: trip_queries[:in_range][:rc].by_result('TD').count,
+          stf: trip_queries[:in_range][:stf][:all].by_result('TD').count,
         },
         cancels: {
-          rc: trip_queries[:in_range][:rc].where(trip_result: "CANC").count,
-          stf: trip_queries[:in_range][:stf][:all].where(trip_result: "CANC").count,
+          rc: trip_queries[:in_range][:rc].by_result('CANC').count,
+          stf: trip_queries[:in_range][:stf][:all].by_result('CANC').count,
         },
         no_shows: {
-          rc: trip_queries[:in_range][:rc].where(trip_result: "NS").count,
-          stf: trip_queries[:in_range][:stf][:all].where(trip_result: "NS").count,
+          rc: trip_queries[:in_range][:rc].by_result('NS').count,
+          stf: trip_queries[:in_range][:stf][:all].by_result('NS').count,
         },
       },
       rider_donations: {
@@ -572,9 +572,9 @@ class ReportsController < ApplicationController
       new_rider_ethinic_heritage: {ethnicities: []}, # We will loop over and add the rest of these later
     }
 
-    TRIP_PURPOSES.sort.each do |tp|
-     trip = {
-        name: tp,
+    TripPurpose.order(:name).each do |tp|
+      trip = {
+        name: tp.name,
         oaa3b: trip_queries[:in_range][:all].where(funding_source_id: FundingSource.pick_id_by_name("OAA")).where(trip_purpose: tp).total_ride_count,
         rc: trip_queries[:in_range][:rc].where(trip_purpose: tp).total_ride_count,
         trimet: trip_queries[:in_range][:all].where(funding_source_id: FundingSource.pick_id_by_name("TriMet Non-Medical")).where(trip_purpose: tp).total_ride_count,
@@ -585,12 +585,12 @@ class ReportsController < ApplicationController
             mileage: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp).total_mileage
           },
           wheelchair: {
-            count: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp, service_level: "Wheelchair").total_ride_count,
-            mileage: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp, service_level: "Wheelchair").total_mileage
+            count: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp).by_service_level("Wheelchair").total_ride_count,
+            mileage: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp).by_service_level("Wheelchair").total_mileage
           },
           ambulatory: {
-            count: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp, service_level: "Ambulatory").total_ride_count,
-            mileage: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp, service_level: "Ambulatory").total_mileage
+            count: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp).by_service_level("Ambulatory").total_ride_count,
+            mileage: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp).by_service_level("Ambulatory").total_mileage
           },
         },
         unreimbursed: trip_queries[:in_range][:all].where(funding_source_id: FundingSource.pick_id_by_name("Unreimbursed")).where(trip_purpose: tp).total_ride_count,
@@ -670,9 +670,8 @@ class ReportsController < ApplicationController
   def hms_to_hours(hms)
     #argument is a string of the form hours:minutes:seconds.  We would like
     #a float of hours
-    if !hms or hms.empty?
-      return 0
-    end
+    return 0 if hms == 0 || hms.blank?
+
     hours, minutes, seconds = hms.split(":").map &:to_i
     hours ||= 0
     minutes ||= 0

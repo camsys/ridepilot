@@ -40,21 +40,21 @@ class TripsController < ApplicationController
     #on yet.
 
     @trips = Trip.accessible_by(current_ability).for_provider(current_provider_id).where(
-      ["trip_result = '' and pickup_time >= ? ", Date.today]).order("pickup_time")
+      ["trip_result_id is NULL and pickup_time >= ? ", Date.today]).order("pickup_time")
   end
 
   def reconcile_cab
     #the cab company has sent a log of all trips in the past [time period]
     #we want to mark some trips as no-shows.  This will be a paginated
     #list of trips
-    @trips = Trip.accessible_by(current_ability).for_provider(current_provider_id).where(
-      "cab = true and (trip_result = 'COMP' or trip_result = 'NS')").reorder("pickup_time desc").paginate :page=>params[:page], :per_page=>50
+    @trips = Trip.accessible_by(current_ability).for_provider(current_provider_id).includes(:trip_result).references(:trip_result).where(
+      "cab = true and (trip_results.code = 'COMP' or trip_results.code = 'NS')").reorder("pickup_time desc").paginate :page=>params[:page], :per_page=>50
   end
 
   def no_show
     @trip = Trip.find(params[:trip_id])
     if can? :edit, @trip
-      @trip.trip_result = 'NS'
+      @trip.trip_result = TripResult.find_by(code: 'NS')
       @trip.save
     end
     redirect_to :action=>:reconcile_cab, :page=>params[:page]
@@ -65,7 +65,7 @@ class TripsController < ApplicationController
     if can? :edit, @trip
       @trip.cab = true
       @trip.cab_notified = false
-      @trip.trip_result = 'COMP'
+      @trip.trip_result = TripResult.find_by(code: 'COMP')
       @trip.save
     end
     redirect_to :action=>:reconcile_cab, :page=>params[:page]
@@ -87,7 +87,7 @@ class TripsController < ApplicationController
   def confirm
     @trip = Trip.find(params[:trip_id])
     if can? :edit, @trip
-      @trip.trip_result = "COMP"
+      @trip.trip_result = TripResult.find_by(code: 'COMP')
       @trip.save
     end
     redirect_to :action=>:unscheduled
@@ -96,7 +96,7 @@ class TripsController < ApplicationController
   def turndown
     @trip = Trip.find(params[:trip_id])
     if can? :edit, @trip
-      @trip.trip_result = "TD"
+      @trip.trip_result = TripResult.find_by(code: 'TD')
       @trip.save
     end
     redirect_to :action=>:unscheduled
@@ -118,7 +118,7 @@ class TripsController < ApplicationController
       @trip.pickup_address_id = customer.address_id
       @trip.mobility_id = customer.mobility_id 
       @trip.funding_source_id = customer.default_funding_source_id
-      @trip.service_level = customer.default_service_level
+      @trip.service_level = customer.service_level
     end
 
     prep_view
@@ -238,9 +238,9 @@ class TripsController < ApplicationController
       :repetition_vehicle_id,
       :round_trip,
       :run_id,
-      :service_level,
-      :trip_purpose,
-      :trip_result,
+      :service_level_id,
+      :trip_purpose_id,
+      :trip_result_id,
       :vehicle_id,
       customer_attributes: [:id]
     )
@@ -283,13 +283,13 @@ class TripsController < ApplicationController
     @customer           = @trip.customer
     @mobilities         = Mobility.order(:name).all
     @funding_sources    = FundingSource.by_provider(current_provider)
-    @trip_results       = TRIP_RESULT_CODES.map { |k,v| [v,k] }
-    @trip_purposes      = TRIP_PURPOSES
+    @trip_results       = TripResult.pluck(:name, :id)
+    @trip_purposes      = TripPurpose.all
     @drivers            = Driver.active.for_provider @trip.provider_id
     @trips              = [] if @trips.nil?
     @vehicles           = add_cab(Vehicle.active.for_provider(@trip.provider_id))
     @repeating_vehicles = @vehicles 
-    @service_levels     = SERVICE_LEVELS
+    @service_levels     = ServiceLevel.pluck(:name, :id)
 
     @trip.run_id = -1 if @trip.cab
 
