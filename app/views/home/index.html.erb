@@ -9,4 +9,5 @@
   <% if show_scheduling? %><li><%= link_to translate_helper("current_provider_link_text"), provider_path(current_user.current_provider) %></li><% end %>
   <% if show_dispatch? %><li><%= link_to translate_helper("dispatch_link_text"), dispatch_path %></li><% end %>
   <% if can? :manage, LookupTable %><li><%= link_to translate_helper("lookup_tables_link_text"), lookup_tables_path %></li><% end %>
+  <% if can? :manage, Translation %><li><%= link_to translate_helper("translation_engine_link_text"), translation_engine.translations_path %></li><% end %>
 </ul>
