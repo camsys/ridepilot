@@ -1,13 +1,6 @@
 GIT
-  remote: git://github.com/zpearce/Schedule-Attributes.git
-  revision: babf55d9b5cd8f56456e1e2a33916e809f7c4e28
-  specs:
-    schedule_atts (0.0.1)
-      activesupport
-      ice_cube (>= 0.6.4)
-
-PATH
-  remote: ~/code/translation_engine
+  remote: git://github.com/camsys/translation_engine.git
+  revision: e370d21f3eb4f9884d15b3dee60f6a34137aba43
   specs:
     translation_engine (3.3.1)
       honeybadger
@@ -16,6 +9,14 @@ PATH
       rails (~> 4.1.0)
       sass-rails
       simple_form
+
+GIT
+  remote: git://github.com/zpearce/Schedule-Attributes.git
+  revision: babf55d9b5cd8f56456e1e2a33916e809f7c4e28
+  specs:
+    schedule_atts (0.0.1)
+      activesupport
+      ice_cube (>= 0.6.4)
 
 GEM
   remote: https://rubygems.org/
