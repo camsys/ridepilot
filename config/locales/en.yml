@@ -635,6 +635,9 @@ en:
   vehicle_show_heading: "Vehicle Details"
   add_maintenance_link_text: "Add Maintenance Event"
   edit_vehicle_link_text: "Edit Vehicle"
+  translation_engine_link_text: "Translations"
+  save: "Save"
+  confirm_message: "Are you sure you want to delete this record?"
 
   locales:
     en: "English"
