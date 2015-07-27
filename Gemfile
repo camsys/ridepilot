@@ -127,4 +127,5 @@ end
 group :test do 
   gem 'launchy'
   gem 'selenium-webdriver'
+  gem 'poltergeist'
 end
