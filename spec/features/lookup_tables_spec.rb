@@ -65,20 +65,22 @@ RSpec.describe "Lookup Tables" do
             expect(page).to have_css('#editLookupTableValue:disabled')
           end
 
-          skip "can see enabled Edit Value button after selecting a row", js: true do
+          it "can see enabled Edit Value button after selecting a row", js: true do
             within '#lookupTable' do 
-              find('tr:first').click
+              find('tbody tr:first-child').click
             end
             
             expect(page).to have_button('editLookupTableValue')
           end
         end
 
-        skip "edits an exiting value", js: true do 
+        it "edits an exiting value", js: true do 
           within '#lookupTable' do 
-            find('tr:first').click
+            find('tbody tr:first-child').click
           end
 
+          click_button 'editLookupTableValue'
+          
           within '#editLookupTableValueDialog' do 
             fill_in 'value', with: 'Updated Purpose'
             click_button 'OK'
@@ -92,19 +94,21 @@ RSpec.describe "Lookup Tables" do
             expect(page).to have_css('#deleteLookupTableValue:disabled')
           end
 
-          skip "can see enabled Delete Value button after selecting a row", js: true do
+          it "can see enabled Delete Value button after selecting a row", js: true do
             within '#lookupTable' do 
-              find('tr:first').click
+              find('tbody tr:first-child').click
             end
             
             expect(page).to have_button('deleteLookupTableValue')
           end
         end
 
-        skip "deletes an exiting value", js: true do 
+        it "deletes an exiting value", js: true do 
           within '#lookupTable' do 
-            find('tr:first').click
+            find('tbody tr:first-child').click
           end
+
+          click_button 'deleteLookupTableValue'
 
           within '#deleteLookupTableValueDialog' do 
             click_button 'OK'
