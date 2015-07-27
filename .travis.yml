@@ -4,7 +4,6 @@ bundler_args: "--without development"
 rvm:
 - 2.2.1
 before_script: 
-- phantomjs --version
 - cp config/database.yml.travis config/database.yml
 - psql -U postgres -c "create extension postgis"
 script:
