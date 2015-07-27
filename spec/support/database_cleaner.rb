@@ -26,7 +26,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each, :js => true) do
-    DatabaseCleaner.strategy = :truncation, {:except => %w[translations locales translation_keys]}
+    #DatabaseCleaner.strategy = :truncation, {:except => %w[translations locales translation_keys]}
   end
 
   config.before(:each) do
