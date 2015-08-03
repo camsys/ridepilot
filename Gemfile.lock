@@ -98,6 +98,8 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    celluloid (0.16.0)
+      timers (~> 4.0.0)
     childprocess (0.5.6)
       ffi (~> 1.0, >= 1.0.11)
     chronic (0.10.2)
@@ -114,6 +116,7 @@ GEM
       execjs
     coffee-script-source (1.9.1.1)
     columnize (0.9.0)
+    connection_pool (2.2.0)
     css_splitter (0.4.1)
       sprockets (>= 2.0.0)
     database_cleaner (1.4.1)
@@ -149,6 +152,7 @@ GEM
     haml (4.0.6)
       tilt
     hike (1.2.3)
+    hitimes (1.2.2)
     honeybadger (2.1.3)
     i18n (0.7.0)
     i18n-active_record (0.0.2)
@@ -235,6 +239,8 @@ GEM
     redis-activesupport (4.1.0)
       activesupport (~> 4)
       redis-store (~> 1.1.0)
+    redis-namespace (1.5.2)
+      redis (~> 3.0, >= 3.0.4)
     redis-rack (1.5.0)
       rack (~> 1.5)
       redis-store (~> 1.1.0)
@@ -285,6 +291,12 @@ GEM
       multi_json (~> 1.0)
       rubyzip (~> 1.0)
       websocket (~> 1.0)
+    sidekiq (3.4.2)
+      celluloid (~> 0.16.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      json (~> 1.0)
+      redis (~> 3.2, >= 3.2.1)
+      redis-namespace (~> 1.5, >= 1.5.2)
     simple_form (3.1.0)
       actionpack (~> 4.0)
       activemodel (~> 4.0)
@@ -307,6 +319,8 @@ GEM
     thread_safe (0.3.5)
     tilt (1.4.1)
     timeliness (0.3.7)
+    timers (4.0.1)
+      hitimes
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uglifier (2.7.1)
@@ -374,6 +388,7 @@ DEPENDENCIES
   schedule_atts!
   sdoc (~> 0.4.0)
   selenium-webdriver
+  sidekiq
   spring
   spring-commands-rspec
   therubyracer

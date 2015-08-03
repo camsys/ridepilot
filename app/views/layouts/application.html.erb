@@ -70,9 +70,9 @@
       <% if alert %>
         <p class="alert"><%= alert %></p>
       <% end %>
-      <%= content_for?(:menu_bar) ? yield(:menu_bar) : '' %>
-      <%= yield %>
     </div>
+    <%= content_for?(:menu_bar) ? yield(:menu_bar) : '' %>
+    <%= yield %>
   </div>
 
   <%= render partial: 'layouts/footer' %>

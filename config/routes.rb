@@ -69,8 +69,11 @@ Rails.application.routes.draw do
       collection do
         get :autocomplete
         get :search
+        patch :upload
+        get :check_loading_status
       end
     end
+    get "check_address_loading_status" => "addresses#check_loading_status"
     
     resources :device_pools, :except => [:index, :show] do
       resources :device_pool_drivers, :only => [:create, :destroy]

@@ -11,13 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150727030205) do
+ActiveRecord::Schema.define(version: 20150803224056) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
-  enable_extension "fuzzystrmatch"
   enable_extension "postgis_topology"
+  enable_extension "fuzzystrmatch"
+
+  create_table "address_upload_flags", force: true do |t|
+    t.boolean  "is_loading",          default: false
+    t.integer  "provider_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "last_upload_summary"
+  end
+
+  add_index "address_upload_flags", ["provider_id"], :name => "index_address_upload_flags_on_provider_id"
 
   create_table "addresses", force: true do |t|
     t.string   "name"
@@ -26,7 +36,7 @@ ActiveRecord::Schema.define(version: 20150727030205) do
     t.string   "city"
     t.string   "state"
     t.string   "zip"
-    t.boolean  "in_district"
+    t.boolean  "in_district",                                                               default: false
     t.integer  "provider_id"
     t.datetime "created_at"
     t.datetime "updated_at"

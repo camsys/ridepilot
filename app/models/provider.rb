@@ -9,6 +9,7 @@ class Provider < ActiveRecord::Base
   has_many :funding_source_visibilities, :dependent => :destroy
   has_many :funding_sources, :through => :funding_source_visibilities
   has_many :addresses, :dependent => :nullify
+  has_one :address_upload_flag
 
   has_attached_file :logo, :styles => { :small => "150x150>" }
   
@@ -44,5 +45,9 @@ class Provider < ActiveRecord::Base
 
   def init
     self.scheduling = true if new_record?
+  end
+
+  def address_upload_flag
+    super || AddressUploadFlag.create(provider: self)
   end
 end

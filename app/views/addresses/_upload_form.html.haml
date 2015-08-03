@@ -1,0 +1,40 @@
+- if defined? provider && provider
+  = simple_form_for :address, url: upload_addresses_path, html: {class: 'form-horizontal', multipart: true, method: 'patch' }, authenticity_token: true, wrapper: :horizontal_form do |f|
+    .row#address_upload_div
+      .col-sm-12
+        .panel.panel-default
+          .panel-heading
+            .row
+              .col-sm-12
+                %h3.panel-title
+                  .btns.pull-right
+                    = f.submit translate_helper(:upload), class: 'btn action-button', role: 'button'
+                  = translate_helper(:load_common_addresses)
+          .panel-body
+            /= f.error_notification message: print_messages(f)
+            %label=translate_helper(:load_common_addresses_notes)
+            = f.input "file", required:true, :label => translate_helper(:select_address_file_to_upload),:as => :file
+    :javascript
+      if(#{provider.address_upload_flag.is_loading}) {
+        $('#address_upload_div input[type=submit]').text("#{translate_helper(:uploading)}");
+        $('#address_upload_div input[type=submit]').attr('disabled', 'disabled');
+        timer = setInterval(function(){
+          if ($('#address_upload_div input[type=submit]:disabled').length === 0) {
+            clearInterval(timer)
+          } else {
+            $.ajax({
+              type: 'GET',
+              url: "#{check_address_loading_status_path}",
+              async: false,
+              success: function(status) { 
+                if(!status.is_loading) {
+                  $('#address_upload_div input[type=submit]').text("#{translate_helper(:upload)}");
+                  $('#address_upload_div input[type=submit]:disabled').removeAttr('disabled');
+                  show_alert(status.summary);
+                }
+              }
+            });
+          }
+        }, 1000);
+      }
+      

@@ -522,3 +522,37 @@ function validate_viewport(viewport) {
     errors.push('Zoom must be between 0 and 19.');
   return errors;
 }
+
+/*
+ * show loading mask
+ */
+(function($) {
+    $.fn.overlayMask = function(action) {
+        var mask = this.find('.overlay-mask');
+        var maskSpinner = this.find('.overlay-mask-spinner');
+
+        // Create the required mask
+
+        if (!mask.length) {
+            this.css({
+                position: 'relative'
+            });
+            this.append('<i class="fa fa-spinner fa-spin overlay-mask-spinner"></i><div class="overlay-mask"></div>');
+        }
+
+        // Act based on params
+
+        if (!action || action === 'show') {
+            mask.show();
+            maskSpinner.show();
+        } else if (action === 'hide') {
+            mask.hide();
+            maskSpinner.hide();
+        } else if (action === 'remove') {
+            mask.remove();
+            maskSpinner.remove();
+        }
+
+        return this;
+    };
+})(jQuery)

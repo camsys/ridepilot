@@ -67,7 +67,7 @@ class AddressesController < ApplicationController
 
       #only addresses within one decimal degree of the trimet district
       addresses = addresses.find_all { |address|
-        point = RGeo::Geographic.spherical_factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f, 4326)
+        point = RGeo::Geographic.spherical_factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f)
         Region.count(:conditions => ["name='TriMet' and st_distance(the_geom, ?) <= 1", point]) > 0
       }
 
@@ -83,7 +83,7 @@ class AddressesController < ApplicationController
                     :city => address['city'],
                     :state => STATE_NAME_TO_POSTAL_ABBREVIATION[address['state'].upcase],
                     :zip => address['postcode'],
-                    :the_geom => RGeo::Geographic.spherical_factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f, 4326)
+                    :the_geom => RGeo::Geographic.spherical_factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f)
                     )
         address_obj.json
 
@@ -162,6 +162,55 @@ class AddressesController < ApplicationController
     else
       @address.destroy
       redirect_to current_provider, :notice => "#{@address.name} was successfully deleted."
+    end
+  end
+
+  def check_loading_status
+    status = {
+      is_loading: current_provider.address_upload_flag.is_loading 
+    }
+
+    status[:summary] = current_provider.address_upload_flag.last_upload_summary || 
+      TranslationEngine.translate_text(:address_file_uploaded) if !status[:is_loading]
+
+    render json: status
+  end
+
+  def upload
+    error_msgs = []
+
+    if !can?(:load, Address)
+      error_msgs << TranslationEngine.translate_text(:not_authorized)
+    else
+      address_file = params[:address][:file] if params[:address]
+      
+      if !address_file.nil?
+        if address_file.content_type != 'text/csv'
+          error_msgs << TranslationEngine.translate_text(:address_file_should_be_csv)
+        elsif current_provider.address_upload_flag.is_loading
+          error_msgs << TranslationEngine.translate_text(:address_file_being_uploading)
+        else
+          begin
+            current_provider.address_upload_flag.uploading!
+            #Address.load_addresses(address_file.path, current_provider)
+            AddressUploadWorker.perform_async(address_file.path, current_provider.id) #sidekiq needs to run
+          rescue Exception => ex
+            current_provider.address_upload_flag.uploaded!
+            error_msgs << ex.message
+          end
+        end
+      else
+        error_msgs << TranslationEngine.translate_text(:select_address_file_to_upload)
+      end
+    end
+
+    if error_msgs.size > 0
+      flash.now[:error] = error_msgs.join(' ')
+    end
+
+    respond_to do |format|
+      format.js
+      format.html {redirect_to provider_path(current_provider)}
     end
   end
 

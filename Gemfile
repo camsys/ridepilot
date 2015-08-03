@@ -96,6 +96,9 @@ gem 'rails-fullcalendar-resourceviews', '~> 1.6.5.7', github: 'xudongcamsys/rail
 # overcome IE9 4096 per stylesheet limit
 gem 'css_splitter'
 
+# background workder
+gem 'sidekiq'
+
 group :integration, :qa, :production do 
   gem 'rails_12factor'
   gem 'unicorn'
