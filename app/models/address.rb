@@ -178,7 +178,8 @@ class Address < ActiveRecord::Base
     }
 
     summary_info = TranslationEngine.translate_text(:common_address_upload_summary) % sub_pairs
-    provider.address_upload_flag.update(last_upload_summary: summary_info)
+    provider.address_upload_flag.last_upload_summary = summary_info
+    provider.address_upload_flag.save
 
     Rails.logger.info summary_info
     summary_info

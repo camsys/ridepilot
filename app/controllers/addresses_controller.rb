@@ -205,12 +205,12 @@ class AddressesController < ApplicationController
     end
 
     if error_msgs.size > 0
-      flash.now[:error] = error_msgs.join(' ')
+      full_error_msg = error_msgs.join(' ')
     end
 
     respond_to do |format|
       format.js
-      format.html {redirect_to provider_path(current_provider)}
+      format.html {redirect_to provider_url(current_provider), alert: full_error_msg }
     end
   end
 
