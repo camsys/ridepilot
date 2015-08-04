@@ -9,10 +9,10 @@
                 %h3.panel-title
                   .btns.pull-right
                     = f.submit translate_helper(:upload), class: 'btn action-button', role: 'button'
-                  = translate_helper(:load_common_addresses)
+                  = translate_helper(:upload_common_addresses)
           .panel-body
             /= f.error_notification message: print_messages(f)
-            %label=translate_helper(:load_common_addresses_notes)
+            %label=translate_helper(:upload_common_addresses_notes)
             = f.input "file", required:true, :label => translate_helper(:select_address_file_to_upload),:as => :file
     :javascript
       if(#{provider.address_upload_flag.is_loading}) {

@@ -784,10 +784,21 @@ en:
   vehicle_unavailable: 'Vehicle is not available'
   driver_unavailable: 'Driver is not available'
   unknown_error: 'There was something wrong with the request, please try again.'
+  # address upload
+  address_file_uploaded: 'Address file has been uploaded.'
+  not_authorized: 'You are not authorized.'
+  address_file_should_be_csv: 'The address file should be in CSV.'
+  address_file_being_uploading: 'There is an address file currently in uploading.'
+  select_address_file_to_upload: 'Select a file (.csv) to upload'
+  common_address_upload_summary: 'Summary:'
+  upload: 'Upload'
+  uploading: 'Uploading'
+  upload_common_addresses: 'Upload Addresses'
+  upload_common_addresses_notes: 'Please refer to address file specifications.'
+
 
   locales:
     en: "English"
-    sp: "Spanish"
     tags: "Tags"
 
 
