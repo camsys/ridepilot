@@ -48,7 +48,11 @@
         - date_order_parameters = translate_helper("date_order_parameter").split(",").collect do |param| param.to_sym end 
         = f.date_select :birth_date, :start_year => 1896, :use_short_month => true, :include_blank => true, order: date_order_parameters
         /= f.text_field :birth_date, :class => 'datepicker form-control'
-
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :is_elderly, translate_helper(:is_elderly) 
+      .col-sm-9
+        = f.check_box :is_elderly
     .form-group.col-sm-12.ethnicity
       .col-sm-3
         = f.label :ethnicity, translate_helper(:ethnicity) 

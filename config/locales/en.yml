@@ -76,6 +76,7 @@ en:
   alternate_phone: "Alternate Phone"
   email: "Email"
   date_of_birth: "Date of Birth"
+  is_elderly: 'Elderly?'
   ethnicity: "Ethnicity"
   mobility: "Mobility"
   mobility_notes: "Mobility Notes"

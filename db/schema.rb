@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150910191026) do
+ActiveRecord::Schema.define(version: 20150913131643) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,11 +63,6 @@ ActiveRecord::Schema.define(version: 20150910191026) do
   add_index "addresses_customers", ["address_id"], :name => "index_addresses_customers_on_address_id"
   add_index "addresses_customers", ["customer_id"], :name => "index_addresses_customers_on_customer_id"
 
-  create_table "boolean_lookup", force: true do |t|
-    t.string "name", limit: 16
-    t.string "note", limit: 16
-  end
-
   create_table "custom_reports", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -105,6 +100,7 @@ ActiveRecord::Schema.define(version: 20150910191026) do
     t.boolean  "ada_eligible"
     t.string   "service_level_old"
     t.integer  "service_level_id"
+    t.boolean  "is_elderly"
   end
 
   add_index "customers", ["address_id"], :name => "index_customers_on_address_id"
@@ -684,11 +680,6 @@ ActiveRecord::Schema.define(version: 20150910191026) do
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["password_changed_at"], :name => "index_users_on_password_changed_at"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
-
-  create_table "vehicle_maintenance_compliance_due_types", force: true do |t|
-    t.string "name", limit: 16
-    t.string "note", limit: 16
-  end
 
   create_table "vehicle_maintenance_compliances", force: true do |t|
     t.integer  "vehicle_id"
