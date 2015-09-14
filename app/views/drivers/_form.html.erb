@@ -51,6 +51,70 @@
       </div><!-- END .panel -->
       
       <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("driver_address_heading") %></div>
+        <div class="panel-body form-horizontal">
+          <%= f.fields_for :address, @driver.address do |address_form| %>
+            <%= address_form.hidden_field :provider_id %>
+            <div class="form-group">
+                <%= address_form.label :name, translate_helper("address_name"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :name, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :building_name, translate_helper("building_name"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :building_name, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :address, translate_helper("address"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :address, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :city, translate_helper("city"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :city, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :state, translate_helper("state"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :state, class: "form-control", disabled: @readonly, maxlength: 2 %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :zip, translate_helper("zip"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :zip, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :notes, translate_helper("address_notes"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_area :notes, rows: 3, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :phone_number, translate_helper("phone_number"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :phone_number, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+          <% end %>
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
+      
+      <div class="panel panel-primary">
         <div class="panel-heading"><%= translate_helper("operating_hours_heading") %></div>
         <div class="panel-body form-inline">
           <table class="table table-condensed">
@@ -232,7 +296,7 @@
 
 <%= render 'shared/hide_invisible_form_fields_js', model_name: "driver", table_name: 'drivers', provider_id:  current_provider.try(:id) %>
 
-<%= render 'shared/modal_dialog', modal_id: "driver-form-modal-dialog" %>
+<%= render 'shared/modal_dialog', modal_id: "modal-dialog" %>
 
 <%= javascript_tag do %>
   $(document).ready(function(){

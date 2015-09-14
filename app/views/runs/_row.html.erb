@@ -1,5 +1,6 @@
 <tr>
   <td><% if can? :show, run %><%= link_to translate_helper("view"), run_path(run) %><% end %></td>
+  <td><%= run.name %></td>
   <td><%= run.date.to_s(:long) %></td>
   <td><%= run.scheduled_start_time.try(:to_s,:time_only) %></td>
   <td><%= run.scheduled_end_time.try(:to_s,:time_only) %></td>

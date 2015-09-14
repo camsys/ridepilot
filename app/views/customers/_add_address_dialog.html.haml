@@ -1,0 +1,32 @@
+.address-form#customer-address-form
+  = render 'addresses/validate_form', :prefix=>'customer', address: Address.new
+
+= render 'new_address_js'
+
+:javascript 
+  $(document).ready(function() {
+    $('#addCustomerCommonAddress').click(function(e) {
+      e.preventDefault();
+      var form = $("#customer-address-form");
+      form.dialog( "open" );  
+      $(".address-form :input").removeAttr("disabled");
+      $('.ui-dialog button').show();
+      form.find('form')[0].reset();
+      form.find('.error').remove();
+    });
+
+    $('#customerCommonAddressTable').on('click', '.deleteCustomerAddress', function(e) {
+      e.preventDefault();
+
+      $(this).parents('tr').remove();
+    });
+
+    $('#customerCommonAddressTable').on('click', '.viewAddress', function(e) {
+      e.preventDefault();
+
+      $("#customer-address-form").dialog( "open" );
+      $(".address-form :input").attr("disabled","disabled");
+      $('.ui-dialog button').hide();
+      populate_address_form( 'customer', $(this).parents('tr').data('address'));
+    });
+  });

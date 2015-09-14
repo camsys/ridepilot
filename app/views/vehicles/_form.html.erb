@@ -271,7 +271,7 @@
 
 <%= render 'shared/hide_invisible_form_fields_js', model_name: "vehicle", table_name: 'vehicles', provider_id:  current_provider.try(:id) %>
 
-<%= render 'shared/modal_dialog', modal_id: "vehicle-form-modal-dialog" %>
+<%= render 'shared/modal_dialog', modal_id: "modal-dialog" %>
 
 <%= javascript_tag do %>
   $(document).ready(function(){

@@ -1,6 +1,6 @@
 var $new_form = $("<%= j (render partial: 'form', locals: {remote: true}) %>");
 $new_form.find('input.datepicker').datepicker({dateFormat: 'yy-mm-dd', showButtonPanel: true}).css('z-index', 9999);
 
-$('#vehicle-form-modal-dialog .modal-body .container-fluid').html($new_form);
-$('#vehicle-form-modal-dialog .modal-title').html("<%= j translate_helper('vehicle_warranty_form_edit_heading') %>");
-$('#vehicle-form-modal-dialog').modal('show');
+$('#modal-dialog .modal-body .container-fluid').html($new_form);
+$('#modal-dialog .modal-title').html("<%= j translate_helper('vehicle_warranty_form_edit_heading') %>");
+$('#modal-dialog').modal('show');

@@ -16,7 +16,8 @@ class VehiclesController < ApplicationController
   def edit; end
 
   def update
-    if @vehicle.update_attributes(vehicle_params)
+    @vehicle.assign_attributes vehicle_params
+    if @vehicle.is_all_valid?(current_provider_id) && @vehicle.save
       redirect_to @vehicle, notice: 'Vehicle was successfully updated.'
     else
       render action: :edit
@@ -25,7 +26,7 @@ class VehiclesController < ApplicationController
 
   def create
     @vehicle.provider = current_provider
-    if @vehicle.save
+    if @vehicle.is_all_valid?(current_provider_id) && @vehicle.save
       redirect_to @vehicle, notice: 'Vehicle was successfully created.'
     else
       render action: :new

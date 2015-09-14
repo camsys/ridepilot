@@ -23,8 +23,10 @@ en:
   header_content: "<a href='/en' id='logo'>RidePilot</a>"
   #addresses
   address_name: "Address Name"
+  address_nickname: "Nickname"
   building_name: "Building Name"
   address: "Address"
+  view_address_details: 'View Details'
   city: "City"
   state: "State"
   zip: "Zip Code"
@@ -41,6 +43,7 @@ en:
   reassociate_trips: "Associate this addresses's trips with another address."
   address_search: "Address Search"
   address_notes: "Notes"
+  must_have_one_address: 'Must have at least one address'
   #cab trips
   cab: 'Cab'
   pickup_date: "Pickup Date"
@@ -60,8 +63,19 @@ en:
     one: "Edit %{count} cab trip"
     other: "Edit %{count} cab trips"
   #customers
+  customer_details_panel: 'Details'
+  customer_addresses_panel: 'Addresses'
+  is_mailing_address: 'Mailing'
+  customer_providers_panel: 'Authorized Providers'
+  customer_eligibility_panel: 'Eligibility'
+  customer_donations_panel: 'Donations'
+  customer_others_panel: 'Others'
+  customer_inactivate_panel: 'Inactivate'
   name: "Name"
   phone: "Phone"
+  gender: 'Gender'
+  male: 'Male'
+  female: 'Female'
   alternate_phone: "Alternate Phone"
   email: "Email"
   date_of_birth: "Date of Birth"
@@ -84,24 +98,27 @@ en:
     other: "%{count} errors prohibited this customer from being saved:"
   ignore_duplicates: "Ignore duplicates"
   group: "Group"
+  new_group: 'New Group'
   first_name: "First Name"
   middle_initial: "Middle Initial"
   last_name: "Last Name:"
   alternate_phone_number: "Alternate Phone"
   inactivation_reason: "Inactivation Reason"
   editing_customer: "Editing Customer: %{customer_name}"
-  customer_listing: "Customer Listing"
+  customer_listing: "Customers"
   new_customer: "New Customer"
   new_trip_for_customer: "New Trip for This Customer"
   duplicate: "Duplicate"
   merge: 'Merge'
   customer: "Customer"
+  customer_active: 'Active?'
   reassociate_customer_trips: "Associate this customer's trips with another customer."
   group_name: "Group Name"
   no_trips_yet: "No trips yet."
   cctc_RC_label: "RC"
   cctc_STF_label: "STF"
   cctc_new_riders_label: "# Riders New This Month"
+  delete_customer_confirm: "Are you sure to delete this customer?"
   # Lookup tables
   add_value: "Add Value"
   delete_value: "Delete Value"
@@ -203,6 +220,7 @@ en:
   operating_hours_24_hours: "24 Hours"
   operating_hours_open: "Open"
   driver_form_details_heading: "Details"
+  driver_address_heading: "Address"
 
   # Driver histories
   driver_histories_heading: "History Events"
@@ -972,6 +990,7 @@ en:
   to_date: 'To Date'
   from_date_cannot_later_than_to_date: "From Date can not be later than To Date"
   # runs table
+  run_name_column: 'Name'
   run_date_column: 'Date'
   run_start_time_column: 'Start Time'
   run_end_time_column: 'End Time'

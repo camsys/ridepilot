@@ -74,10 +74,29 @@ class DriversController < ApplicationController
 
     @start_hours = OperatingHours.available_start_times
     @end_hours = OperatingHours.available_end_times
+    
+    @driver.address ||= @driver.build_address provider: @driver.provider
   end
   
   def driver_params
-    params.require(:driver).permit(:active, :paid, :name, :email, :user_id)
+    params.require(:driver).permit(
+      :active, 
+      :paid, 
+      :name, 
+      :email, 
+      :user_id,
+      :address_attributes => [
+        :address,
+        :building_name,
+        :city,
+        :name,
+        :provider_id,
+        :state,
+        :zip,
+        :notes,
+        :phone_number
+      ],
+    )
   end
   
   def create_or_update_hours!

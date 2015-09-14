@@ -1,4 +1,4 @@
-$('#vehicle-form-modal-dialog').modal('hide');
+$('#modal-dialog').modal('hide');
 var $new_row = $("<%= j (render @vehicle_maintenance_event) %>").hide();
 $('#vehicle-maintenance-events-table .vehicle_maintenance_event-<%= @vehicle_maintenance_event.id %>').slideUp('fast').replaceWith($new_row);
 $new_row.slideDown('slow');

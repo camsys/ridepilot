@@ -1,9 +1,0 @@
-<% content_for :menu_bar do %>
-        <ul id="subnav" class="selfclear">
-          <li><%= link_to translate_helper("active_customers_link_text"), :action=>:index %></li>
-          <li><%= link_to translate_helper("all_customers_link_text"), :action=>:all %></li>
-          <li><%= link_to translate_helper("new_customer_link_text"), :action=>:new %></li>
-        </ul>
-<% end %>
-
-<%= render :file => 'layouts/application' %>

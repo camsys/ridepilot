@@ -1,6 +1,6 @@
 <%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'trips' %>
 <% edit_mode = :edit if !defined? edit_mode%>
-<%= form_for @trip, :html => (@remote ? {"data-remote" => true} : {} ) do |f| %>
+<%= form_for @trip, :html => (@remote ? {"data-remote" => true, class: 'trip_form'} : {class: 'trip_form'} ) do |f| %>
   <%= render 'form_header', edit_mode: edit_mode, f: f %>
   <% if @trip.errors.any? %>
     <div id="error_explanation">

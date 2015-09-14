@@ -1,0 +1,120 @@
+- edit_mode = :edit if !defined? edit_mode
+
+.panel.panel-primary#customer_details_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:customer_details_panel)
+  .panel-body{style: 'padding: 5px;'}
+    - if @dup 
+      .form-group.col-sm-12
+        .col-sm-3
+          = f.label :ignore_dups, translate_helper(:ignore_duplicates) 
+        .col-sm-9
+          = check_box_tag :ignore_dups 
+    .form-group.col-sm-12.firstname
+      .col-sm-3
+        = f.label :first_name, translate_helper(:first_name) 
+      .col-sm-9
+        = f.text_field :first_name, class: 'form-control'
+    .form-group.col-sm-12.middlename
+      .col-sm-3
+        = f.label :middle_initial, translate_helper(:middle_initial) 
+      .col-sm-9
+        = f.text_field :middle_initial, class: 'form-control'
+    .form-group.col-sm-12.lastname
+      .col-sm-3
+        = f.label :last_name, translate_helper(:last_name) 
+      .col-sm-9
+        = f.text_field :last_name, class: 'form-control'
+    .form-group.col-sm-12.radio_buttons.optional.trip_proxy_is_round_trip
+      .col-sm-3
+        = f.label :gender, translate_helper(:gender) 
+      .col-sm-9
+        %input.radio_buttons.optional#customer_gender_male{name: "customer[gender]", type: "radio", value: :male, checked: (@customer.gender == "male" ? "checked" : nil)}
+        %label.radio_buttons.optional{for: "customer_gender_male"} #{translate_helper(:male)}
+
+        %input.radio_buttons.optional#customer_gender_female{name: "customer[gender]", type: "radio", value: :female, checked: (@customer.gender == "female" ? "checked" : nil)}
+        %label.radio_buttons.optional{for: "customer_gender_female"} #{translate_helper(:female)}
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :phone_number_1, translate_helper(:phone_number) 
+      .col-sm-9
+        = f.text_field :phone_number_1, class: 'form-control'
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :phone_number_2, translate_helper(:alternate_phone_number) 
+      .col-sm-9
+        = f.text_field :phone_number_2, class: 'form-control'
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :email, translate_helper(:email) 
+      .col-sm-9
+        = f.text_field :email, class: 'form-control'
+    .form-group.col-sm-12.birth_date
+      .col-sm-3
+        = f.label :birth_date, translate_helper(:date_of_birth) 
+      .col-sm-9
+        - date_order_parameters = translate_helper("date_order_parameter").split(",").collect do |param| param.to_sym end 
+        = f.date_select :birth_date, :start_year => 1896, :use_short_month => true, :include_blank => true, order: date_order_parameters
+        /= f.text_field :birth_date, :class => 'datepicker form-control'
+
+    .form-group.col-sm-12.ethnicity
+      .col-sm-3
+        = f.label :ethnicity, translate_helper(:ethnicity) 
+      .col-sm-9
+        = f.select :ethnicity, @ethnicity_names, {include_blank: true}, {class: 'form-control'}
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :mobility_id, translate_helper(:mobility) 
+      .col-sm-9
+        = f.collection_select :mobility_id, @mobilities, :id, :name, {include_blank: true},  {class: 'form-control'}
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :mobility_notes, translate_helper(:mobility_notes) 
+      .col-sm-9
+        = f.text_field :mobility_notes, class: 'form-control'
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :medicaid_eligible, translate_helper(:medicaid_eligible) 
+      .col-sm-9
+        = f.check_box :medicaid_eligible
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :ada_eligible, translate_helper(:ada_eligible) 
+      .col-sm-9
+        = f.check_box :ada_eligible
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :default_service_level, translate_helper(:default_service_level) 
+      .col-sm-9
+        = f.select :service_level_id, @service_levels, {:include_blank => true}, {class: 'form-control'}
+
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :default_funding_source_id, translate_helper(:default_funding_source) 
+      .col-sm-9
+        = f.collection_select :default_funding_source_id, @funding_sources, :id, :name, {:include_blank => true }, { class: 'form-control' }
+    - if is_admin_or_system_admin?
+      .form-group.col-sm-12
+        .col-sm-3
+          = f.label :emergency_contact_notes, translate_helper(:emergency_contact_notes) 
+        .col-sm-9
+          = f.text_area :emergency_contact_notes, class: 'form-control'
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :private_notes, translate_helper(:private_notes) 
+      .col-sm-9
+        = f.text_area :private_notes, class: 'form-control'
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :public_notes, translate_helper(:public_notes) 
+      .col-sm-9
+        = f.text_area :public_notes, class: 'form-control'
+    - if !@customer.active?
+      .form-group.col-sm-12
+        .col-sm-3
+          = f.label :inactivated_reason, translate_helper(:inactivated_reason) 
+        .col-sm-9
+          = f.text_field :inactivated_reason, class: 'form-control'
+
+

@@ -122,7 +122,7 @@ $(function() {
   $("tr:odd").addClass("odd");
   
   // delete a customer from the show page
-  $("body.customers.show .profile-actions .delete, body.addresses.edit .profile-actions .delete").click( function(event){
+  $("body.customers.show .profile-actions .delete, body.addresses.edit .profile-actions .delete, #customer_merge").click( function(event){
     event.preventDefault();
 
     var link = $(this);
@@ -162,19 +162,6 @@ $(function() {
   $("body").on("change", "#trip_vehicle_id", function(event){
     $("#trip_driver_id").val( $(this).find("option[value=" + $(this).val() + "]").data("driver-id") );
   });
-
-  // hide middle/last names for group customer
-  var updateGroupField = function() {
-    if ( $('input#customer_group').is(':checked') ){
-      $('li.middlename, li.lastname, li.ethnicity, li.birth_date').hide();
-      $('li.firstname label').html("Group Name:");
-    } else {
-      $('li.middlename, li.lastname, li.ethnicity, li.birth_date').show();
-      $('li.firstname label').html("First Name:");
-    }
-  };
-  updateGroupField();
-  $('input#customer_group').click(updateGroupField);
 
   // Setting z-index to 999 ensures the calendar appears over bootstrap input group components
   $('#new_monthly #monthly_start_date, #new_monthly #monthly_end_date, input.datepicker').datepicker({

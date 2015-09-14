@@ -11,7 +11,7 @@ script:
 - bundle exec /usr/bin/env RAILS_ENV=test rspec
 branches:
   only:
-  - develop
+  - iteration2
 deploy:
   provider: heroku
   api_key:
@@ -21,7 +21,7 @@ deploy:
   strategy: api
   on:
     repo: camsys/ridepilot
-    branch: develop
+    branch: iteration2
 notifications:
   slack:
     secure: Qq78NTbeTtBlWrBCLk5ifHGySTA/jyyCu+dHT9JNtNrriIi/rcFXRW8FPqu1ukgdynGaPS8+PVQoD5sxp/HmuEpV53uUtqg8rR3PZc2+KVY3p/6GOqLfUJQY31nn/HKCFR7qudhhmICi/cOVsh3TnV2fk/Vmqu0iw5GM3xdEXSwe5JJrNCw72B8MGYoQu8BiBUCmouEaRzifIdNAiHBspZefmDfRm/0zRvMCYg/2qdvnU5NV/Fk0CM+PtYPri92tE2lqmhXTBDJZgPkzZGo9DBcWb+/NANJoE1Fr8q7lvD3sEJhiDC2wNUMsjzvOQWSfUmUp2zMgAnLV9aJ4uKTrVphD7DfgHnPi8KnNV1ThAEfjPTm+rnXNv+CtQfSnaex3GzZYmL37GRNnuLIzQmycn0NBapS4i4aMQhHiG0yu4/VRps1szHSllfJoYivnffChJHdmTw2Kty0WSvpCSiHZLcGenHihPTwr+wmQ38bYjy3zBaVDLgGhvOPPd8usgQfDFNL+kxzB0vKhOXx4V3KA9zkNSJb7uT5BzYSaqKWH9MM1wpFYpzlTh79Gw8N4mDiT0XDC7q416rlrFMI6tMMAEnimlCb+TqnWEtFyCH06HGc5iFCuEFqU+GfRW5npzoyjcA3IS1PYP0zydgaYm2+eCi1sdVEPbF6PZiTdZX0G748=

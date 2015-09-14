@@ -1,0 +1,77 @@
+<script type='text/javascript'>
+
+  function populate_address_form(field, address) {
+    form = $("#" + field + "-address-form");
+    form.find('#address_id').val(address.id);
+    form.find('#' + field + '_name').val(address.name);
+    form.find('#' + field + '_building_name').val(address.building_name);
+    form.find('#' + field + '_address').val(address.address);
+    form.find('#' + field + '_city').val(address.city);
+    form.find('#' + field + '_state').val(address.state);
+    form.find('#' + field + '_zip').val(address.zip);
+    form.find('#' + field + '_lat').val(address.lat);
+    form.find('#' + field + '_lon').val(address.lon);
+    form.find('#' + field + '_in_district').val(address.in_district);
+    form.find('#' + field + '_notes').val(address.notes);
+  }
+
+  function insertAddressRow(addressData, addressText) {
+    $('#customerCommonAddressTable').append("<tr data-address='" + JSON.stringify(addressData) + "'>" +
+        '<td><button class="deleteCustomerAddress btn-danger" name="button" type="button">Delete</button></td>' +
+        "<td>" + addressData.name + '&nbsp;<a class="viewAddress" href="#">(View details)</a></td>' +
+        "<td>" + addressText + "</td>" +
+        '<td><input name="mailing" type="radio" value=false></td>' +
+        "</tr>");
+  }
+
+  $(document).ready(function() {
+    
+    // happens after you submit an address (not autocomplete)
+    // an id should be returned, and then the form should close.
+    // if no id is returned, error messages are filled in. 
+    $("body").on('ajax:success', '.address-validate', function(evt, data, status, xhr){
+      if (data.success) {
+        $( $(this)[0].parentNode ).dialog( "close" );
+
+        //insert a new address row
+        insertAddressRow(data.attributes, data.address_text);
+        
+      } else {
+        //failed to create an address
+        for (var field in data) {
+          text_field = $('#' + data.prefix + "_" + field);
+          error_element = text_field.attr('data-error-element');
+          if (!error_element) {
+            error_element_id = data.prefix + "_" + field
+            text_field.after('<span class="error" id="' + error_element_id + '">' + data[field] + "</span>");
+            error_element = "#" + error_element_id;
+            text_field.attr('data-error-element', error_element);
+          }
+          $(error_element).innerHtml = data[field]
+        }
+      }
+    })
+    
+    // address dialog functionality
+    // via http://jqueryui.com/demos/dialog/#modal-form 
+    function makeDialogs() {
+      $( ".address-form" ).dialog({
+          autoOpen: false,
+          height: 395,
+          width: 600,
+          modal: true,
+          buttons: {
+              "Add Address": function() {
+                  form = $( this )[0].children[0];
+                  $(form).trigger('submit'); 
+              },
+              Cancel: function() {
+                $( this ).dialog( "close" );
+              }
+          }
+      });
+    };
+    
+    makeDialogs();
+  });
+</script>

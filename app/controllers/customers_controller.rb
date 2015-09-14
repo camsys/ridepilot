@@ -55,6 +55,8 @@ class CustomersController < ApplicationController
       @read_only_customer = true if @customer.provider_id != current_provider.id
     end
 
+    prep_edit
+
     @trips    = @customer.trips.reorder('pickup_time desc').paginate :page => params[:page], :per_page => PER_PAGE
 
     respond_to do |format|
@@ -65,7 +67,8 @@ class CustomersController < ApplicationController
 
   def new
     @customer = Customer.new name_options
-    @customer.address ||= @customer.build_address :provider => current_provider
+    @customer.provider = current_provider
+    #@customer.address ||= @customer.build_address :provider => current_provider
     prep_edit
 
     respond_to do |format|
@@ -84,6 +87,7 @@ class CustomersController < ApplicationController
     @customer = Customer.new customer_params
     @customer.provider = current_provider
     @customer.activated_date = Date.today
+    edit_addresses @customer
 
     if params[:ignore_dups] != "1"
       #check for duplicates
@@ -125,10 +129,10 @@ first_name, first_name, first_name, first_name,
       providers.push(Provider.find(authorized_provider_id)) if authorized_provider_id.present?
     end
 
-    @customer.authorized_providers = providers
+    @customer.authorized_providers = (providers << @customer.provider).uniq
 
     respond_to do |format|
-      if @customer.save
+      if @customer.is_all_valid?(current_provider_id) && @customer.save
         format.html { redirect_to(@customer, :notice => 'Customer was successfully created.') }
         format.xml  { render :xml => @customer, :status => :created, :location => @customer }
       else
@@ -155,6 +159,7 @@ first_name, first_name, first_name, first_name,
     authorize! :update, @customer if !@customer.authorized_for_provider(current_provider.id)
 
     @customer.assign_attributes customer_params
+    edit_addresses @customer
 
     #save address changes
     if address_attributes_param && address_attributes_param[:id].present?
@@ -166,13 +171,16 @@ first_name, first_name, first_name, first_name,
     params[:customer][:authorized_provider_ids].each do |authorized_provider_id|
       providers.push(Provider.find(authorized_provider_id)) if authorized_provider_id.present?
     end
-    @customer.authorized_providers = providers
+    @customer.authorized_providers = (providers << @customer.provider).uniq
+    
+    
     
     respond_to do |format|
-      if @customer.save
+      if @customer.is_all_valid?(current_provider_id) && @customer.save
         format.html { redirect_to(@customer, :notice => 'Customer was successfully updated.') }
         format.xml  { head :ok }
       else
+        prep_edit
         format.html { render :action => "edit" }
         format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
       end
@@ -196,6 +204,7 @@ first_name, first_name, first_name, first_name,
   
   def customer_params
     params.require(:customer).permit(
+      :gender,
       :ada_eligible,
       :birth_date,
       :default_funding_source_id,
@@ -263,6 +272,13 @@ first_name, first_name, first_name, first_name,
     @ethnicity_names = (current_provider.ethnicities.collect(&:name) + [@customer.ethnicity]).compact.sort.uniq
     @funding_sources = FundingSource.by_provider(current_provider)
     @service_levels = ServiceLevel.pluck(:name, :id)
+  end
+
+  def edit_addresses(customer)
+    if params[:addresses]
+      addresses = JSON.parse(params[:addresses])
+      customer.edit_addresses addresses, params[:mailing_address_index].to_i || 0
+    end
   end
 
 end

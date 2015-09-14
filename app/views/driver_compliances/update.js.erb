@@ -1,4 +1,4 @@
-$('#driver-form-modal-dialog').modal('hide');
+$('#modal-dialog').modal('hide');
 var $new_row = $("<%= j (render @driver_compliance) %>").hide();
 $('#driver_compliances-table .driver_compliance-<%= @driver_compliance.id %>').slideUp('fast').replaceWith($new_row);
 $new_row.slideDown('slow');

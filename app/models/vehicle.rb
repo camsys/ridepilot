@@ -1,4 +1,6 @@
 class Vehicle < ActiveRecord::Base
+  include RequiredFieldValidatorModule 
+  
   OWNERSHIPS = [:agency, :volunteer].freeze
 
   has_paper_trail

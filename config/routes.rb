@@ -92,6 +92,7 @@ Rails.application.routes.draw do
 
     resources :addresses, :only => [:create, :edit, :update, :destroy] do
       collection do
+        post :validate
         get :autocomplete
         get :search
         patch :upload

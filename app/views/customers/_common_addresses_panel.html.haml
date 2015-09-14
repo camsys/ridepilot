@@ -1,0 +1,40 @@
+- edit_mode = :edit if !defined? edit_mode
+- is_editing = edit_mode == :edit || edit_mode == :new
+
+.panel.panel-primary#customer_common_addresses_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:customer_addresses_panel)
+  .panel-body{style: 'padding: 5px;'}
+    %table.table.table-striped.table-bordered#customerCommonAddressTable
+      %thead
+        %tr
+          - if is_editing
+            %th{width: 50}
+          %th
+            = translate_helper(:address_nickname)
+          %th
+            = translate_helper(:address)
+          %th
+            = translate_helper(:is_mailing_address)
+      %tbody
+        - @customer.addresses.each do |address|
+          %tr{data: {address: address.to_json}}
+            - if is_editing
+              %td
+                = button_tag :type => 'button', class: 'deleteCustomerAddress btn-danger' do 
+                  = translate_helper(:delete)
+            %td
+              = address.name
+              = link_to " (" + translate_helper(:view_address_details) + ")", '#', class: 'viewAddress'
+            %td
+              = address.address_text
+            %td
+              = radio_button_tag(:mailing, address.id, address == @customer.address)
+    - if is_editing
+      .pull-right
+        %button.btn.action-button#addCustomerCommonAddress
+          = translate_helper(:add)
+
+
+    

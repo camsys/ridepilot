@@ -160,16 +160,16 @@ RSpec.describe ReportsController do
         
         # Runs for existing drivers, in report range
         vehicle = create(:vehicle)
-        r_1 = Run.create(provider: @test_provider, driver: ed_1, paid: true,  date: @test_start_date, actual_start_time: @test_start_date, actual_end_time: @test_start_date + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
-        r_2 = Run.create(provider: @test_provider, driver: ed_2, paid: false, date: @test_start_date, actual_start_time: @test_start_date, actual_end_time: @test_start_date + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
+        r_1 = Run.create(name: 'run_1', provider: @test_provider, driver: ed_1, paid: true,  date: @test_start_date, actual_start_time: @test_start_date, actual_end_time: @test_start_date + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
+        r_2 = Run.create(name: 'run_2', provider: @test_provider, driver: ed_2, paid: false, date: @test_start_date, actual_start_time: @test_start_date, actual_end_time: @test_start_date + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
 
         # Runs for existing drivers, outside report range
-        r_3 = Run.create(provider: @test_provider, driver: ed_1, paid: true,  date: @test_start_date - 1.month, actual_start_time: @test_start_date - 1.month, actual_end_time: @test_start_date - 1.month + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
-        r_4 = Run.create(provider: @test_provider, driver: ed_2, paid: false, date: @test_start_date - 1.month, actual_start_time: @test_start_date - 1.month, actual_end_time: @test_start_date - 1.month + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
+        r_3 = Run.create(name: 'run_3', provider: @test_provider, driver: ed_1, paid: true,  date: @test_start_date - 1.month, actual_start_time: @test_start_date - 1.month, actual_end_time: @test_start_date - 1.month + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
+        r_4 = Run.create(name: 'run_4', provider: @test_provider, driver: ed_2, paid: false, date: @test_start_date - 1.month, actual_start_time: @test_start_date - 1.month, actual_end_time: @test_start_date - 1.month + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
 
         # Runs for new drivers, in report range
-        r_5 = Run.create(provider: @test_provider, driver: nd_1, paid: true,  date: @test_start_date, actual_start_time: @test_start_date, actual_end_time: @test_start_date + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
-        r_6 = Run.create(provider: @test_provider, driver: nd_2, paid: false, date: @test_start_date, actual_start_time: @test_start_date, actual_end_time: @test_start_date + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
+        r_5 = Run.create(name: 'run_5', provider: @test_provider, driver: nd_1, paid: true,  date: @test_start_date, actual_start_time: @test_start_date, actual_end_time: @test_start_date + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
+        r_6 = Run.create(name: 'run_6', provider: @test_provider, driver: nd_2, paid: false, date: @test_start_date, actual_start_time: @test_start_date, actual_end_time: @test_start_date + 30.minutes, unpaid_driver_break_time: 5, vehicle: vehicle)
 
         # Rides for existing drivers, in report range
         create(:trip, provider: @test_provider, run: r_1, funding_source: @test_funding_sources[:stf], pickup_time: @test_start_date)

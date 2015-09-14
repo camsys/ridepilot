@@ -1,6 +1,6 @@
 <%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'runs' %>
 <% edit_mode = :edit if !defined? edit_mode%>
-<%= form_for @run, :html => (@remote ? {"data-remote" => true} : {} ) do |f| %>
+<%= form_for @run, :html => (@remote ? {"data-remote" => true, class: 'run_form'} : {class: 'run_form'} ) do |f| %>
   <%= render 'form_header', edit_mode: edit_mode, f: f %>
   <% if @run.errors.any? %>
     <div id="error_explanation">

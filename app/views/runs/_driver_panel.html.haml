@@ -7,7 +7,7 @@
       .col-sm-3
         = f.label :driver, translate_helper("driver")
       .col-sm-9
-        = f.collection_select :driver_id, @drivers, :id, :name, {}, {class: 'form-control'}
+        = f.collection_select :driver_id, @drivers, :id, :name, {include_blank: true}, {class: 'form-control'}
     .form-group.col-sm-12
       .col-sm-3
         = f.label :unpaid_driver_break_time, translate_helper("unpaid_break_time")

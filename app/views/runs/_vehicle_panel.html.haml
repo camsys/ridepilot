@@ -7,7 +7,7 @@
       .col-sm-3
         = f.label :vehicle, translate_helper("vehicle") 
       .col-sm-9
-        = f.collection_select :vehicle_id, @vehicles, :id, :name, {}, {class: 'form-control'}
+        = f.collection_select :vehicle_id, @vehicles, :id, :name, {include_blank: true}, {class: 'form-control'}
     .form-group.col-sm-12
       .col-sm-3
         = f.label :start_odometer, translate_helper("start_odometer")

@@ -3,6 +3,7 @@ class Driver < ActiveRecord::Base
 
   has_paper_trail
   
+  belongs_to :address
   belongs_to :provider
   belongs_to :user
   
@@ -18,10 +19,13 @@ class Driver < ActiveRecord::Base
   # TODO Look into using `#mark_for_destruction` and `#marked_for_destruction?`
   has_many :driver_compliances, dependent: :delete_all, inverse_of: :driver
 
+  accepts_nested_attributes_for :address, update_only: true
+
+  validates :address, associated: true
+  validates :email, format: { with: Devise.email_regexp, allow_blank: true }
+  validates :name, uniqueness: { scope: :provider_id }, length: { minimum: 2 }
   validates :provider, presence: true
   validates :user_id, uniqueness: { allow_nil: true }
-  validates :name, uniqueness: { scope: :provider_id }, length: { minimum: 2 }
-  validates :email, format: { with: Devise.email_regexp, allow_blank: true }
 
   scope :users,         -> { where("drivers.user_id IS NOT NULL") }
   scope :active,        -> { where(active: true) }

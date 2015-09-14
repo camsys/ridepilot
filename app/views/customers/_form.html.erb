@@ -1,4 +1,30 @@
-<%= simple_form_for(@customer) do |f| %>
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'customers' %>
+<% edit_mode = :edit if !defined? edit_mode%>
+<% is_group = false if !defined? is_group %>
+
+<% if @trips.present? && can?(:destroy, @customer) %>
+  <div id="confirm-destroy" style="display:none;">
+    <%= form_for @customer, :html => { :method => "delete" } do |form| %>
+      <fieldset>
+        <legend><% translate_helper("reassociate_customer_trips") %></legend>
+        <ol class="section">
+          <li>
+          <%= label_tag translate_helper("customer_name") %>
+          <%= autocomplete_field_tag 'customer_name', '', autocomplete_customers_path, :size => 30, :id_element => "#customer_id", "submit-buttons" => "#show_details #new_trip" %>
+          <%= hidden_field_tag 'customer_id' %>
+          </li>
+        </ol>
+      </fieldset>
+    <% end %>
+  </div>
+  
+<% end %>
+
+<%= simple_form_for @customer, html: { class: 'customer_form', id: 'customerForm' } do |f| %>
+  <%= hidden_field_tag 'addresses' %>
+  <%= hidden_field_tag 'mailing_address_index' %>
+  <%= f.hidden_field :group, value: is_group %>
+  <%= render 'form_header', edit_mode: edit_mode, f: f %>
   <% if @customer.errors.any? %>
     <div id="error_explanation">
       <h2><%= translate_helper("customer_form_error_message", count: @customer.errors.count)%></h2>
@@ -10,136 +36,61 @@
     </div>
   <% end %>
 
-  <% if @dup %>
-    <label for="ignore_dups">translate_helper("ignore_duplicates")</label>
-    <%= check_box_tag :ignore_dups %><br/>
-  <% end %>
+  <div class="col-sm-12 col-md-6">
+    <%= render 'details_panel', f: f, edit_mode: edit_mode %>
+  </div>
 
-  <fieldset class="new-customer">
-
-    <div class="group">
-      <%= f.check_box :group %>
-      <%= f.label :group, translate_helper("group") %>
-    </div>
-
-    <ol class="section first">
-      <li class="selfclear firstname">
-        <%= f.label :first_name, translate_helper("first_name") %>
-        <%= f.text_field :first_name %>
-      </li>
-
-      <li class="selfclear middlename">
-        <%= f.label :middle_initial, translate_helper("middle_initial") %>
-        <%= f.text_field :middle_initial %>
-      </li>
-
-      <li class="selfclear lastname">
-        <%= f.label :last_name, translate_helper("last_name") %>
-        <%= f.text_field :last_name %>
-      </li>
-
-      <li class="selfclear">
-        <%= f.label :phone_number_1, translate_helper("phone_number") %>
-        <%= f.text_field :phone_number_1 %>
-      </li>
-
-      <li class="selfclear">
-        <%= f.label :phone_number_2, translate_helper("alternate_phone_number") %>
-        <%= f.text_field :phone_number_2 %>
-      </li>
-
-      <li class="selfclear">
-        <%= f.label :email, translate_helper("email") %>
-        <%= f.text_field :email %>
-      </li>
-
-      <li class="selfclear birth_date">
-        <%= f.label :birth_date, translate_helper("date_of_birth") %>
-        <%- date_order_parameters = translate_helper("date_order_parameter").split(",").collect do |param| param.to_sym end %>
-        <%= f.date_select :birth_date, :start_year => 1896, :use_short_month => true, :include_blank => true, order: date_order_parameters  %>
-      </li>
-
-      <li class="selfclear ethnicity">
-        <%= f.label :ethnicity, translate_helper("ethnicity") %>
-        <%= f.select :ethnicity, @ethnicity_names %>
-      </li>
-    </ol>
-
-    <ol class="section second">
-      <%= f.fields_for :address, @customer.address do |address_form| %>
-        <%= render 'addresses/form', :form=>address_form, :editing_address => false %>
-      <% end %>
-
-      <li class="selfclear">
-        <%= f.label :mobility_id, translate_helper("mobility") %>
-        <%= f.collection_select :mobility_id, @mobilities, :id, :name %>
-      </li>
-
-      <li class="selfclear">
-        <%= f.label :mobility_notes, translate_helper("mobility_notes") %>
-        <%= f.text_area :mobility_notes %>
-      </li>
-
-      <li class="selfclear">
-        <%= f.label :medicaid_eligible, translate_helper("medicaid_eligible") %>
-        <%= f.check_box :medicaid_eligible %>
-      </li>
-
-      <li class="selfclear">
-        <%= f.label :ada_eligible, translate_helper("ada_eligible") %>
-        <%= f.check_box :ada_eligible %>
-      </li>
-    </ol>
-
-    <ol class="section third">
-      <li class="selfclear">
-        <%= f.label :default_service_level, translate_helper("default_service_level") %>
-        <%= f.select :service_level_id, @service_levels, :include_blank => true %>
-      </li>
-
-      <li class="selfclear">
-        <%= f.label :default_funding_source_id, translate_helper("default_funding_source") %>
-        <%= f.collection_select :default_funding_source_id, @funding_sources, :id, :name, :include_blank => true %>
-      </li>
-
-      <% if is_admin_or_system_admin? %>
-        <li class="selfclear">
-          <%= f.label :prime_number, translate_helper("prime_number") %>
-          <%= f.text_field :prime_number %>
-        </li>
-      <% end %>
-
-      <li class="selfclear">
-        <%= f.label :emergency_contact_notes, translate_helper("emergency_contact_notes") %>
-        <%= f.text_area :emergency_contact_notes %>
-      </li>
-
-      <li class="selfclear">
-        <%= f.label :private_notes, translate_helper("private_notes") %>
-        <%= f.text_area :private_notes %>
-      </li>
-
-      <li class="selfclear">
-        <%= f.label :public_notes, translate_helper("public_notes") %>
-        <%= f.text_area :public_notes %>
-      </li>
-
-      <% if @customer.inactivated_date %>
-      <li class="selfclear">
-        <%= f.label :inactivated_reason, translate_helper("inactivated_reason") %>
-        <%= f.text_field :inactivated_reason %>
-      </li>
-      <% end %>
-    </ol>
-
-    <div id="customer_providers" class="col-md-12">
-      <div class="col-md-3"><strong><%= translate_helper("customer_authorized_providers") %></strong></div>
-      <div class="col-md-9"><%= f.association :authorized_providers, as: :check_boxes, label: false, :item_wrapper_class => 'col-md-4', :label_html => { :class => 'col-md-12', :wrapper => false } %></div>
-    </div>
-
-    <div class="actions">
-      <%= f.submit %>
-    </div>
-  </fieldset>
+  <div class="col-sm-12 col-md-6">
+    <%= render 'common_addresses_panel', edit_mode: edit_mode %>
+    <%#= render 'eligibility_panel', f: f  if !is_group %>
+    <%= render 'providers_panel', f: f %>
+    <%#= render 'donations_panel', f: f %>
+    <%#= render 'others_panel', f: f %>
+  </div>
 
 <% end %>
+
+<%= render 'inactivate_dialog' if edit_mode == :edit %>
+<%= render 'add_address_dialog' %>
+
+<%= render 'shared/hide_invisible_form_fields_js', model_name: "customer", table_name: 'customers', provider_id:  current_provider.try(:id) %>
+
+<script>
+// hide middle/last names for group customer
+  var updateGroupField = function() {
+    if ( <%= is_group %> ){
+      $('.middlename, .lastname, .ethnicity, .birth_date').hide();
+      $('.firstname label').html("<%=translate_helper(:group_name)%>:");
+    } else {
+      $('.middlename, .lastname, .ethnicity, .birth_date').show();
+      $('.firstname label').html("<%=translate_helper(:first_name)%>:");
+    }
+  };
+  updateGroupField();
+  $('input#customer_group').click(updateGroupField);
+
+  $('#customerForm').submit(function() {
+    if($('#customerCommonAddressTable tbody tr').length == 0) {
+      show_alert("<%= translate_helper(:must_have_one_address)%>");
+      return false;
+    }
+
+    var mailingAddressIndex = 0;
+
+    // serializing addresses
+    var rowIndex = -1;
+    var addresses = [];
+    $('#customerCommonAddressTable tbody tr').each(function() {
+      rowIndex ++;
+
+      if($(this).find('input[name=mailing]').prop('checked')) {
+        mailingAddressIndex = rowIndex;
+      }
+
+      addresses.push($(this).data('address'));
+    });
+
+    $('#customerForm input[name=mailing_address_index').val(mailingAddressIndex);
+    $('#customerForm input[name=addresses').val(JSON.stringify(addresses));
+  });
+</script>
