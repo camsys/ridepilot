@@ -1,4 +1,6 @@
 class Provider < ActiveRecord::Base
+  acts_as_paranoid # soft delete
+  
   serialize :fields_required_for_run_completion, Array
 
   has_many :addresses, :dependent => :nullify

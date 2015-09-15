@@ -1,5 +1,7 @@
 class Customer < ActiveRecord::Base
   include RequiredFieldValidatorModule 
+  
+  acts_as_paranoid # soft delete
 
   has_and_belongs_to_many :authorized_providers, :class_name => 'Provider', :through => 'customers_providers'
   has_and_belongs_to_many :addresses, :class_name => 'Address', :through => 'addresses_customers'

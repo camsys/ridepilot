@@ -1,6 +1,8 @@
 class Driver < ActiveRecord::Base
   include RequiredFieldValidatorModule
 
+  acts_as_paranoid # soft delete
+
   has_paper_trail
   
   belongs_to :address

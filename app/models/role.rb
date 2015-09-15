@@ -1,4 +1,6 @@
 class Role < ActiveRecord::Base
+  acts_as_paranoid # soft delete
+  
   belongs_to :user
   belongs_to :provider
   validates_uniqueness_of :user_id, :scope => :provider_id

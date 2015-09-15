@@ -1,6 +1,9 @@
 class Run < ActiveRecord::Base
   include RequiredFieldValidatorModule
   include RecurringRideCoordinator
+
+  acts_as_paranoid # soft delete
+  
   schedules_occurrences_with :repeating_run, 
     with_attributes: -> (run) {
       attrs = {}

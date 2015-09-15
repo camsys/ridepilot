@@ -1,5 +1,7 @@
 class Vehicle < ActiveRecord::Base
   include RequiredFieldValidatorModule 
+
+  acts_as_paranoid # soft delete
   
   OWNERSHIPS = [:agency, :volunteer].freeze
 

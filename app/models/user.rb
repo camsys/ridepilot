@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  acts_as_paranoid # soft delete
+  
   has_many   :roles, dependent: :destroy
   belongs_to :current_provider, class_name: "Provider", foreign_key: :current_provider_id
   has_one    :driver
