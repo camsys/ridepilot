@@ -7,19 +7,20 @@ RSpec.describe VehiclesController, type: :controller do
   # Vehicle. As you add validations to Vehicle, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) { 
-    # Nothing is required, but add a name to avoid a ParameterMissing error
-    attributes_for(:vehicle, :name => "Vehicle 1")
+    attributes_for(:vehicle, default_driver_id: create(:driver, :provider => @current_user.current_provider).id)
   }
 
   let(:invalid_attributes) { 
-    # Nothing is required, but VIN length must be <= 17
-    attributes_for(:vehicle, :vin => "123456789012345678") 
+    # Nothing is required, but VIN length must be 17
+    attributes_for(:vehicle, :vin => "1234")
   }
 
   describe "GET #index" do
-    it "redirects to the current user's provider" do
+    it "assigns all vehicles for the current provider as @vehicles" do
+      vehicle_1 = create(:vehicle, :provider => @current_user.current_provider)
+      vehicle_2 = create(:vehicle)
       get :index, {}
-      expect(response).to redirect_to(@current_user.current_provider)
+      expect(assigns(:vehicles)).to eq([vehicle_1])
     end
   end
 
@@ -28,6 +29,12 @@ RSpec.describe VehiclesController, type: :controller do
       vehicle = create(:vehicle, :provider => @current_user.current_provider)
       get :show, {:id => vehicle.to_param}
       expect(assigns(:vehicle)).to eq(vehicle)
+    end
+
+    it "sets @readonly to true" do
+      vehicle = create(:vehicle, :provider => @current_user.current_provider)
+      get :show, {:id => vehicle.to_param}
+      expect(assigns(:readonly)).to be_truthy
     end
   end
 
@@ -60,9 +67,9 @@ RSpec.describe VehiclesController, type: :controller do
         expect(assigns(:vehicle)).to be_persisted
       end
 
-      it "redirects to the current user's provider" do
+      it "redirects to the new vehicle" do
         post :create, {:vehicle => valid_attributes}
-        expect(response).to redirect_to(@current_user.current_provider)
+        expect(response).to redirect_to(Vehicle.last)
       end
     end
 
@@ -83,16 +90,7 @@ RSpec.describe VehiclesController, type: :controller do
     context "with valid params" do
       let(:new_attributes) {
         {
-          :name => "Name",
-          :default_driver_id => 1,
-          :year => 2000,
-          :make => "Make",
-          :model => "Model",
-          :license_plate => "License Plate",
-          :vin => "12345678901234567",
-          :garaged_location => "Garaged Location",
-          :active => false,
-          :reportable => false
+          :garaged_location => "Garaged Location"
         }
       }
 
@@ -109,10 +107,10 @@ RSpec.describe VehiclesController, type: :controller do
         expect(assigns(:vehicle)).to eq(vehicle)
       end
 
-      it "redirects to the current user's provider" do
+      it "redirects to the vehicle" do
         vehicle = create(:vehicle, :provider => @current_user.current_provider)
         put :update, {:id => vehicle.to_param, :vehicle => new_attributes}
-        expect(response).to redirect_to(@current_user.current_provider)
+        expect(response).to redirect_to(vehicle)
       end
     end
 
@@ -139,10 +137,10 @@ RSpec.describe VehiclesController, type: :controller do
       }.to change(Vehicle, :count).by(-1)
     end
 
-    it "redirects to the current user's provider" do
+    it "redirects to the vehicles list" do
       vehicle = create(:vehicle, :provider => @current_user.current_provider)
       delete :destroy, {:id => vehicle.to_param}
-      expect(response).to redirect_to(@current_user.current_provider)
+      expect(response).to redirect_to(vehicles_url)
     end
   end
 

@@ -1,21 +1,19 @@
 <dl id="report-footer">
-  <dt>Provider/Agency:</dt>
+  <dt><%= translate_helper("report_footer_heading") %></dt>
   <dd><%= @provider.name %></dd>
 
-  <dt>Report month:</dt>
+  <dt><%= translate_helper("report_month_heading") %></dt>
   <dd><%= @start_date.strftime("%B %Y") %></dd>
 
-  <dt class="hand-completed">Person preparing report (please print):</dt>
+  <dt class="hand-completed"><%= translate_helper("person_preparing_report_label") %></dt>
   <dd class="hand-completed"></dd>
 
-  <dt class="hand-completed">Title:</dt>
+  <dt class="hand-completed"><%= translate_helper("report_footer_title") %></dt>
   <dd class="hand-completed"></dd>
 
-  <dt class="hand-completed">Signature of person preparing report:</dt>
+  <dt class="hand-completed"><%= translate_helper("signature_of_person_preparing_report_label") %></dt>
   <dd class="hand-completed"></dt>
 
-  <dt class="hand-completed">Phone number:</dt>
+  <dt class="hand-completed"><%= translate_helper("phone_number") %></dt>
   <dd class="hand-completed"></dt>
 </dl>
-
-<%= link_to 'Back to Reports', reports_path, :class=>'action-bttn' %>

@@ -133,9 +133,10 @@ RSpec.describe ProvidersController, type: :controller do
 
   describe "POST #change_dispatch" do
     it "updates the dispatch flag on the requested provider" do
+      initial_dispatch_value = @current_user.current_provider.dispatch
       expect {
         post :change_dispatch, {:id => @current_user.current_provider.id, :dispatch => false}
-      }.to change{ @current_user.current_provider.reload.dispatch }.from(true).to(false)
+      }.to change{ @current_user.current_provider.reload.dispatch }.from(initial_dispatch_value).to(false)
     end
 
     it "redirects to the provider" do
@@ -145,6 +146,7 @@ RSpec.describe ProvidersController, type: :controller do
   end
 
   describe "POST #change_scheduling" do
+    
     it "updates the scheduling flag on the requested provider" do
       expect {
         post :change_scheduling, {:id => @current_user.current_provider.id, :scheduling => false}
@@ -166,44 +168,6 @@ RSpec.describe ProvidersController, type: :controller do
 
     it "redirects to the provider" do
       post :change_allow_trip_entry_from_runs_page, {:id => @current_user.current_provider.id, :allow_trip_entry_from_runs_page => true}
-      expect(response).to redirect_to(@current_user.current_provider)
-    end
-  end
-
-  describe "POST #save_region" do
-    it "updates the region_nw_corner flag on the requested provider" do
-      expect {
-        post :save_region, {:id => @current_user.current_provider.id, :region_north => 1.0, :region_west => 1.0}
-      }.to change{ @current_user.current_provider.reload.region_nw_corner }.from(nil)
-    end
-
-    it "updates the region_se_corner flag on the requested provider" do
-      expect {
-        post :save_region, {:id => @current_user.current_provider.id, :region_south => 1.0, :region_east => 1.0}
-      }.to change{ @current_user.current_provider.reload.region_se_corner }.from(nil)
-    end
-
-    it "redirects to the provider" do
-      post :save_region, {:id => @current_user.current_provider.id}
-      expect(response).to redirect_to(@current_user.current_provider)
-    end
-  end
-
-  describe "POST #save_viewport" do
-    it "updates the viewport_zoom flag on the requested provider" do
-      expect {
-        post :save_viewport, {:id => @current_user.current_provider.id, :viewport_lat => 1.0, :viewport_lng => 1.0}
-      }.to change{ @current_user.current_provider.reload.viewport_zoom }.from(nil)
-    end
-
-    it "updates the viewport_center flag on the requested provider" do
-      expect {
-        post :save_viewport, {:id => @current_user.current_provider.id, :viewport_lat => 1.0, :viewport_lng => 1.0, :viewport_zoom => "1"}
-      }.to change{ @current_user.current_provider.reload.viewport_center }.from(nil)
-    end
-
-    it "redirects to the provider" do
-      post :save_viewport, {:id => @current_user.current_provider.id, :viewport_lat => 1.0, :viewport_lng => 1.0}
       expect(response).to redirect_to(@current_user.current_provider)
     end
   end
@@ -230,6 +194,57 @@ RSpec.describe ProvidersController, type: :controller do
           post :change_reimbursement_rates, {:id => @current_user.current_provider.id, :bad_reimbursement_rate => 0.99}
         }.to_not change{ @current_user.current_provider.reload }
       end
+    end
+  end
+
+  describe "POST #change_fields_required_for_run_completion" do
+    it "updates the fields_required_for_run_completion flag on the requested provider" do
+      expect {
+        post :change_fields_required_for_run_completion, {:id => @current_user.current_provider.id, :fields_required_for_run_completion => Run::FIELDS_FOR_COMPLETION}
+      }.to change{ @current_user.current_provider.reload.fields_required_for_run_completion }.from([])
+    end
+
+    it "redirects to the provider" do
+      post :change_fields_required_for_run_completion, {:id => @current_user.current_provider.id, :fields_required_for_run_completion => []}
+      expect(response).to redirect_to(@current_user.current_provider)
+    end
+  end
+
+  describe "POST #save_region" do
+    it "updates the region_nw_corner flag on the requested provider" do
+      expect {
+        post :save_region, {:id => @current_user.current_provider.id, :region_north => 1.0, :region_west => 1.0}
+      }.to change{ @current_user.current_provider.reload.region_nw_corner }.from(nil)
+    end
+
+    it "updates the region_se_corner flag on the requested provider" do
+      expect {
+        post :save_region, {:id => @current_user.current_provider.id, :region_south => 1.0, :region_east => 1.0}
+      }.to change{ @current_user.current_provider.reload.region_se_corner }.from(nil)
+    end
+
+    it "redirects to the provider" do
+      post :save_region, {:id => @current_user.current_provider.id}
+      expect(response).to redirect_to(provider_url @current_user.current_provider, anchor: "region")
+    end
+  end
+
+  describe "POST #save_viewport" do
+    it "updates the viewport_zoom flag on the requested provider" do
+      expect {
+        post :save_viewport, {:id => @current_user.current_provider.id, :viewport_lat => 1.0, :viewport_lng => 1.0}
+      }.to change{ @current_user.current_provider.reload.viewport_zoom }.from(nil)
+    end
+
+    it "updates the viewport_center flag on the requested provider" do
+      expect {
+        post :save_viewport, {:id => @current_user.current_provider.id, :viewport_lat => 1.0, :viewport_lng => 1.0, :viewport_zoom => "1"}
+      }.to change{ @current_user.current_provider.reload.viewport_center }.from(nil)
+    end
+
+    it "redirects to the provider" do
+      post :save_viewport, {:id => @current_user.current_provider.id, :viewport_lat => 1.0, :viewport_lng => 1.0}
+      expect(response).to redirect_to(provider_url @current_user.current_provider, anchor: "viewport")
     end
   end
   

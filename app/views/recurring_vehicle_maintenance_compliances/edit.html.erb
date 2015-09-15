@@ -1,0 +1,40 @@
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: false, tab_class: 'admin' %>
+
+<div id="page-header" class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1><%= translate_helper("edit_recurring_vehicle_maintenance_compliance_heading") %></h1>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <div class="pull-right">
+      <button class="btn action-button" id="recurring_vehicle_maintenance_compliance_form_submit">
+        <%= translate_helper("update") %>
+      </button>
+      <%= link_to translate_helper("cancel"), @recurring_vehicle_maintenance_compliance, class: "btn action-button" %>
+    </div>
+  </div>
+</div>
+
+<% if @readonly %>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h2 class="panel-title"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_readonly_notice_heading") %></h2>
+    </div>
+    <div class="panel-body">
+      <p><%= translate_helper("recurring_vehicle_maintenance_compliance_form_readonly_notice") %></p>
+    </div>
+  </div>
+<% else %>
+  <%= render partial: "new_event_notice" %>
+<% end %>
+
+<%= render partial: "form" %>
+
+<%= javascript_tag do %>
+  $(document).ready(function(){
+    $("form.edit_recurring_vehicle_maintenance_compliance .form-actions").hide();
+    
+    $("#recurring_vehicle_maintenance_compliance_form_submit").on("click", function(){
+      $("form.edit_recurring_vehicle_maintenance_compliance").submit();
+    });
+  });
+<% end %>

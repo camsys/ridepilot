@@ -9,16 +9,17 @@
 ActiveRecord::Base.transaction do
   puts "Seeding..."
 
-  unless Provider.ride_connection.present?
-    puts "Creating first Provider..."
-    provider = Provider.new(:name => 'Ride Connection', :dispatch => true)
-    provider.logo = File.open(Rails.root.join("public", "ride_connection_logo.png"))
+  puts "Creating first provider and system admin..."
+  if !Provider.first.present?
+    puts "Creating first Provider UTA..."
+    provider = Provider.new(:name => 'UTA', :dispatch => true)
+    #provider.logo = File.open(Rails.root.join("public", "uta_logo.png"))
     provider.save!
   
     puts "Creating first User..."
-    password = "password 1"
+    password = Rails.application.secrets.system_admin_password
     user = User.create!(
-      :email => "admin@rideconnection.org",
+      :email => Rails.application.secrets.system_admin_email,
       :password => password,
       :password_confirmation => password,
       :current_provider => provider
@@ -28,22 +29,19 @@ ActiveRecord::Base.transaction do
     Role.create!(
       :user => user,
       :provider => provider, 
-      :level => 100
+      :level => 200
     )
   end
 
-  Region.find_or_create_by!(:name => "TriMet") do |region|
-    puts "Creating TriMet Region..."
-    f = File.new(Rails.root.join('db', 'trimet.wkt'))
-    wkt = f.read
-    f.close
-    region.the_geom = RGeo::Geos.factory(srid: 4326).parse_wkt(wkt)
-  end
+  puts "Creating lookup tables..."
+  Rake::Task["ridepilot:seed_lookup_tables"].invoke
 
-  puts "Creating initial mobilities..."
-  ["Scooter", "Wheelchair", "Wheelchair - Oversized", "Wheelchair - Can Transfer", "Unknown", "Ambulatory"].each do |name|
-    Mobility.find_or_create_by!(:name => name)
-  end
+  puts "Seeding translations"
+  Rake::Task["ridepilot:load_locales"].invoke
+
+  puts "Seeding custom reports"
+  Rake::Task["ridepilot:seed_custom_reports"].invoke
 
   puts "Done seeding"
+
 end

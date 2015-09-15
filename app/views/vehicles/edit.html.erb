@@ -1,10 +1,29 @@
-<div id="page-header">
-  <h1>Edit Vehicle</h1>
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'vehicles' %>
+
+<div id="page-header" class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1><%= translate_helper("edit_vehicle_heading") %></h1>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <% if can? :manage, @vehicle %>
+      <div class="pull-right">
+        <button class="btn action-button" id="vehicle_form_submit">
+          <%= translate_helper("save") %>
+        </button>
+        <%= link_to translate_helper("cancel"), @vehicle, class: "btn action-button" %>
+      </div>
+    <% end %>
+  </div>
 </div>
 
-<%= render :partial=>"form" %>
+<%= render partial: "form" %>
 
-<% if current_user && can?(:edit, Provider) %>
-<hr />
-<%= link_to 'Back', provider_path(current_user.current_provider), :class=>'action-bttn' %>
+<%= javascript_tag do %>
+  $(document).ready(function(){
+    $("form.edit_vehicle .form-actions").hide();
+    
+    $("#vehicle_form_submit").on("click", function(){
+      $("form.edit_vehicle").submit();
+    });
+  });
 <% end %>

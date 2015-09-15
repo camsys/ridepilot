@@ -1,0 +1,34 @@
+<div id="page-header" class="clearfix">
+  <h1><%= translate_helper("application_settings_heading")%></h1>
+</div>
+
+<table class="application-settings-list">
+  <thead>
+    <tr>
+      <th><%= translate_helper("application_settings_setting") %></th>
+      <th><%= translate_helper("application_settings_configured_value") %></th>
+      <th><%= translate_helper("application_settings_applied_value") %></th>
+      <th><%= translate_helper("application_settings_default_value") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= translate_helper("application_settings_password_archiving_count") %></td>
+      <td><%= ApplicationSetting.all['devise.password_archiving_count'] %></td>
+      <td><%= Devise.password_archiving_count %></td>
+      <td><%= ApplicationSetting.defaults['devise.password_archiving_count'] %></td>
+    </tr>
+    <tr>
+      <td><%= translate_helper("application_settings_expire_password_after") %> <sup><a href="#fn1">1</a></sup></td>
+      <td><%= (ApplicationSetting.all['devise.expire_password_after'] || 0).to_i / 1.day %> days</td>
+      <td><%= (Devise.expire_password_after || 0).to_i / 1.day %> days</td>
+      <td><%= (ApplicationSetting.defaults['devise.expire_password_after'] || 0).to_i / 1.day %> days</td>
+    </tr>
+  </tbody>
+</table>
+
+<p id="fn1"><small><sup>1</sup> A password expiration setting of zero means automatic password expiration is disabled</small></p>
+
+<hr/>
+
+<%= link_to translate_helper("application_settings_edit_link_text"), {action: :edit}, class: 'action-bttn' %>

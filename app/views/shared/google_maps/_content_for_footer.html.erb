@@ -1,0 +1,39 @@
+<%= javascript_include_tag "//maps.google.com/maps/api/js?v=3.12&sensor=false" %>
+<%= javascript_include_tag "google_map.js" %>
+<%= javascript_tag do %>
+  var GoogleMapDefaults = {
+    <% if current_user.current_provider.viewport_center && current_user.current_provider.viewport_zoom %>
+      // Setup the viewport according to the provider settings
+      viewport: {
+        center_lat: <%= current_user.current_provider.viewport_center.y %>, 
+        center_lng: <%= current_user.current_provider.viewport_center.x %>,
+        zoom: <%= current_user.current_provider.viewport_zoom %>
+      },
+    <% else %>
+      // Provider settings not defined, use Salt Lake City as default
+      viewport: {
+        center_lat: <%= GOOGLE_MAP_DEFAULTS[:viewport][:center_lat] %>,
+        center_lng: <%= GOOGLE_MAP_DEFAULTS[:viewport][:center_lng] %>,
+        zoom: <%= GOOGLE_MAP_DEFAULTS[:viewport][:zoom] %>
+      },
+    <% end %>
+  
+    <% if current_user.current_provider.region_nw_corner && current_user.current_provider.region_se_corner %>
+      // Setup the bounds according to the provider settings
+      bounds: {
+        north: <%= current_user.current_provider.region_nw_corner.y %>,
+        west:  <%= current_user.current_provider.region_nw_corner.x %>,
+        south: <%= current_user.current_provider.region_se_corner.y %>,
+        east:  <%= current_user.current_provider.region_se_corner.x %>
+      }
+    <% else %>
+      // Provider settings not defined, use Utah area as default
+      bounds: {
+        north: <%= GOOGLE_MAP_DEFAULTS[:bounds][:north] %>,
+        west:  <%= GOOGLE_MAP_DEFAULTS[:bounds][:west] %>,
+        south: <%= GOOGLE_MAP_DEFAULTS[:bounds][:south] %>,
+        east:  <%= GOOGLE_MAP_DEFAULTS[:bounds][:east] %>
+      }
+    <% end %>
+  };
+<% end %>

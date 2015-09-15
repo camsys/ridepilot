@@ -1,12 +1,14 @@
 require "rails_helper"
 
 RSpec.describe Customer do
-  describe "default_service_level" do
-    it "should be a string field" do
+  describe "service_level_id" do
+    it "should be an integer field" do
       c = Customer.new
-      expect(c).to respond_to(:default_service_level)
-      c.default_service_level = "abc"
-      expect(c.default_service_level).to eq("abc")
+      expect(c).to respond_to(:service_level_id)
+      c.service_level_id = "1"
+      expect(c.service_level_id).to eq 1
+      c.service_level_id = "0"
+      expect(c.service_level_id).to eq 0
     end
   end
   

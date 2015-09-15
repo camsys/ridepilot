@@ -1,0 +1,13 @@
+%table#tripsTable
+  %tr
+    %th
+    %th
+    %th= translate_helper("pickup_time_column") 
+    %th= translate_helper("appointment_time_column") 
+    %th= translate_helper("customer_column")
+    %th= translate_helper("pickup_address_column") 
+    %th= translate_helper("dropoff_address_column")
+    %th= translate_helper("trip_status_column")
+
+  - @trips.each do |trip|
+    = render "trip_row", :trip => trip 

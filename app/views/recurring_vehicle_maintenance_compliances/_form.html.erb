@@ -1,0 +1,252 @@
+<%= form_for @recurring_vehicle_maintenance_compliance do |f| %>
+  <% if @recurring_vehicle_maintenance_compliance.errors.any? %>
+    <div class="panel panel-danger">
+      <div class="panel-heading"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_error", count: @recurring_vehicle_maintenance_compliance.errors.count) %></div>
+      <div class="panel-body">
+        <ul>
+          <% @recurring_vehicle_maintenance_compliance.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+  
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_details_header") %></div>
+        <div class="panel-body form-horizontal">
+          <div class="form-group">
+            <%= f.label :event_name, translate_helper("recurring_vehicle_maintenance_compliance_form_event_name"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :event_name, class: "form-control", disabled: @all_readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :event_notes, translate_helper("recurring_vehicle_maintenance_compliance_form_event_notes"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_area :event_notes, class: "form-control", rows: 3, disabled: @all_readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :recurrence_notes, translate_helper("recurring_vehicle_maintenance_compliance_form_recurrence_notes"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_area :recurrence_notes, class: "form-control", rows: 3, disabled: @all_readonly %>
+            </div>
+          </div>  
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
+
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_recurrence_schedule_header") %></div>
+        <div class="panel-body form-horizontal">
+          <div class="form-group">
+            <%= f.label :recurrence_type, translate_helper("recurring_vehicle_maintenance_compliance_form_recurrence_type"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.select :recurrence_type, VehicleMaintenanceCompliance::DUE_TYPES.map(&:to_s), { selected: @recurring_vehicle_maintenance_compliance.recurrence_type }, class: "form-control updates-schedule-preview schedule-preview-required updates-future-schedule-preview future-schedule-preview-required", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group recurrence-rule-date">
+            <%= f.label :recurrence_frequency, translate_helper("recurring_vehicle_maintenance_compliance_form_recurrence_frequency"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.number_field :recurrence_frequency, min: 1, class: "form-control updates-schedule-preview schedule-preview-required updates-future-schedule-preview future-schedule-preview-required", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group recurrence-rule-date">
+            <%= f.label :recurrence_schedule, translate_helper("recurring_vehicle_maintenance_compliance_form_recurrence_schedule"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.select :recurrence_schedule, RecurringVehicleMaintenanceCompliance::RECURRENCE_SCHEDULES.map(&:to_s), { selected: @recurring_vehicle_maintenance_compliance.recurrence_schedule }, class: "form-control updates-schedule-preview schedule-preview-required updates-future-schedule-preview future-schedule-preview-required", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group recurrence-rule-date">
+            <%= f.label :start_date, translate_helper("recurring_vehicle_maintenance_compliance_form_start_date"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <div class="input-group datepicker-icon">
+                <%= f.text_field :start_date, class: "form-control datepicker updates-schedule-preview schedule-preview-required updates-future-schedule-preview future-schedule-preview-required", disabled: @readonly %>
+                <div class="input-group-btn">
+                  <button class="btn btn-default" type="button" <%= "disabled=\"disabled\"" if @readonly %>>
+                    <%= image_tag "calendar-clock.png" %>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group recurrence-rule-mileage">
+            <%= f.label :recurrence_mileage, translate_helper("recurring_vehicle_maintenance_compliance_form_recurrence_mileage"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.number_field :recurrence_mileage, min: 1, class: "form-control updates-schedule-preview schedule-preview-required updates-future-schedule-preview future-schedule-preview-required", disabled: @readonly %>
+            </div>
+          </div>  
+        </div><!-- END .panel-body -->
+        <div class="panel-footer schedule-preview-panel">
+          <%= render partial: "schedule_preview" %>
+        </div><!-- END .panel-footer -->        
+      </div><!-- END .panel -->
+    </div><!-- END .col-md-6 -->
+
+    <div class="col-sm-12 col-md-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_compliance_based_scheduling_heading") %></div>
+        <div class="panel-body form-horizontal">
+          <div class="checkbox">
+            <%= f.label :compliance_based_scheduling do %>
+              <%= f.check_box :compliance_based_scheduling, disabled: @readonly, class: "updates-schedule-preview updates-future-schedule-preview" %>
+              <%= translate_helper("recurring_vehicle_maintenance_compliance_form_compliance_based_scheduling") %>
+            <% end %>
+          </div>
+        </div><!-- END .panel-body -->
+        <div class="panel-footer compliance-date-based-schedule-preview-panel">
+          <%= render partial: "compliance_based_schedule_preview" %>
+        </div><!-- END .panel-footer -->
+      </div><!-- END .panel -->
+
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("recurring_vehicle_maintenance_compliance_recurrence_future_scheduling_heading") %></div>
+        <div class="panel-body form-horizontal">
+          <div class="form-group">
+            <%= f.label :future_start_rule, translate_helper("recurring_vehicle_maintenance_compliance_form_future_start_rule"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.select :future_start_rule, RecurringVehicleMaintenanceCompliance::FUTURE_START_RULES.collect{ |rule| [translate_helper("recurring_vehicle_maintenance_compliance_form_future_start_rule_#{rule.to_s}") ,rule.to_s] }, { selected: @recurring_vehicle_maintenance_compliance.future_start_rule }, class: "form-control updates-future-schedule-preview future-schedule-preview-required", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group future-start-rule-time-span">
+            <%= f.label :future_start_frequency, translate_helper("recurring_vehicle_maintenance_compliance_form_future_start_frequency"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.number_field :future_start_frequency, min: 1, class: "form-control updates-future-schedule-preview future-schedule-preview-required", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group future-start-rule-time-span">
+            <%= f.label :future_start_schedule, translate_helper("recurring_vehicle_maintenance_compliance_form_future_start_schedule"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.select :future_start_schedule, RecurringVehicleMaintenanceCompliance::RECURRENCE_SCHEDULES.map(&:to_s), { selected: @recurring_vehicle_maintenance_compliance.future_start_schedule }, class: "form-control updates-future-schedule-preview future-schedule-preview-required", disabled: @readonly %>
+            </div>
+          </div>
+        </div><!-- END .panel-body -->
+        <div class="panel-footer future-schedule-preview-panel">
+          <%= render partial: "future_schedule_preview" %>
+        </div><!-- END .panel-footer -->
+      </div><!-- END .panel -->
+    </div><!-- END .col-md-6 -->
+  </div><!-- END .row -->
+  <% unless @all_readonly %>
+    <div class="row form-actions"><%= f.submit translate_helper("recurring_vehicle_maintenance_compliance_form_submit"), class: "btn action-button" %></div>
+  <% end %>
+<% end %> 
+
+<%= javascript_tag do %>
+  $(document).ready(function(){
+    $("#recurring_vehicle_maintenance_compliance_recurrence_type").on("change", function() {
+      if (RecurringVehicleMaintenanceCompliance.recurrence_type_is("mileage")) {
+        $(".recurrence-rule-mileage").fadeIn();
+        $(".recurrence-rule-date").fadeOut();
+      } else if (RecurringVehicleMaintenanceCompliance.recurrence_type_is("date")) {
+        $(".recurrence-rule-mileage").fadeOut();
+        $(".recurrence-rule-date").fadeIn();
+      } else {
+        $(".recurrence-rule-mileage").fadeIn();
+        $(".recurrence-rule-date").fadeIn();
+      }
+    }).trigger("change");
+
+    $("#recurring_vehicle_maintenance_compliance_future_start_rule").on("change", function() {
+      if (RecurringVehicleMaintenanceCompliance.future_start_rule_is("time_span")) {
+        $(".future-start-rule-time-span").fadeIn();
+      } else {
+        $(".future-start-rule-time-span").fadeOut();
+      }
+    }).trigger("change");
+
+    $("#recurring_vehicle_maintenance_compliance_compliance_based_scheduling").on("change", function() {
+      if ($(this).is(":checked")) {
+        $(".compliance-date-based-schedule-preview-panel").fadeIn();
+      } else {
+        $(".compliance-date-based-schedule-preview-panel").fadeOut();
+      }
+    }).trigger("change");
+  
+    <% unless @readonly %>
+      $(".updates-schedule-preview").on("change", function() {
+        RecurringVehicleMaintenanceCompliance.updateSchedulePreview(
+          $(".schedule-preview-panel"),
+          $(".schedule-preview-required:visible"),
+          $(".updates-schedule-preview"),
+          '<p class="text-muted"><%= j translate_helper("recurring_vehicle_maintenance_compliance_form_schedule_preview_placeholder_text") %></p>',
+          '<%= j schedule_preview_recurring_vehicle_maintenance_compliances_path %>',
+          'An error occurred generating the schedule preview.'
+        );
+
+        if ($("#recurring_vehicle_maintenance_compliance_compliance_based_scheduling").is(":checked")) {
+          RecurringVehicleMaintenanceCompliance.updateSchedulePreview(
+            $(".compliance-date-based-schedule-preview-panel"),
+            $(".schedule-preview-required:visible"),
+            $(".updates-schedule-preview"),
+            '<p class="text-muted"><%= j translate_helper("recurring_vehicle_maintenance_compliance_form_compliance_based_schedule_preview_placeholder_text") %></p>',
+            '<%= j compliance_based_schedule_preview_recurring_vehicle_maintenance_compliances_path %>',
+            'An error occurred generating the compliance based schedule preview.'
+          );
+        }
+      });
+  
+      $(".updates-future-schedule-preview").on("change", function() {
+        if (RecurringVehicleMaintenanceCompliance.future_start_rule_is("time_span")) {
+          var $schedulingInputs = $(".future-schedule-preview-required:visible");
+          var defaultPreviewText = '<p class="text-muted"><%= j translate_helper("recurring_vehicle_maintenance_compliance_form_future_schedule_time_span_preview_placeholder_text") %></p>';
+        }
+        else if (RecurringVehicleMaintenanceCompliance.future_start_rule_is("on_schedule")) {
+          var $schedulingInputs = $(".schedule-preview-required:visible");
+          var defaultPreviewText = '<p class="text-muted"><%= j translate_helper("recurring_vehicle_maintenance_compliance_form_future_schedule_on_schedule_preview_placeholder_text") %></p>';
+        }
+        else {
+          var $schedulingInputs = $(".schedule-preview-required:visible");
+          var defaultPreviewText = '<p class="text-muted"><%= j translate_helper("recurring_vehicle_maintenance_compliance_form_future_schedule_immediately_preview_placeholder_text") %></p>';
+        }  
+      
+        RecurringVehicleMaintenanceCompliance.updateSchedulePreview(
+          $(".future-schedule-preview-panel"),
+          $schedulingInputs,
+          $(".updates-future-schedule-preview"),
+          defaultPreviewText,
+          '<%= j future_schedule_preview_recurring_vehicle_maintenance_compliances_path %>',
+          'An error occurred generating the future schedule preview.'
+        );
+      });
+    <% end %>
+  });
+
+  var RecurringVehicleMaintenanceCompliance = {
+    recurrence_type_is: function (rule) {
+      return !!($("#recurring_vehicle_maintenance_compliance_recurrence_type").val() == rule);
+    },
+
+    future_start_rule_is: function (rule) {
+      return !!($("#recurring_vehicle_maintenance_compliance_future_start_rule").val() == rule);
+    },
+
+    updateSchedulePreview: function ($previewContainer, $schedulingInputs, $formInputs, defaultPreviewText, targetUrl, errorText) {
+      var previewTarget = $previewContainer.find(".schedule-preview");
+      RecurringVehicleMaintenanceCompliance.fadeInText(previewTarget, defaultPreviewText);
+      if ($schedulingInputs.filter(function() { return $(this).val() == ""; }).length == 0) {
+        RecurringVehicleMaintenanceCompliance.fadeInText(previewTarget, "Calculating...");
+        $.get(targetUrl, $formInputs.serialize(), function(data) {
+          // Replace the whole footer panel content
+          RecurringVehicleMaintenanceCompliance.fadeInText($previewContainer, data);
+        })
+        .fail(function() {
+          console.log(errorText, arguments);
+          // Replace only the date list
+          RecurringVehicleMaintenanceCompliance.fadeInText(previewTarget, '<p class="text-warning">' + errorText + ' Please make sure all scheduling fields are complete and valid.</p>');
+        })
+      } else {
+        // Replace only the date list
+        RecurringVehicleMaintenanceCompliance.fadeInText(previewTarget, defaultPreviewText);
+      }
+    },
+
+    fadeInText: function (target, new_text) {
+      if (new_text != target.html()) {
+        target.fadeOut(function(){ target.html(new_text).fadeIn(); });
+      }
+    }
+  };
+<% end %>

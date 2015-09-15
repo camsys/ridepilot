@@ -1,0 +1,23 @@
+.col-sm-12#calendar{style: 'padding: 0px;'}
+- resources = [] if !defined? resources
+- events = [] if !defined? events
+- currentDate = nil if !defined? currentDate
+
+:javascript
+  $(document).ready(function() { 
+
+    $('#calendar').fullCalendar({
+      currentDate: new Date(#{currentDate}),
+      header: false,
+      defaultView: 'resourceDay',
+      minTime: RidePilot.business_hours.start,
+      slotMinutes: 60,
+      maxTime:RidePilot.business_hours.end,
+      columnFormat: 'h(:mm)tt',
+      resources: #{resources},
+      events: #{events},
+      eventClick: function ( event, jsEvent, view )  {
+        window.location.href = "#{base_path}/" + event.id;
+      }
+    });
+  });

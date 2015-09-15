@@ -1,0 +1,12 @@
+= render 'form', edit_mode: :show, is_group: @customer.group
+
+.col-sm-12
+  = render 'trips'
+
+:javascript
+  $(document).ready(function() {
+    $(".customer_form :input").attr("disabled","disabled");
+    $('#inactivateCustomer').removeAttr('disabled');
+    $(".address-form :input").attr("disabled","disabled");
+    $('.ui-dialog button').hide();
+  });

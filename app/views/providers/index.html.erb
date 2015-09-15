@@ -1,11 +1,11 @@
-<div id="page-header">
-  <h1>Providers</h1>
+<div id="page-header" class="clearfix">
+  <h1><%= translate_helper("provider_index_heading") %></h1>
 </div>
 
 <table>
 <tr>
-  <th>Name</th>
-  <th>Users</th>
+  <th><%= translate_helper("provider_index_name") %></th>
+  <th><%= translate_helper("provider_index_users") %></th>
   <th></th>
 </tr>
 
@@ -13,11 +13,11 @@
 <tr>
 <td><%= provider.name %></td>
 <td><%= provider.users.size %></td>
-<td><%= link_to "Details", provider_path(provider) %></td>
+<td><%= link_to translate_helper("provider_index_details"), provider_path(provider) %></td>
 </tr>
 <% end %>
 </table>
 
 <% if can? :edit, Provider %>
-<p><%= link_to "New Provider", new_provider_path, :class=>'action-bttn new-provider' %></p>
+<p><%= link_to translate_helper("new_provider_link_text"), new_provider_path, :class=>'action-bttn new-provider' %></p>
 <% end %>

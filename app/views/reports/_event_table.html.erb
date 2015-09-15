@@ -1,12 +1,12 @@
 <table>
 <tr>
-<th>Service Date</th>
-<th>Service Performed</th>
-<th>Odometer Reading</th>
-<th>Vendor</th>
-<th>Invoice Date</th>
-<th>Invoice Number</th>
-<th>Invoice Amount</th>
+<th><%= translate_helper("service_date") %></th>
+<th><%= translate_helper("service_performed") %></th>
+<th><%= translate_helper("odometer_reading") %></th>
+<th><%= translate_helper("vendor") %></th>
+<th><%= translate_helper("invoice_date") %></th>
+<th><%= translate_helper("invoice_number") %></th>
+<th><%= translate_helper("invoice_amount") %></th>
 </tr>
 <% for event in @noncovered_events %> 
 <tr>

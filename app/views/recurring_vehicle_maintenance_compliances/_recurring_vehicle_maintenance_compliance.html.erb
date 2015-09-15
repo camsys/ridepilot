@@ -1,0 +1,20 @@
+<tr>
+  <td>
+    <%= link_to recurring_vehicle_maintenance_compliance.event_name, recurring_vehicle_maintenance_compliance %>
+  </td>
+  <td>
+    <%= recurring_vehicle_maintenance_compliance.recurrence_type %>
+  </td>
+  <td>
+    <%= recurring_vehicle_maintenance_compliance.start_date.try(:to_s, :long) %>
+  </td>
+  <td>
+    <%= schedule_string recurring_vehicle_maintenance_compliance %>
+  </td>
+  <td>
+    <%= recurring_vehicle_maintenance_compliance.compliance_based_scheduling? ? translate_helper("yes") : translate_helper("no") %>
+  </td>
+  <td>
+    <%= recurring_vehicle_maintenance_compliance.vehicle_maintenance_compliances.any? ? translate_helper("yes") : translate_helper("no") %>
+  </td>
+</tr>

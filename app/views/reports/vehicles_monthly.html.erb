@@ -1,17 +1,16 @@
-<%= content_for :title, "Vehicle Operations: #{@provider.name}, #{@start_date.strftime("%B %Y")}" %>
+<%= render 'custom_report_header'%>
+<%= content_for :title, translate_helper("vehicle_operations_title",provider:@provider.name,start_date:@start_date.strftime("%B %Y")) %>
 
-<div id="page-header">
-  <h1>Vehicle Operations Report</h1>
-</div>
-
+<div class="filter-form" style="padding-top: 10px;">
 <%= form_for @query, :url=>url_for(:action=>:vehicles_monthly), :html=>{:method=>:get} do |f| %>
   <fieldset class="select-month">
     <p>
-      <%= f.date_select  :start_date, :order => [:month,:year] %>
-      <%= f.submit "Report" %>
+      <%= f.date_select  :start_date, :order => [:month,:year] rescue nil%>
+      <%= f.submit translate_helper("vehicle_operations_submit") %>
     </p>
   </fieldset>
 <% end %>
+</div>
 
 <%= render :partial => 'header' %>
 
@@ -19,30 +18,30 @@
   <table>
     <tr>
       <th colspan="8" class="table-header print-only">
-        Vehicle Operations Report
+        <%= translate_helper("vehicle_operations_heading") %>
       </th>
     </tr>
     <tr>
       <th colspan="2">
-        Vehicle Year/Make/Model (Internal Name)
+        <%= translate_helper("vehicle_operations_ymm_label") %>
       </th>
       <th class="data">
-        Total Trips
+        <%= translate_helper("total_trips") %>
       </th>
       <th class="data">
-        Hours in Operation
+        <%= translate_helper("hours_in_operation") %>
       </th>
       <th class="data">
-        Avg Rides per Hour
+        <%= translate_helper("average_rides_per_hour") %>
       </th>
       <th class="data">
-        Start Odometer
+        <%= translate_helper("start_odometer") %>
       </th>
       <th class="data">
-        End Odometer
+        <%= translate_helper("end_odometer") %>
       </th>
       <th class="data">
-        Mileage
+        <%= translate_helper("mileage") %>
       </th>
     </tr>
 
@@ -63,16 +62,16 @@
         <td class="numeric"><%= @ending_odometer[vehicle] == -1 || @beginning_odometer[vehicle] == -1 ? 'N/A' : @ending_odometer[vehicle] - @beginning_odometer[vehicle] %></td>
       </tr>
       <tr>
-        <th>VIN:</th>
+        <th><%= translate_helper("vin") %></th>
         <td><%= vehicle.vin %></td>
         <td colspan="6" rowspan="3"></td>
       </tr>
       <tr>
-        <th>License Plate:</th>
+        <th><%= translate_helper("license_plate") %></th>
         <td><%= vehicle.license_plate %></td>
       </tr>
       <tr>
-        <th>Garaged Address:</th>
+        <th><%= translate_helper("garaged_location") %></th>
         <td><%= vehicle.garaged_location %></td>
       </tr>
     <% end %>

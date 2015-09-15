@@ -1,0 +1,6 @@
+<%= form_for @trips_query, :url=>url_for(:action=>:cctc_summary_report), :html=>{:method=>:get} do |f| %>
+  <fieldset>
+    <%= f.date_select :start_date, :order => [:month,:year] rescue nil%>
+    <%= f.submit translate_helper("show") %>
+  </fieldset>
+<% end %>

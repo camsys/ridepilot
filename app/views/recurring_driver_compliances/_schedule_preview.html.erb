@@ -1,0 +1,9 @@
+<% count = @recurring_driver_compliance.compliance_based_scheduling? ? 1 : 6 %>
+<p><strong><%= translate_helper("recurring_driver_compliance_form_schedule_preview_header", count: count) %></strong></p>
+<div class="schedule-preview">
+  <% if @schedule_preview.present? %>
+    <%= render partial: "preview_dates", locals: {dates: @schedule_preview} %>
+  <% else %>
+    <p class="text-muted"><%= translate_helper("recurring_driver_compliance_form_schedule_preview_placeholder_text") %></p>
+  <% end %>
+</div>

@@ -1,0 +1,43 @@
+.panel.panel-primary.filters-panel#run_filter_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:run_filter)
+  .panel-body{style: 'padding: 5px;'}
+    = form_for :run_filters, url: runs_path, html: { :id => "run_filter_form" }, :method => :get do |f|
+      =f.hidden_field :days_of_week, class: 'days_of_week_hidden_field'
+      .btns.pull-right
+        = f.submit  translate_helper(:ok), id: 'runFilters', class: 'btn action-button', role: 'button'
+        = button_tag  translate_helper(:reset), id: 'resetFilters', class: 'btn action-button', role: 'button'
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :start, translate_helper("from_date")
+        = f.text_field :start, :value => format_time_for_listing_day(@start_pickup_date), class: 'date-picker form-control', readonly: true
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :end, translate_helper("to_date")
+        = f.text_field :end, :value => format_time_for_listing_day(@end_pickup_date), class: 'date-picker form-control', readonly: true
+      .col-sm-12{style: 'padding: 5px;'}
+        = render partial: 'trips/weekday_select'
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :vehicle_id, translate_helper(:vehicle)
+        = f.select :vehicle_id, options_from_collection_for_select( @vehicles, :id, :name, session[:vehicle_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :driver_id, translate_helper(:driver)
+        = f.select :driver_id, options_from_collection_for_select( @drivers, :id, :name, session[:driver_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :run_result_id, translate_helper(:run_result)
+        = f.select :run_result_id, options_for_select( [[translate_helper(:complete), 1], [translate_helper(:incomplete), 2]], session[:run_result_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
+
+= render "shared/date_time_picker_javascript"
+:javascript
+  $(document).ready(function(){
+    makeDatePickers();
+
+    $('#resetFilters').on('click', function() {
+      $('#run_filter_form input').val('');
+      $('#run_filter_form select').val('');
+
+      $('#run_filter_form select').submit();
+    });
+
+  });
+      
+    

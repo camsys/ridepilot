@@ -1,0 +1,11 @@
+<div id="page-header" class="clearfix">
+  <h1><%= translate_helper("vehicle_maintenance_compliance_form_new_heading") %></h1>
+</div>
+
+<%= render partial: "form" %>
+
+<%= javascript_tag do %>
+  $(document).ready(function(){
+    <%= render partial: "javascript.js" %>
+  });
+<% end %>

@@ -8,24 +8,38 @@
 
 class RunsController < ApplicationController
   load_and_authorize_resource
-  before_filter :filter_runs, :only => :index
 
   def index
-    @runs = @runs.for_provider(current_provider_id)
+    Date.beginning_of_week= :sunday
+
+    @runs = Run.for_provider(current_provider_id).includes(:driver, :vehicle).order(:date)
+    filter_runs
+    
+    @drivers = Driver.where(:provider_id=>current_provider_id)
+    @vehicles = Vehicle.where(:provider_id=>current_provider_id)
+    @start_pickup_date = Time.at(session[:start].to_i).to_date
+    @end_pickup_date = Time.at(session[:end].to_i).to_date
+    @days_of_week = run_sessions[:days_of_week].blank? ? [0,1,2,3,4,5,6] : run_sessions[:days_of_week].split(',').map(&:to_i)
+
+    @runs_json = @runs.has_scheduled_time.map(&:as_calendar_json).to_json # TODO: sql refactor to improve performance
+    @day_resources = []
+
+    if @start_pickup_date > @end_pickup_date
+      flash.now[:alert] = TranslationEngine.translate_text(:from_date_cannot_later_than_to_date)
+    else
+      flash.now[:alert] = nil
+      @day_resources = (@start_pickup_date..@end_pickup_date).select{|d| @days_of_week.index(d.wday)}.map{|d| {
+        id:   d.to_s(:js), 
+        name: d.strftime("%a, %b %d,%Y"),
+        isDate: true
+        } }.to_json
+    end
+
+
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @trips }
-      format.js {
-        rows = if @runs.present?
-          @runs.map do |r|
-            render_to_string :partial => "row.html", :locals => { :run => r }
-          end 
-        else 
-          [render_to_string( :partial => "no_runs.html" )]
-        end
-
-        render :json => { :rows => rows }
-      }
+      format.xml  { render :xml => @runs }
+      format.json { render :json => @runs }
     end
   end
 
@@ -44,19 +58,22 @@ class RunsController < ApplicationController
     render "index"
   end
 
+  def show
+    setup_run
+  end
+
   def edit
     setup_run
-    @trip_results = TRIP_RESULT_CODES.map { |k,v| [v,k] }
   end
 
   def create
     authorize! :manage, current_provider
  
     @run = Run.new(run_params)
-    @run.provider_id = current_provider_id
+    @run.provider = current_provider
     
     respond_to do |format|
-      if @run.save
+      if @run.is_all_valid?(current_provider_id) && @run.save
         format.html { redirect_to(runs_path(date_range(@run)), :notice => 'Run was successfully created.') }
         format.xml  { render :xml => @run, :status => :created, :location => @run }
       else
@@ -83,12 +100,11 @@ class RunsController < ApplicationController
     end
                 
     respond_to do |format|
-      if @run.update_attributes(run_params)
+      if @run.is_all_valid?(current_provider_id) && @run.update_attributes(run_params)
         format.html { redirect_to(runs_path(date_range(@run)), :notice => 'Run was successfully updated.') }
         format.xml  { head :ok }
       else
         setup_run
-        @trip_results = TRIP_RESULT_CODES.map { |k,v| [v,k] }
         
         format.html { render :action => "edit" }
         format.xml  { render :xml => @run.errors, :status => :unprocessable_entity }
@@ -117,23 +133,8 @@ class RunsController < ApplicationController
   private
   
   def setup_run
-    @drivers = Driver.where(:provider_id=>@run.provider_id)
+    @drivers = Driver.active.where(:provider_id=>@run.provider_id)
     @vehicles = Vehicle.active.where(:provider_id=>@run.provider_id)
-  end
-  
-  def filter_runs
-    if params[:end].present? && params[:start].present?
-      @week_start = Time.at params[:start].to_i
-      @week_end   = Time.at params[:end].to_i
-    else
-      time     = Time.now
-      @week_start = time.beginning_of_week
-      @week_end   = @week_start + 6.days
-    end
-    
-    @runs = @runs.
-      where("date >= '#{@week_start.to_s(:db)}'").
-      where("date < '#{@week_end.to_s(:db)}'")
   end
 
   def date_range(run)
@@ -144,40 +145,97 @@ class RunsController < ApplicationController
   end
   
   def run_params
-    params.require(:run).permit(:name, :date, :start_odometer, :end_odometer, :scheduled_start_time, :scheduled_end_time, :unpaid_driver_break_time, :vehicle_id, :driver_id, :paid, :complete, :actual_start_time, :actual_end_time, :trips_attributes => [
-      :id,
-      :appointment_time,
-      :attendant_count,
-      :customer_id,
-      :customer_informed,
-      :donation,
-      :driver_id,
-      :dropoff_address_id,
-      :funding_source_id,
-      :group_size,
-      :guest_count,
-      :medicaid_eligible,
-      :mileage,
-      :mobility_id,
-      :notes,
-      :pickup_address_id,
-      :pickup_time,
+    params[:run][:repetition_driver_id] = params[:run][:driver_id]
+    params[:run][:repetition_vehicle_id] = params[:run][:vehicle_id]
+    params.require(:run).permit(
+      :name, 
+      :date, 
+      :start_odometer, 
+      :end_odometer, 
+      :scheduled_start_time, 
+      :scheduled_end_time, 
+      :unpaid_driver_break_time, 
+      :vehicle_id, 
+      :driver_id, 
+      :paid, 
+      :complete, 
+      :actual_start_time, 
+      :actual_end_time, 
       :repeats_fridays,
       :repeats_mondays,
       :repeats_thursdays,
       :repeats_tuesdays,
       :repeats_wednesdays,
-      :repetition_customer_informed,
       :repetition_driver_id,
       :repetition_interval,
       :repetition_vehicle_id,
-      :round_trip,
-      :run_id,
-      :service_level,
-      :trip_purpose,
-      :trip_result,
-      :vehicle_id,
-      customer_attributes: [:id]
-    ])
+      :trips_attributes => [
+        :id,
+        :appointment_time,
+        :attendant_count,
+        :customer_id,
+        :customer_informed,
+        :donation,
+        :driver_id,
+        :dropoff_address_id,
+        :funding_source_id,
+        :group_size,
+        :guest_count,
+        :medicaid_eligible,
+        :mileage,
+        :mobility_id,
+        :notes,
+        :pickup_address_id,
+        :pickup_time,
+        :repeats_fridays,
+        :repeats_mondays,
+        :repeats_thursdays,
+        :repeats_tuesdays,
+        :repeats_wednesdays,
+        :repetition_customer_informed,
+        :repetition_driver_id,
+        :repetition_interval,
+        :repetition_vehicle_id,
+        :round_trip,
+        :run_id,
+        :service_level_id,
+        :trip_purpose_id,
+        :trip_result_id,
+        :vehicle_id,
+        customer_attributes: [:id]
+      ]
+    )
+  end
+
+  def filter_runs
+    filters_hash = params[:run_filters] || {}
+    
+    update_sessions(filters_hash)
+
+    run_filter = RunFilter.new(@runs, run_sessions)
+    @runs = run_filter.filter!
+
+    update_sessions({
+      start: run_filter.filters[:start],
+      end: run_filter.filters[:end],
+      days_of_week: run_filter.filters[:days_of_week]
+      })
+  end
+
+  def update_sessions(params = {})
+    params.each do |key, val|
+      session[key] = val if !val.nil?
+    end
+  end
+
+  def run_sessions
+    {
+      start: session[:start],
+      end: session[:end], 
+      driver_id: session[:driver_id], 
+      vehicle_id: session[:vehicle_id],
+      run_result_id: session[:run_result_id], 
+      days_of_week: session[:days_of_week]
+    }
   end
 end

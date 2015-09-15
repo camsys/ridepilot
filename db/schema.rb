@@ -11,12 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150224063651) do
+ActiveRecord::Schema.define(version: 20150915132551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
   enable_extension "postgis_topology"
+  enable_extension "fuzzystrmatch"
+
+  create_table "address_upload_flags", force: true do |t|
+    t.boolean  "is_loading",          default: false
+    t.integer  "provider_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "last_upload_summary"
+  end
+
+  add_index "address_upload_flags", ["provider_id"], :name => "index_address_upload_flags_on_provider_id"
 
   create_table "addresses", force: true do |t|
     t.string   "name"
@@ -25,18 +36,42 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.string   "city"
     t.string   "state"
     t.string   "zip"
-    t.boolean  "in_district"
+    t.boolean  "in_district",                                                               default: false
     t.integer  "provider_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "lock_version",                                                                  default: 0
+    t.integer  "lock_version",                                                              default: 0
     t.string   "phone_number"
-    t.boolean  "inactive",                                                                      default: false
-    t.string   "default_trip_purpose"
-    t.spatial  "the_geom",             limit: {:srid=>4326, :type=>"point", :geographic=>true}
+    t.boolean  "inactive",                                                                  default: false
+    t.string   "trip_purpose_old"
+    t.spatial  "the_geom",         limit: {:srid=>4326, :type=>"point", :geographic=>true}
+    t.integer  "trip_purpose_id"
+    t.text     "notes"
+    t.datetime "deleted_at"
   end
 
+  add_index "addresses", ["deleted_at"], :name => "index_addresses_on_deleted_at"
+  add_index "addresses", ["provider_id"], :name => "index_addresses_on_provider_id"
   add_index "addresses", ["the_geom"], :name => "index_addresses_on_the_geom", :spatial => true
+  add_index "addresses", ["trip_purpose_id"], :name => "index_addresses_on_trip_purpose_id"
+
+  create_table "addresses_customers", force: true do |t|
+    t.integer  "customer_id"
+    t.integer  "address_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "addresses_customers", ["address_id"], :name => "index_addresses_customers_on_address_id"
+  add_index "addresses_customers", ["customer_id"], :name => "index_addresses_customers_on_customer_id"
+
+  create_table "custom_reports", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "redirect_to_results", default: false
+    t.string   "title"
+  end
 
   create_table "customers", force: true do |t|
     t.string   "first_name"
@@ -65,8 +100,28 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.string   "prime_number"
     t.integer  "default_funding_source_id"
     t.boolean  "ada_eligible"
-    t.string   "default_service_level"
+    t.string   "service_level_old"
+    t.integer  "service_level_id"
+    t.boolean  "is_elderly"
+    t.string   "gender"
+    t.datetime "deleted_at"
   end
+
+  add_index "customers", ["address_id"], :name => "index_customers_on_address_id"
+  add_index "customers", ["default_funding_source_id"], :name => "index_customers_on_default_funding_source_id"
+  add_index "customers", ["deleted_at"], :name => "index_customers_on_deleted_at"
+  add_index "customers", ["mobility_id"], :name => "index_customers_on_mobility_id"
+  add_index "customers", ["provider_id"], :name => "index_customers_on_provider_id"
+  add_index "customers", ["service_level_id"], :name => "index_customers_on_service_level_id"
+
+  create_table "customers_providers", id: false, force: true do |t|
+    t.integer "provider_id"
+    t.integer "customer_id"
+  end
+
+  add_index "customers_providers", ["customer_id", "provider_id"], :name => "index_customers_providers_on_customer_id_and_provider_id"
+  add_index "customers_providers", ["customer_id"], :name => "index_customers_providers_on_customer_id"
+  add_index "customers_providers", ["provider_id"], :name => "index_customers_providers_on_provider_id"
 
   create_table "device_pool_drivers", force: true do |t|
     t.string   "status"
@@ -80,8 +135,9 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "vehicle_id"
   end
 
-  add_index "device_pool_drivers", ["device_pool_id"], :name => "index_devices_on_device_pool_id"
-  add_index "device_pool_drivers", ["driver_id"], :name => "index_device_pool_users_on_user_id"
+  add_index "device_pool_drivers", ["device_pool_id"], :name => "index_device_pool_drivers_on_device_pool_id"
+  add_index "device_pool_drivers", ["driver_id"], :name => "index_device_pool_drivers_on_driver_id"
+  add_index "device_pool_drivers", ["vehicle_id"], :name => "index_device_pool_drivers_on_vehicle_id"
 
   create_table "device_pools", force: true do |t|
     t.integer  "provider_id"
@@ -89,7 +145,62 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.string   "color"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "deleted_at"
   end
+
+  add_index "device_pools", ["deleted_at"], :name => "index_device_pools_on_deleted_at"
+  add_index "device_pools", ["provider_id"], :name => "index_device_pools_on_provider_id"
+
+  create_table "document_associations", force: true do |t|
+    t.integer  "document_id"
+    t.integer  "associable_id"
+    t.string   "associable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "document_associations", ["associable_id", "associable_type"], :name => "index_document_associations_on_associable_id_and_associable_typ"
+  add_index "document_associations", ["document_id", "associable_id", "associable_type"], :name => "index_document_associations_unique_document_id_associable", :unique => true
+  add_index "document_associations", ["document_id"], :name => "index_document_associations_on_document_id"
+
+  create_table "documents", force: true do |t|
+    t.integer  "documentable_id"
+    t.string   "documentable_type"
+    t.string   "description"
+    t.string   "document_file_name"
+    t.string   "document_content_type"
+    t.integer  "document_file_size"
+    t.datetime "document_updated_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "documents", ["documentable_id", "documentable_type"], :name => "index_documents_on_documentable_id_and_documentable_type"
+
+  create_table "driver_compliances", force: true do |t|
+    t.integer  "driver_id"
+    t.string   "event"
+    t.text     "notes"
+    t.date     "due_date"
+    t.date     "compliance_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "recurring_driver_compliance_id"
+  end
+
+  add_index "driver_compliances", ["driver_id"], :name => "index_driver_compliances_on_driver_id"
+  add_index "driver_compliances", ["recurring_driver_compliance_id"], :name => "index_driver_compliances_on_recurring_driver_compliance_id"
+
+  create_table "driver_histories", force: true do |t|
+    t.integer  "driver_id"
+    t.string   "event"
+    t.text     "notes"
+    t.date     "event_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "driver_histories", ["driver_id"], :name => "index_driver_histories_on_driver_id"
 
   create_table "drivers", force: true do |t|
     t.boolean  "active"
@@ -100,20 +211,68 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.datetime "updated_at"
     t.integer  "lock_version", default: 0
     t.integer  "user_id"
+    t.string   "email"
+    t.integer  "address_id"
+    t.datetime "deleted_at"
   end
+
+  add_index "drivers", ["address_id"], :name => "index_drivers_on_address_id"
+  add_index "drivers", ["deleted_at"], :name => "index_drivers_on_deleted_at"
+  add_index "drivers", ["provider_id"], :name => "index_drivers_on_provider_id"
+  add_index "drivers", ["user_id"], :name => "index_drivers_on_user_id"
+
+  create_table "field_configs", force: true do |t|
+    t.integer  "provider_id",                 null: false
+    t.string   "table_name",                  null: false
+    t.string   "field_name",                  null: false
+    t.boolean  "visible",     default: true
+    t.boolean  "required",    default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "field_configs", ["provider_id"], :name => "index_field_configs_on_provider_id"
 
   create_table "funding_source_visibilities", force: true do |t|
     t.integer "funding_source_id"
     t.integer "provider_id"
   end
 
+  add_index "funding_source_visibilities", ["funding_source_id"], :name => "index_funding_source_visibilities_on_funding_source_id"
+  add_index "funding_source_visibilities", ["provider_id"], :name => "index_funding_source_visibilities_on_provider_id"
+
   create_table "funding_sources", force: true do |t|
-    t.string "name"
+    t.string   "name"
+    t.datetime "deleted_at"
+  end
+
+  add_index "funding_sources", ["deleted_at"], :name => "index_funding_sources_on_deleted_at"
+
+  create_table "locales", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "lookup_tables", force: true do |t|
+    t.string   "caption"
+    t.string   "name"
+    t.string   "value_column_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "add_value_allowed",    default: true
+    t.boolean  "edit_value_allowed",   default: true
+    t.boolean  "delete_value_allowed", default: true
+    t.boolean  "is_provider_specific", default: false
+    t.string   "model_name"
   end
 
   create_table "mobilities", force: true do |t|
-    t.string "name"
+    t.string   "name"
+    t.datetime "deleted_at"
   end
+
+  add_index "mobilities", ["deleted_at"], :name => "index_mobilities_on_deleted_at"
 
   create_table "monthlies", force: true do |t|
     t.date     "start_date"
@@ -126,12 +285,50 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "funding_source_id"
   end
 
+  add_index "monthlies", ["funding_source_id"], :name => "index_monthlies_on_funding_source_id"
+  add_index "monthlies", ["provider_id"], :name => "index_monthlies_on_provider_id"
+
+  create_table "old_passwords", force: true do |t|
+    t.string   "encrypted_password",       null: false
+    t.string   "password_archivable_type", null: false
+    t.integer  "password_archivable_id",   null: false
+    t.datetime "created_at"
+  end
+
+  add_index "old_passwords", ["password_archivable_type", "password_archivable_id"], :name => "index_password_archivable"
+
+  create_table "operating_hours", force: true do |t|
+    t.integer  "driver_id"
+    t.integer  "day_of_week"
+    t.time     "start_time"
+    t.time     "end_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "operating_hours", ["driver_id"], :name => "index_operating_hours_on_driver_id"
+
   create_table "provider_ethnicities", force: true do |t|
     t.integer  "provider_id"
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "deleted_at"
   end
+
+  add_index "provider_ethnicities", ["deleted_at"], :name => "index_provider_ethnicities_on_deleted_at"
+  add_index "provider_ethnicities", ["provider_id"], :name => "index_provider_ethnicities_on_provider_id"
+
+  create_table "provider_reports", force: true do |t|
+    t.integer  "provider_id"
+    t.integer  "custom_report_id"
+    t.boolean  "inactive"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "provider_reports", ["custom_report_id"], :name => "index_provider_reports_on_custom_report_id"
+  add_index "provider_reports", ["provider_id"], :name => "index_provider_reports_on_provider_id"
 
   create_table "providers", force: true do |t|
     t.string   "name"
@@ -155,14 +352,77 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.spatial  "region_nw_corner",                                limit: {:srid=>4326, :type=>"point", :geographic=>true}
     t.spatial  "region_se_corner",                                limit: {:srid=>4326, :type=>"point", :geographic=>true}
     t.spatial  "viewport_center",                                 limit: {:srid=>4326, :type=>"point", :geographic=>true}
+    t.text     "fields_required_for_run_completion"
+    t.datetime "deleted_at"
   end
+
+  add_index "providers", ["deleted_at"], :name => "index_providers_on_deleted_at"
+
+  create_table "recurring_driver_compliances", force: true do |t|
+    t.integer  "provider_id"
+    t.string   "event_name"
+    t.text     "event_notes"
+    t.string   "recurrence_schedule"
+    t.integer  "recurrence_frequency"
+    t.text     "recurrence_notes"
+    t.date     "start_date"
+    t.string   "future_start_rule"
+    t.string   "future_start_schedule"
+    t.integer  "future_start_frequency"
+    t.boolean  "compliance_based_scheduling", default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "recurring_driver_compliances", ["provider_id"], :name => "index_recurring_driver_compliances_on_provider_id"
+
+  create_table "recurring_vehicle_maintenance_compliances", force: true do |t|
+    t.integer  "provider_id"
+    t.string   "event_name"
+    t.text     "event_notes"
+    t.string   "recurrence_type"
+    t.string   "recurrence_schedule"
+    t.integer  "recurrence_frequency"
+    t.integer  "recurrence_mileage"
+    t.text     "recurrence_notes"
+    t.date     "start_date"
+    t.string   "future_start_rule"
+    t.string   "future_start_schedule"
+    t.integer  "future_start_frequency"
+    t.boolean  "compliance_based_scheduling", default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "recurring_vehicle_maintenance_compliances", ["provider_id"], :name => "index_recurring_vehicle_maintenance_compliances_on_provider_id"
 
   create_table "regions", force: true do |t|
-    t.string  "name"
-    t.spatial "the_geom", limit: {:srid=>4326, :type=>"polygon", :geographic=>true}
+    t.string   "name"
+    t.spatial  "the_geom",   limit: {:srid=>4326, :type=>"polygon", :geographic=>true}
+    t.datetime "deleted_at"
   end
 
+  add_index "regions", ["deleted_at"], :name => "index_regions_on_deleted_at"
   add_index "regions", ["the_geom"], :name => "index_regions_on_the_geom", :spatial => true
+
+  create_table "repeating_runs", force: true do |t|
+    t.text     "schedule_yaml"
+    t.string   "name"
+    t.date     "date"
+    t.datetime "scheduled_start_time"
+    t.datetime "scheduled_end_time"
+    t.integer  "vehicle_id"
+    t.integer  "driver_id"
+    t.boolean  "paid"
+    t.integer  "provider_id"
+    t.integer  "lock_version",         default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "repeating_runs", ["driver_id"], :name => "index_repeating_runs_on_driver_id"
+  add_index "repeating_runs", ["provider_id"], :name => "index_repeating_runs_on_provider_id"
+  add_index "repeating_runs", ["vehicle_id"], :name => "index_repeating_runs_on_vehicle_id"
 
   create_table "repeating_trips", force: true do |t|
     t.text     "schedule_yaml"
@@ -177,7 +437,7 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "dropoff_address_id"
     t.integer  "mobility_id"
     t.integer  "funding_source_id"
-    t.string   "trip_purpose"
+    t.string   "trip_purpose_old"
     t.text     "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -187,13 +447,99 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "vehicle_id"
     t.boolean  "cab",                default: false
     t.boolean  "customer_informed"
+    t.integer  "trip_purpose_id"
   end
 
-  create_table "roles", force: true do |t|
-    t.integer "user_id"
-    t.integer "provider_id"
-    t.integer "level"
+  add_index "repeating_trips", ["customer_id"], :name => "index_repeating_trips_on_customer_id"
+  add_index "repeating_trips", ["driver_id"], :name => "index_repeating_trips_on_driver_id"
+  add_index "repeating_trips", ["dropoff_address_id"], :name => "index_repeating_trips_on_dropoff_address_id"
+  add_index "repeating_trips", ["funding_source_id"], :name => "index_repeating_trips_on_funding_source_id"
+  add_index "repeating_trips", ["mobility_id"], :name => "index_repeating_trips_on_mobility_id"
+  add_index "repeating_trips", ["pickup_address_id"], :name => "index_repeating_trips_on_pickup_address_id"
+  add_index "repeating_trips", ["provider_id"], :name => "index_repeating_trips_on_provider_id"
+  add_index "repeating_trips", ["trip_purpose_id"], :name => "index_repeating_trips_on_trip_purpose_id"
+  add_index "repeating_trips", ["vehicle_id"], :name => "index_repeating_trips_on_vehicle_id"
+
+  create_table "reporting_filter_fields", force: true do |t|
+    t.integer  "filter_group_id",             null: false
+    t.integer  "filter_type_id",              null: false
+    t.integer  "lookup_table_id"
+    t.string   "name",                        null: false
+    t.string   "title"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.integer  "sort_order",      default: 1, null: false
+    t.string   "value_type"
   end
+
+  add_index "reporting_filter_fields", ["filter_group_id"], :name => "index_reporting_filter_fields_on_filter_group_id"
+  add_index "reporting_filter_fields", ["filter_type_id"], :name => "index_reporting_filter_fields_on_filter_type_id"
+  add_index "reporting_filter_fields", ["lookup_table_id"], :name => "index_reporting_filter_fields_on_lookup_table_id"
+
+  create_table "reporting_filter_groups", force: true do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "reporting_filter_types", force: true do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "reporting_lookup_tables", force: true do |t|
+    t.string   "name",                              null: false
+    t.string   "display_field_name",                null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.string   "id_field_name",      default: "id", null: false
+    t.string   "data_access_type"
+  end
+
+  create_table "reporting_output_fields", force: true do |t|
+    t.string   "name",              null: false
+    t.string   "title"
+    t.integer  "report_id",         null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.string   "formatter"
+    t.integer  "numeric_precision"
+    t.integer  "sort_order"
+  end
+
+  add_index "reporting_output_fields", ["report_id"], :name => "index_reporting_output_fields_on_report_id"
+
+  create_table "reporting_reports", force: true do |t|
+    t.string   "name",                       null: false
+    t.string   "description"
+    t.string   "data_source",                null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.string   "primary_key", default: "id", null: false
+  end
+
+  create_table "reporting_specific_filter_groups", force: true do |t|
+    t.integer  "report_id"
+    t.integer  "filter_group_id"
+    t.integer  "sort_order",      default: 1, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "reporting_specific_filter_groups", ["filter_group_id"], :name => "index_of_filter_group_on_specific_filter_group"
+  add_index "reporting_specific_filter_groups", ["report_id"], :name => "index_of_report_on_specific_filter_group"
+
+  create_table "roles", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "provider_id"
+    t.integer  "level"
+    t.datetime "deleted_at"
+  end
+
+  add_index "roles", ["deleted_at"], :name => "index_roles_on_deleted_at"
+  add_index "roles", ["provider_id"], :name => "index_roles_on_provider_id"
+  add_index "roles", ["user_id"], :name => "index_roles_on_user_id"
 
   create_table "runs", force: true do |t|
     t.string   "name"
@@ -213,16 +559,75 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "lock_version",             default: 0
+    t.integer  "repeating_run_id"
+    t.datetime "deleted_at"
   end
 
+  add_index "runs", ["deleted_at"], :name => "index_runs_on_deleted_at"
+  add_index "runs", ["driver_id"], :name => "index_runs_on_driver_id"
   add_index "runs", ["provider_id", "date"], :name => "index_runs_on_provider_id_and_date"
-  add_index "runs", ["provider_id", "scheduled_start_time"], :name => "index_runs_on_provider_id_and_start_time"
+  add_index "runs", ["provider_id", "scheduled_start_time"], :name => "index_runs_on_provider_id_and_scheduled_start_time"
+  add_index "runs", ["repeating_run_id"], :name => "index_runs_on_repeating_run_id"
+  add_index "runs", ["vehicle_id"], :name => "index_runs_on_vehicle_id"
+
+  create_table "service_levels", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "deleted_at"
+  end
+
+  add_index "service_levels", ["deleted_at"], :name => "index_service_levels_on_deleted_at"
+
+  create_table "settings", force: true do |t|
+    t.string   "var",                   null: false
+    t.text     "value"
+    t.integer  "thing_id"
+    t.string   "thing_type", limit: 30
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "settings", ["thing_type", "thing_id", "var"], :name => "index_settings_on_thing_type_and_thing_id_and_var", :unique => true
+
+  create_table "translation_keys", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "translations", force: true do |t|
+    t.integer  "locale_id"
+    t.integer  "translation_key_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "travel_time_estimates", id: false, force: true do |t|
     t.integer "from_address_id"
     t.integer "to_address_id"
     t.integer "seconds"
   end
+
+  create_table "trip_purposes", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "deleted_at"
+  end
+
+  add_index "trip_purposes", ["deleted_at"], :name => "index_trip_purposes_on_deleted_at"
+
+  create_table "trip_results", force: true do |t|
+    t.string   "code"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "deleted_at"
+  end
+
+  add_index "trip_results", ["deleted_at"], :name => "index_trip_results_on_deleted_at"
 
   create_table "trips", force: true do |t|
     t.integer  "run_id"
@@ -236,8 +641,8 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "dropoff_address_id"
     t.integer  "mobility_id"
     t.integer  "funding_source_id"
-    t.string   "trip_purpose"
-    t.string   "trip_result",                                 default: ""
+    t.string   "trip_purpose_old"
+    t.string   "trip_result_old",                             default: ""
     t.text     "notes"
     t.decimal  "donation",           precision: 10, scale: 2, default: 0.0
     t.integer  "provider_id"
@@ -254,35 +659,74 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.boolean  "round_trip"
     t.boolean  "medicaid_eligible"
     t.integer  "mileage"
-    t.string   "service_level"
+    t.string   "service_level_old"
+    t.integer  "trip_purpose_id"
+    t.integer  "trip_result_id"
+    t.integer  "service_level_id"
+    t.datetime "deleted_at"
   end
 
+  add_index "trips", ["called_back_by_id"], :name => "index_trips_on_called_back_by_id"
+  add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"
+  add_index "trips", ["deleted_at"], :name => "index_trips_on_deleted_at"
+  add_index "trips", ["dropoff_address_id"], :name => "index_trips_on_dropoff_address_id"
+  add_index "trips", ["funding_source_id"], :name => "index_trips_on_funding_source_id"
+  add_index "trips", ["mobility_id"], :name => "index_trips_on_mobility_id"
+  add_index "trips", ["pickup_address_id"], :name => "index_trips_on_pickup_address_id"
   add_index "trips", ["provider_id", "appointment_time"], :name => "index_trips_on_provider_id_and_appointment_time"
   add_index "trips", ["provider_id", "pickup_time"], :name => "index_trips_on_provider_id_and_pickup_time"
+  add_index "trips", ["repeating_trip_id"], :name => "index_trips_on_repeating_trip_id"
+  add_index "trips", ["run_id"], :name => "index_trips_on_run_id"
+  add_index "trips", ["service_level_id"], :name => "index_trips_on_service_level_id"
+  add_index "trips", ["trip_purpose_id"], :name => "index_trips_on_trip_purpose_id"
+  add_index "trips", ["trip_result_id"], :name => "index_trips_on_trip_result_id"
 
   create_table "users", force: true do |t|
-    t.string   "email",                              default: "", null: false
-    t.string   "encrypted_password",     limit: 128, default: "", null: false
-    t.string   "password_salt",                      default: "", null: false
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
-    t.integer  "sign_in_count",                      default: 0
+    t.integer  "sign_in_count",          default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
+    t.string   "password_salt"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "current_provider_id"
     t.string   "unconfirmed_email"
     t.datetime "reset_password_sent_at"
+    t.datetime "password_changed_at"
+    t.datetime "expires_at"
+    t.string   "inactivation_reason"
+    t.datetime "deleted_at"
   end
 
+  add_index "users", ["current_provider_id"], :name => "index_users_on_current_provider_id"
+  add_index "users", ["deleted_at"], :name => "index_users_on_deleted_at"
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+  add_index "users", ["password_changed_at"], :name => "index_users_on_password_changed_at"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
+  create_table "vehicle_maintenance_compliances", force: true do |t|
+    t.integer  "vehicle_id"
+    t.string   "event"
+    t.text     "notes"
+    t.date     "due_date"
+    t.integer  "due_mileage"
+    t.string   "due_type"
+    t.date     "compliance_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "recurring_vehicle_maintenance_compliance_id"
+    t.integer  "compliance_mileage"
+  end
+
+  add_index "vehicle_maintenance_compliances", ["recurring_vehicle_maintenance_compliance_id"], :name => "index_vehicle_maintenance_compliances_on_recurring_vehicle_main"
+  add_index "vehicle_maintenance_compliances", ["vehicle_id"], :name => "index_vehicle_maintenance_compliances_on_vehicle_id"
+
   create_table "vehicle_maintenance_events", force: true do |t|
-    t.integer  "vehicle_id",                                              null: false
-    t.integer  "provider_id",                                             null: false
+    t.integer  "vehicle_id"
     t.boolean  "reimbursable"
     t.date     "service_date"
     t.date     "invoice_date"
@@ -296,6 +740,19 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.integer  "lock_version",                                default: 0
   end
 
+  add_index "vehicle_maintenance_events", ["vehicle_id"], :name => "index_vehicle_maintenance_events_on_vehicle_id"
+
+  create_table "vehicle_warranties", force: true do |t|
+    t.integer  "vehicle_id"
+    t.string   "description"
+    t.text     "notes"
+    t.date     "expiration_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "vehicle_warranties", ["vehicle_id"], :name => "index_vehicle_warranties_on_vehicle_id"
+
   create_table "vehicles", force: true do |t|
     t.string   "name"
     t.integer  "year"
@@ -305,21 +762,33 @@ ActiveRecord::Schema.define(version: 20150224063651) do
     t.string   "vin"
     t.string   "garaged_location"
     t.integer  "provider_id"
-    t.boolean  "active",            default: true
+    t.boolean  "active",                       default: true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "lock_version",      default: 0
+    t.integer  "lock_version",                 default: 0
     t.integer  "default_driver_id"
     t.boolean  "reportable"
+    t.text     "insurance_coverage_details"
+    t.string   "ownership"
+    t.string   "responsible_party"
+    t.date     "registration_expiration_date"
+    t.integer  "seating_capacity"
+    t.text     "accessibility_equipment"
+    t.datetime "deleted_at"
   end
 
+  add_index "vehicles", ["default_driver_id"], :name => "index_vehicles_on_default_driver_id"
+  add_index "vehicles", ["deleted_at"], :name => "index_vehicles_on_deleted_at"
+  add_index "vehicles", ["provider_id"], :name => "index_vehicles_on_provider_id"
+
   create_table "versions", force: true do |t|
-    t.string   "item_type",  null: false
-    t.integer  "item_id",    null: false
-    t.string   "event",      null: false
+    t.string   "item_type",      null: false
+    t.integer  "item_id",        null: false
+    t.string   "event",          null: false
     t.string   "whodunnit"
     t.text     "object"
     t.datetime "created_at"
+    t.text     "object_changes"
   end
 
   add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"

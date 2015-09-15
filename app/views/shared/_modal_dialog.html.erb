@@ -1,0 +1,32 @@
+<% modal_id ||= "modal-dialog" %>
+<div id="<%= modal_id %>" class="modal fade" role="dialog" aria-hidden="true" tabindex="-1" aria-labelledby="modal-title">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h2 class="modal-title" id="modal-title"></h2>
+      </div>
+      <div class="modal-body"><div class="container-fluid"></div></div><!-- END .modal-body -->
+      <div class="modal-footer">
+        <button type="button" class="btn action-button" id="<%= modal_id %>-submit"><%= translate_helper("save") %></button>
+        <button type="button" class="btn action-button" data-dismiss="modal"><%= translate_helper("cancel") %></button>
+      </div><!-- END .modal-footer -->
+    </div><!-- END .modal-content -->
+  </div><!-- END .modal-dialog -->
+</div><!-- END .modal -->
+
+<%= javascript_tag do %>
+  $(document).ready(function(){
+    // modal form setup
+    $('#<%= modal_id %>').on('show.bs.modal', function (e) {
+      var $this = $(this);
+      var $modalBody = $this.find(".modal-body");
+      $modalBody.find(".panel:first").removeClass("panel-primary");
+      $modalBody.find(".form-actions").hide();
+    })
+    
+    $("#<%= modal_id %>-submit").on("click", function(){
+      $('#<%= modal_id %> .modal-body form').submit();
+    });
+  });
+<% end %>

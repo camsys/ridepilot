@@ -1,0 +1,6 @@
+.row.info-header
+  .col-sm-12
+    .btns.pull-left
+      = link_to translate_helper(:back), reporting.report_path(@report, params: @params), class: 'btn action-button btn-arrow-left'
+    .btns.pull-right
+      = link_to translate_helper(:export), reporting.report_results_path(@report, params: @params, format: 'csv'), class: 'btn action-button controls'

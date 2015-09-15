@@ -1,0 +1,22 @@
+<tr class="driver_compliance-<%= driver_compliance.id %>">
+  <td>
+    <p class="form-control-static">
+      <%= driver_compliance.due_date.to_s(:long) %>
+    </p>
+  </td>
+  <td>
+    <p class="form-control-static">
+      <%= link_to_unless @readonly, driver_compliance.event, polymorphic_path([driver_compliance.driver, driver_compliance], action: :edit), remote: true %>
+    </p>
+  </td>
+  <td>
+    <p class="form-control-static">
+      <%= driver_compliance.compliance_date.try(:to_s, :long) %>
+    </p>
+  </td>
+  <% unless @readonly %>
+    <td>
+      <%= link_to "X", polymorphic_path([driver_compliance.driver, driver_compliance]), remote: true, method: :delete, data: { confirm: translate_helper("driver_compliance_delete_confirm") }, class: "btn btn-danger btn-sm pull-right" %>
+    </td>
+  <% end %>
+</tr>

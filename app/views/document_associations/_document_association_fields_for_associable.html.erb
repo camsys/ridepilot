@@ -1,0 +1,9 @@
+<tr class="fields">
+  <td>
+    <%= f.hidden_field :id %>
+    <%= f.collection_select :document_id, documents.order(description: :asc), :id, :description, { include_blank: true }, { class: "form-control" } %>
+  </td>
+  <td>
+    <%= f.link_to_remove "X", class: "btn btn-danger btn-sm" %>
+  </td>
+</tr>

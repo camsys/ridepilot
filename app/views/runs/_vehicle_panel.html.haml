@@ -1,0 +1,20 @@
+.panel.panel-primary#run_vehicle_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:vehicle)
+  .panel-body{style: 'padding: 5px;'}
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :vehicle, translate_helper("vehicle") 
+      .col-sm-9
+        = f.collection_select :vehicle_id, @vehicles, :id, :name, {include_blank: true}, {class: 'form-control'}
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :start_odometer, translate_helper("start_odometer")
+      .col-sm-9
+        = f.text_field :start_odometer, class: 'form-control'
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :end_odometer, translate_helper("end_odometer")
+      .col-sm-9
+        = f.text_field :end_odometer, class: 'form-control'

@@ -1,0 +1,17 @@
+<p><strong>
+  <% case @recurring_vehicle_maintenance_compliance.recurrence_type.try(:to_sym) %>
+  <% when :both %>
+    <%= translate_helper("recurring_vehicle_maintenance_compliance_form_compliance_based_schedule_both_preview_header") %>
+  <% when :mileage %>
+    <%= translate_helper("recurring_vehicle_maintenance_compliance_form_compliance_based_schedule_mileage_preview_header") %>
+  <% else %>
+    <%= translate_helper("recurring_vehicle_maintenance_compliance_form_compliance_based_schedule_date_preview_header") %>
+  <% end %>
+</strong></p>
+<div class="schedule-preview">
+  <% if @compliance_based_schedule_preview.present? %>
+    <%= render partial: "preview_dates", locals: {dates: @compliance_based_schedule_preview} %>
+  <% else %>
+    <p class="text-muted"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_compliance_based_schedule_preview_placeholder_text") %></p>
+  <% end %>
+</div>

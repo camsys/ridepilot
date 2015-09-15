@@ -1,4 +1,4 @@
-<%= render "shared/date_picker_javascript" %>
+<%= render "shared/date_time_picker_javascript" %>
 <script type='text/javascript'>
   function autocompleted(address, field) {
     if (address.id) {
@@ -28,6 +28,7 @@
     form.find('#' + field + '_lat').val(address.lat);
     form.find('#' + field + '_lon').val(address.lon);
     form.find('#' + field + '_in_district').val(address.in_district);
+    form.find('#' + field + '_notes').val(address.notes);
   }
   
   function open_form_for_creating(field) {
@@ -62,52 +63,12 @@
   }
 
   $(document).ready(function() {
-    
-    function load_index_trips(start_time) {
-      $("form.edit_trip").remove();
-      $("form.new_trip").remove();
-      $("table.trips").show();
-      $('a.new').show(); 
-      $('a.new').prev("hr").show();
-      if (start_time) $("#calendar").weekCalendar("gotoWeek", start_time);
-      $("#page-header h1").html("View Trips");
-    }
+    makeDatetimePickers();
 
     function load_edit_trip(form) {
-      $("form.new_trip").remove();
-      $("form.edit_trip").remove();
-      $('table.trips').after(form).hide();    
-      $('a.new').hide(); 
-      $('a.new').prev("hr").hide();
       makeDialogs();
-      makeDatePickers();
-
-      $("#page-header h1").html("Edit Trip");
+      makeDatetimePickers();
     }
-    
-    function push_index_state() {
-      if (supports_history_api()) history.pushState({index: calendar_range, scroll_positions: scroll_positions}, "list trips", "<%= trips_path %>?" + $.param(calendar_range));
-    }
-    
-    function replace_index_state() {
-      if (supports_history_api()) history.replaceState({index: calendar_range, scroll_positions: scroll_positions}, "list trips", "<%= trips_path %>?" + $.param(calendar_range));
-    }
-    
-    function push_edit_state(path) {
-      if (supports_history_api()) history.pushState({edit: path}, "edit trip", path);
-    }
-    
-    function on_trip_index() {
-      return ($("form.edit_trip, form.new_trip").length == 0);
-    }
-
-    window.onpopstate = function(event) {
-      if (event.state) {
-        scroll_positions = event.state['scroll_positions'];
-        if (event.state['index']) load_index_trips(event.state['index'].start * 1000);
-        if (event.state.edit) $.get(event.state.edit, function(data){ load_edit_trip(data.form) }, "json");
-      }
-    };
     
     // happens after you submit an address (not autocomplete)
     // an id should be returned, and then the form should close.
@@ -140,128 +101,6 @@
       }
     })
     
-    var calendar_range, scroll_positions;
-    
-    $('#calendar').weekCalendar({
-        date: new Date(<%= @start && @start > 0 ? @start * 1000 : "Date.now()" %> + (RidePilot.timezone.browser.current_offset_from_server * 1000)),
-        timeslotsPerHour: 4,
-        daysToShow: getDaysToShow(),
-        startOnFirstDayOfWeek: true,
-        firstDayOfWeek: getFirstDayOfWeek,
-        businessHours: {
-          start: RidePilot.business_hours.start,
-          end: RidePilot.business_hours.end,
-          limitDisplay: true},
-        allowCalEventOverlap: true,
-        overlapEventsSeparate: true,
-        headerSeparator: ", ",
-        timeslotHeight: 15,
-        calendarBeforeLoad: function($calendar){
-          // Add the calendar expander & vehicle filter
-          $("#vehicle_filter").remove().appendTo("div.wc-toolbar").show();
-          $("#expand_calendar").remove().appendTo("div.wc-toolbar").show();
-        },
-        height: function($calendar){
-          state = $("#calendar")[0].$state;
-          if(state == 0) {
-            $('.wc-scrollable-grid').hide();
-            $('.wc-header').hide();
-            return 0;
-          } else {
-            $('.wc-scrollable-grid').show();
-            $('.wc-header').show();
-            if(state == 2) {
-              return ($(".wc-hour-header").eq(0).height() + 8) * 11 - 7;
-            } else {
-              return ($(window).height() * 0.3 + 40);
-            }
-          }
-        },
-        timeFormat: "h:ia",
-        textSize: 10,
-        defaultEventLength: 3,
-        readonly: true,
-        eventRender : function(calEvent, $event) {
-            if(calEvent.end.getTime() < new Date().getTime()) {
-                $event.css({ opacity: 0.33 });
-            }
-        },
-        eventClick: function(calEvent, element) {
-          var path = "<%= edit_trip_path 'CHANGE_ME' %>".replace(/CHANGE_ME/, calEvent['id']);
-          $.get(path, function(data){
-            push_edit_state(path);
-            load_edit_trip(data.form);
-          }, "json");
-        },
-        data: function(start, end, callback){
-          $("#vehicle_filter #vehicle_id").val("");
-          /*
-          console.log("start", start);
-          console.log("end", end);
-          calendar_range = { 
-            start: (new Date(start.getTime() - (RidePilot.timezone.browser.current_offset_from_server * 1000))).getTime() / 1000,
-            end: (new Date(end.getTime()  - (RidePilot.timezone.browser.current_offset_from_server * 1000))).getTime() / 1000
-          };
-          console.log("calendar_range", calendar_range);
-          */
-          calendar_range = {start: start.getTime()/1000, end: end.getTime()/1000};
-          
-          $.getJSON('<%= trips_path :json %>',
-            calendar_range,
-            function(data, textStatus, jqXHR){  
-              // we probably didn't have the right range before, so now  we should update the state
-              if ( on_trip_index() ) replace_index_state();
-              
-              // massage date values to account for browser timezone differences. We should ALWAYS
-              // be showing the date as set for the server timezone, i.e. if an event comes from the
-              // server as 4pm PDT and the user is in EDT, it should still show up as 4pm.
-              for(i=0; i < data.events.length; i++) {
-                event = data.events[i];
-                event.original_start = event.start;
-                event.original_end = event.end;
-                event.start = event.start.replace(new RegExp(RidePilot.timezone.server.current_offset + "$"), RidePilot.timezone.browser.current_offset);
-                event.end = event.end.replace(new RegExp(RidePilot.timezone.server.current_offset + "$"), RidePilot.timezone.browser.current_offset);
-                data.events[i] = event;
-              }
-              
-              callback(data.events);
-
-              var table = $("#calendar").next("table");
-              table.find("tr.trip").remove();
-              table.find("tr.day").remove();
-              $.each(data.rows, function(i, row){
-                table.append(row);
-              })
-              $("tr:odd").addClass("odd");
-              
-              if (scroll_positions) window.scrollTo(scroll_positions.scrollX, scroll_positions.scrollY);
-              scroll_positions = null;
-            }
-          );
-        },
-        eventHeader: function(calEvent, calendar) {
-          var options = calendar.weekCalendar('option');
-          var one_hour = 3600000;
-          var displayTitleWithTime = calEvent.end.getTime() - calEvent.start.getTime() <= (one_hour / options.timeslotsPerHour);
-          if (displayTitleWithTime) {
-            return calendar.weekCalendar(
-                        'formatDate', calEvent.start, options.timeFormat) +
-                        ': ' + calEvent.title;
-          } else {
-            return calendar.weekCalendar(
-                        'formatDate', calEvent.start, options.timeFormat);
-          }
-        }
-    });
-    
-    $("#calendar .wc-nav button").bind("click", function(e){
-      if ( on_trip_index() ) push_index_state(); 
-    });
-
-    <% if @trip.present? && @trip.pickup_time.present? %>
-      $("#calendar").weekCalendar("gotoWeek", ISODateFormatToDateObject($("#trip_pickup_time").val()));
-    <% end %>
-
     // address dialog functionality
     // via http://jqueryui.com/demos/dialog/#modal-form 
     function makeDialogs() {
@@ -292,37 +131,6 @@
     
     makeDialogs();
 
-    $("body").on("click", "#expand_calendar button", function(e){
-      var $this    = $(this);
-      var $ui_icon = $this.find(".ui-icon");
-      var $cal     = $("#calendar")[0];
-      if($ui_icon.is('.ui-icon-arrowthickstop-1-n')) {
-        // Collapsing calendar
-        $cal.$state = 0;
-        
-        // Next state is small calendar
-        $ui_icon.toggleClass("ui-icon-arrowthickstop-1-n ui-icon-triangle-1-s");
-        $(this).attr("title", "Small Calendar");
-      } else if($ui_icon.is('.ui-icon-triangle-1-s')) {
-        // Make calendar small
-        $cal.$state = 1; 
-
-        // Next state is large calendar
-        $ui_icon.toggleClass("ui-icon-triangle-1-s ui-icon-arrowthickstop-1-s");
-        $(this).attr("title", "Large Calendar");
-      } else if($ui_icon.is('.ui-icon-arrowthickstop-1-s')) {
-        // Make calendar large
-        $cal.$state = 2;
-
-        // Next state is collapsed calendar
-        $ui_icon.toggleClass("ui-icon-arrowthickstop-1-s ui-icon-arrowthickstop-1-n");
-        $(this).attr("title", "Collapse Calendar");
-      }
-
-      // Trigger window resize so calendar is resized properly
-      $(window).trigger("resize");
-    });
-
     $("body").on('railsAutocomplete.select', '#pickup_search_address', function(e, selected){
       autocompleted(selected.item, 'pickup');
     });
@@ -330,30 +138,6 @@
     $("body").on('railsAutocomplete.select', '#dropoff_search_address', function(e, selected){
       autocompleted(selected.item, 'dropoff');
     });
-    
-    $("body").on('ajax:success', 'tr.trip a[data-remote]', function(e, data, status, xhr){
-      scroll_positions = {scrollX: $(window).scrollLeft(), scrollY: $(window).scrollTop()};
-      replace_index_state(); // make sure the scrollstate is recorded
-      push_edit_state($(this).attr("href"));
-      load_edit_trip(data.form);
-    });
-    
-    $("body").on('ajax:complete', "form.edit_trip", function(e, data, status, xhr){
-      var json = eval('(' + data.responseText + ')');
-      if (json.form) {
-        $("form.edit_trip").replaceWith(json.form);
-        makeDialogs();
-        makeDatePickers();
-      } else  {
-        push_index_state();
-        load_index_trips(calendar_range.start * 1000);
-      }
-    })
-    
-    $("body").on('ajax:success', "#trip_delete", function(e, data, status, xhr){
-      push_index_state();
-      load_index_trips(calendar_range.start * 1000);
-    })
     
     $("body").on('change', '#trip_pickup_time', function() {
       var date = ISODateFormatToDateObject( $(this).val() );
@@ -369,87 +153,5 @@
         $("#trip_run_id").val(selected);
       })
     });
-
-    function getFirstDayOfWeek() {
-      var val = localStorage.getItem('firstDayOfWeek');
-      val = parseInt(val);
-      if (val >= 0 && val < 7) {
-        return val;
-      }
-      // Default: Monday
-      return 1;
-    }
-
-    function getDaysToShow() {
-      var val = localStorage.getItem('daysToShow');
-      val = parseInt(val);
-      if (val > 0 && val <= 7) {
-        return val;
-      }
-      // Default: 5
-      return 5;
-    }
-
-    function refreshCalendar() {
-      var vf = $('#vehicle_filter').remove();
-      var ec = $('#expand_calendar').remove();
-      $('#calendar').weekCalendar('setDaysToShow', getDaysToShow());
-      vf.appendTo('div.wc-toolbar').show();
-      ec.appendTo('div.wc-toolbar').show();
-    }
-
-    function initWeekdaySelect() {
-      $('#weekday_select').buttonset();
-      $("#weekday_select").hover($.noop, function() {
-        $("#weekday_select_buttons").slideUp();
-      });
-      $("#weekday_select").click(function() {
-        $("#weekday_select_buttons").slideDown();
-      });
-      buttons = $('#weekday_select input');
-      for (var i = getFirstDayOfWeek();
-           i < getFirstDayOfWeek() + getDaysToShow(); ++i) {
-        $(buttons.get(i)).attr('checked', 'checked');
-      }
-      $('#weekday_select input').bind("click", updateWeekdays);
-      $('#weekday_select').buttonset('refresh');
-      refreshCalendar();
-    }
-
-    function updateWeekdays() {
-      // Determine first and last days selected
-      var buttons = $('#weekday_select input');
-      var firstDayOfWeek = -1;
-      var daysToShow = 0;
-      for (var i = 0; i < 7; i++) {
-        if ($(buttons.get(i)).is(':checked')) {
-          if (firstDayOfWeek === -1) {
-            firstDayOfWeek = i;
-          }
-          daysToShow = i - firstDayOfWeek + 1;
-        }
-      }
-      
-      // Nothing selected, restore M-F default
-      if (firstDayOfWeek == -1) {
-        firstDayOfWeek = 1;
-        daysToShow = 5;
-      }
-      
-      // Enforce consecutive selection rule
-      for (var i = 0; i < 7; ++i) {
-        if (i >= firstDayOfWeek && i < firstDayOfWeek + daysToShow) {
-          $(buttons.get(i)).attr('checked', 'checked');
-        } else {
-          $(buttons.get(i)).removeAttr('checked');
-        }
-      }
-      $('#weekday_select').buttonset('refresh');
-      localStorage.setItem("firstDayOfWeek", firstDayOfWeek);
-      localStorage.setItem("daysToShow", daysToShow);
-      refreshCalendar();
-    }
-
-    initWeekdaySelect();
   });
 </script>

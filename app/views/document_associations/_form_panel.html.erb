@@ -1,0 +1,27 @@
+<div class="panel panel-primary">
+  <div class="panel-heading"><%= label_tag translate_helper("document_associations_documents_heading") %></div>
+  <table class="table table-striped" id="document-associations">
+    <thead>
+      <tr>
+        <th width="96%"><%= translate_helper("document_associations_form_document_label") %></th>
+        <th width="4%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if documents.empty? %>
+        <tr><td colspan="2">No documents have been uploaded yet.</td></tr>
+      <% else %>
+        <%= f.fields_for :document_associations, :wrapper => false do |f| %>
+          <%= render partial: "document_associations/document_association_fields_for_associable", locals: {f: f, documents: documents} %>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+  <% unless documents.empty? %>
+    <div class="panel-footer">
+      <div class="clearfix">
+        <%= f.link_to_add translate_helper("document_associations_form_add_link_title"), :document_associations, data: { target: "#document-associations" }, class: "btn action-button pull-right" %>
+      </div>
+    </div>
+  <% end %>
+</div><!-- END .panel -->

@@ -1,4 +1,6 @@
 class DevicePool < ActiveRecord::Base
+  acts_as_paranoid # soft delete
+  
   belongs_to  :provider
   has_many    :device_pool_drivers, :dependent => :destroy
   has_many    :drivers, :through => :device_pool_drivers

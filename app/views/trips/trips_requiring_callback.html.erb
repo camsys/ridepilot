@@ -1,13 +1,13 @@
-<div id="page-header">
+<div id="page-header" class="clearfix">
   <h1>Trips Requiring Callback</h1>
 </div>
 
 <table>
   <tr>
-    <th>Customer</th>
-    <th>Pickup Time</th>
-    <th>Result</th>
-    <th>Last called back</th>
+    <th><%= translate_helper("customer") %></th>
+    <th><%= translate_helper("pickup_time") %></th>
+    <th><%= translate_helper("trip_result") %></th>
+    <th><%= translate_helper("last_called_back") %></th>
     <th></th>
   </tr>
 
@@ -16,8 +16,8 @@
     <td><%= trip.customer.name %></td>
     <td><%= trip.pickup_time.to_s %></td>
     <td><%= display_trip_result trip.trip_result %></td>
-    <td><%= trip.called_back_at ? trip.called_back_at : "not yet called" %></td>
-    <td><%= button_to 'Mark as reached', trip_reached_path(trip) %></td>
+    <td><%= trip.called_back_at ? trip.called_back_at : translate_helper("not_yet_called") %></td>
+    <td><%= button_to translate_helper("mark_as_reached"), trip_reached_path(trip) %></td>
   </tr>
 <% end %>
 </table>

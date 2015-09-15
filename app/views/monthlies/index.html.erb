@@ -1,36 +1,4 @@
-<div id="page-header">
-  <h1>Reports: Monthly Miscellaneous Data</h1>
+<div id="page-header" class="clearfix">
+  <h1><%= translate_helper("monthlies_index_heading") %></h1>
 </div>
-
-<% if @monthlies.size == 0 %>
-  <p>No monthly reports yet.</p>
-<% else %>
-  <table>
-    <tr>
-      <th>Month</th>
-      <th>Funding Source</th>
-      <th>Volunteer escort hours</th>
-      <th>Volunteer admin hours</th>
-      <% if can? :edit, Monthly %>
-        <th></th>
-      <% end %>
-    </tr>
-    
-    <% for monthly in @monthlies %>
-      <tr>
-        <td><%= monthly.start_date.try(:strftime, "%B %Y") %></td>
-        <td><%= monthly.funding_source.try(:name) %></td>
-        <td><%= monthly.volunteer_escort_hours.to_i %></td>
-        <td><%= monthly.volunteer_admin_hours.to_i %></td>
-        <% if can? :edit, monthly %>
-          <td><%= link_to "Edit", edit_monthly_path(monthly) %></td>
-        <% end %>
-      </tr>
-    <% end %>
-  </table>
-<% end %>
-
-<% if can? :edit, Monthly %>
-  <hr />
-  <p><%= link_to "Add New Monthly Data", new_monthly_path, :class=>'action-bttn new-report' %></p>
-<% end %>
+<%= render 'report' %>

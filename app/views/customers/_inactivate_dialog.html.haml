@@ -1,0 +1,30 @@
+#inactivateCustomerDialog.modal.fade.col-sm-12{"aria-describedby" => translate_helper(:add_value), :role => "dialog", "aria-hidden" => 'true', :tabindex => "-1"}
+  .modal-dialog
+    .modal-content
+      = form_for @customer, :url=>customer_inactivate_path(@customer), :html=>{:method=>:post} do |f|
+        .modal-header
+          .pull-right
+            = button_tag translate_helper(:inactivate), type: :submit, style: "margin-right: 5px;", class: "btn action-button"
+            = button_tag class: 'btn action-button', data: {dismiss: 'modal'} do
+              = translate_helper(:cancel)
+          .modal-title{:style => "text-align:left;"}
+            %strong
+              = translate_helper(:customer_inactivate_panel)
+        .modal-body.row{:style => "text-align:left;"}
+          .form-group.col-sm-12
+            .col-sm-3
+              = f.label :activated_date, translate_helper(:activated_date) 
+            .col-sm-9
+              = @customer.activated_date
+          - if @customer.inactivated_date
+            .form-group.col-sm-12
+              .col-sm-3
+                = f.label :inactivated_date, translate_helper(:inactivated_date) 
+              .col-sm-9
+                = @customer.inactivated_date
+          .form-group.col-sm-12
+            .col-sm-3
+              = f.label :inactivated_reason, translate_helper(:inactivated_reason) 
+            .col-sm-9
+              = f.text_area :inactivated_reason, class: 'form-control'
+

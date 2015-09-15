@@ -11,8 +11,8 @@ RSpec.describe RunsController, type: :routing do
       expect(:get => "/runs/new").to route_to("runs#new")
     end
 
-    it "does not route to #show" do
-      expect(:get => "/runs/1").to_not route_to("runs#show", :id => "1")
+    it "routes to #show" do
+      expect(:get => "/runs/1").to route_to("runs#show", :id => "1")
     end
 
     it "routes to #edit" do

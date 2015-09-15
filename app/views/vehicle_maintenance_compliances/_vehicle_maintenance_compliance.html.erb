@@ -1,0 +1,27 @@
+<tr class="vehicle_maintenance_compliance-<%= vehicle_maintenance_compliance.id %>">
+  <td>
+    <p class="form-control-static">
+      <%= due_string vehicle_maintenance_compliance %>
+    </p>
+  </td>
+  <td>
+    <p class="form-control-static">
+      <%= link_to_unless @readonly, vehicle_maintenance_compliance.event, polymorphic_path([vehicle_maintenance_compliance.vehicle, vehicle_maintenance_compliance], action: :edit), remote: true %>
+    </p>
+  </td>
+  <td>
+    <p class="form-control-static">
+      <%= vehicle_maintenance_compliance.compliance_date.try(:to_s, :long) %>
+    </p>
+  </td>
+  <td>
+    <p class="form-control-static">
+      <%= number_with_delimiter vehicle_maintenance_compliance.compliance_mileage unless vehicle_maintenance_compliance.compliance_mileage.blank? %>
+    </p>
+  </td>
+  <% unless @readonly %>
+    <td>
+      <%= link_to "X", polymorphic_path([vehicle_maintenance_compliance.vehicle, vehicle_maintenance_compliance]), remote: true, method: :delete, data: { confirm: translate_helper("vehicle_maintenance_compliance_delete_confirm") }, class: "btn btn-danger btn-sm pull-right" %>
+    </td>
+  <% end %>
+</tr>

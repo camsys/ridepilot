@@ -1,0 +1,29 @@
+<table class="table table-striped table-condensed">
+  <thead>
+    <tr>
+      <th class="col-sm-3"><%= translate_helper("document_associations_associable_date_heading") %></th>
+      <th class="col-sm-5"><%= translate_helper("document_associations_associable_name_heading") %></th>
+      <th class="col-sm-4"><%= translate_helper("document_associations_associable_type_heading") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if document_associations.empty? %>
+      <tr>
+        <td colspan="3"><%= translate_helper("document_associations_associables_empty") %></td>
+      </tr>
+    <% end %>
+    <% document_associations.each do |document_association| %>
+      <tr>
+        <td>
+          <%= document_association.associable.associable_date.to_s(:long) %>
+        </td>
+        <td>
+          <%= document_association.associable.associable_name %>
+        </td>
+        <td>
+          <%= document_association.associable.class.name.underscore.humanize.capitalize %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table><!-- END .table -->

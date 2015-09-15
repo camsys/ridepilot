@@ -1,0 +1,7 @@
+<%= form_for @driver_query, :url=>url_for(:action=>:daily_manifest), :html=>{:method=>:get} do |f| %>
+  <fieldset>
+    <%= f.date_select  :start_date rescue nil%>
+    <%= f.collection_select :driver_id, @drivers_with_cab, :id, :name %>
+    <%= f.submit translate_helper("show") %>
+  </fieldset>
+<% end %>

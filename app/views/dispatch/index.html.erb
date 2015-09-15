@@ -1,17 +1,24 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag "jstree-apple/style.css" %>
+  <%= stylesheet_link_tag "jquery-layout-default.css" %>
+<% end %>
+
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'dispatch' %>
+
 <form id="refresh" class="">
   <div class="actions" style="border:0; z-index: 1000">
-    <%= submit_tag "Refresh", :onclick => "d.refresh(); return false;" -%>
+    <%= submit_tag translate_helper("dispatch_submit"), :onclick => "dispatch.refresh(); return false;" -%>
   </div>
 </form>
 
 <div id="page-header" style="min-height: 35px">
-  <h1>Dispatcher</h1>
+  <h1><%= translate_helper("dispatcher_heading")%></h1>
   <form id="search" class="">
     <div class="actions" style="border:0;">
-      <%= text_field_tag "address", nil, :title => "Locate Address" -%>
-      <%= submit_tag "Search", :onclick => "locate(); return false;" -%>
+      <%= text_field_tag "address", nil, :title => translate_helper("locate_address") -%>
+      <%= submit_tag translate_helper("search"), :onclick => "locate(); return false;" -%>
       <span>
-        <small>[<a href="javascript:d.clearSearchMarkers()">Clear All Markers</a>]</small>
+        <small>[<a href="javascript:dispatch.clearSearchMarkers()"><%= translate_helper("clear_all_markers")%></a>]</small>
       </span>
       <span id="search-message"></span>
       <span id="search-spinner"></span>
@@ -22,64 +29,51 @@
 
 <div class="column_wrapper">
   <div class="left_column ui-layout-west">
-    <div id="tree">Loading...</div> &nbsp;
+    <div id="tree"><%= translate_helper("loading") %></div> &nbsp;
   </div>
 
   <div id="map-container" class="ui-layout-center">&nbsp;</div>
 </div>
 
-<script type="text/javascript" charset="utf-8">
-  if ( window.location.protocol == "https:" )
-    document.write('<scr' + 'ipt type="text/javascript" src="https://maps-api-ssl.google.com/maps/api/js?v=3.12&sensor=false"></scr' + 'ipt>');
-  else
-    document.write('<scr' + 'ipt type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.12&sensor=false"></scr' + 'ipt>');
-</script>
-
-<%= javascript_include_tag "styledmarker.js" %>
-<%= javascript_include_tag "jquery.jstree.js" %>
-<%= javascript_include_tag "jquery.layout.js" %>
-<%= javascript_include_tag "dispatcher.js" %>
-<%= stylesheet_link_tag "jstree-apple/style.css" %>
-<%= stylesheet_link_tag "jquery-layout-default.css" %>
-
-<script type="text/javascript" charset="utf-8">
-  function locate() {
-    f = $("#address");
-    if (f.val() == f.attr("title")) {
-      return false;
+<% content_for :footer do %>
+  <%= render "shared/google_maps/content_for_footer" %>
+  <%= javascript_include_tag "styledmarker.js" %>
+  <%= javascript_include_tag "jquery.jstree.js" %>
+  <%= javascript_include_tag "jquery.layout.js" %>
+  <%= javascript_include_tag "dispatcher.js" %>
+  <%= javascript_tag do %>
+    function locate() {
+      f = $("#address");
+      if (f.val() == f.attr("title")) {
+        return false;
+      }
+      dispatch.locateAddress(f.val());
     }
-    d.locateAddress(f.val());
-  }
   
-  var myLayout
+    var myLayout, dispatch;
   
-  $(document).ready(function() {
-    myLayout = $('.column_wrapper').layout({ 
-      applyDefaultStyles: false, 
-      size: 300,
-      minSize: 200
+    $(document).ready(function() {
+      myLayout = $('.column_wrapper').layout({ 
+        applyDefaultStyles: false, 
+        size: 300,
+        minSize: 200
+      });
+
+      hinted_field($("#address"));
+
+      var dispatch_map = new GoogleMap($("#map-container"), GoogleMapDefaults.bounds, GoogleMapDefaults.viewport);
+      
+      if (dispatch_map.errors.length > 0) {
+        html = '<h3>Viewport Errors</h3><ul>';
+        for (i in dispatch_map.errors) {
+          html += '<li>' + dispatch_map.errors[i] + '</li>';
+        }
+        html += '</ul>';
+        $('#map-container').css('border', 'none').addClass('error').append(html);
+      } else {
+        dispatch_map.display_region();
+        dispatch = new Dispatcher("tree", dispatch_map.map, dispatch_map.bounds, dispatch_map.viewport);
+      }
     });
-    
-    var bounds = null;
-    var viewport = null;
-    <% if current_user.current_provider.region_nw_corner &&
-          current_user.current_provider.region_se_corner %>
-    bounds = {
-      north: <%= current_user.current_provider.region_nw_corner.y %>,
-      west:  <%= current_user.current_provider.region_nw_corner.x %>,
-      south: <%= current_user.current_provider.region_se_corner.y %>,
-      east:  <%= current_user.current_provider.region_se_corner.x %>
-    };
-    <% end %>
-    <% if current_user.current_provider.viewport_center &&
-          current_user.current_provider.viewport_zoom %>
-    viewport = {
-      center_lat: <%= current_user.current_provider.viewport_center.y %>,
-      center_lng: <%= current_user.current_provider.viewport_center.x %>,
-      zoom:       <%= current_user.current_provider.viewport_zoom %>
-    };
-    <% end %>
-    d = new Dispatcher("tree", "map-container", bounds, viewport);
-    hinted_field($("#address"));
-  });
-</script>
+  <% end %>
+<% end %>

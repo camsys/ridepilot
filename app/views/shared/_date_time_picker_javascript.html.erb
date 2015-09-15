@@ -1,0 +1,47 @@
+<script type='text/javascript'>
+  function makeDatetimePickers(selector) {
+    selector = selector || '.datetime-picker';
+    $(selector).datetimepicker({
+        buttonImage: "<%=  image_path 'calendar-clock.png' %>",
+        buttonImageOnly: true,
+        constrainInput: false,
+        dateFormat: 'D yy-mm-dd',
+        hourGrid: 2,
+        hourMax: RidePilot.business_hours.end,
+        hourMin: RidePilot.business_hours.start,
+        minuteGrid: 15,
+        showOn: "both",
+        stepHour: 1,
+        stepMinute: 15,
+        timeFormat: 'hh:mm tt'
+    });
+  }
+
+  function makeDatePickers(selector) {
+    selector = selector || '.date-picker';
+    $(selector).datepicker({
+      showOn: 'both',
+      buttonImage: "<%=  image_path 'calendar-clock.png' %>",
+      buttonImageOnly: true,
+      constrainInput: false,
+      dateFormat: 'dd-M-yy D'
+    });
+  }
+
+  function makeTimePickers(selector) {
+    selector = selector || '.time-picker';
+    $(selector).timepicker({
+      buttonImage: "<%=  image_path 'calendar-clock.png' %>",
+      buttonImageOnly: true,
+      constrainInput: false,
+      hourGrid: 2,
+      hourMax: RidePilot.business_hours.end,
+      hourMin: RidePilot.business_hours.start,
+      minuteGrid: 15,
+      showOn: "both",
+      stepHour: 1,
+      stepMinute: 15,
+      timeFormat: 'hh:mm tt'
+    });
+  }
+</script>

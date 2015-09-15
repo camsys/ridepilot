@@ -65,8 +65,11 @@ def bind(args)
 end
 
 class ReportsController < ApplicationController
+  include Reporting::ReportHelper
 
-  def index
+  before_action :set_reports
+
+  def show
     @driver_query = Query.new :start_date => Date.today, :end_date => Date.today
     @trips_query = Query.new
     cab = Driver.new(:name=>"Cab")
@@ -76,6 +79,8 @@ class ReportsController < ApplicationController
     drivers = Driver.active.for_provider(current_provider).default_order.accessible_by(current_ability)
     @drivers =  [all] + drivers
     @drivers_with_cab =  [all, cab] + drivers
+
+    redirect_to action: @custom_report.name if @custom_report.redirect_to_results
   end
 
   def vehicles_monthly
@@ -103,6 +108,10 @@ class ReportsController < ApplicationController
     end
   end
 
+  def monthlies
+    @monthlies = Monthly.order(:start_date)
+  end
+
   def service_summary
     query_params = params[:query] || {}
     @query = Query.new(query_params)
@@ -113,7 +122,7 @@ class ReportsController < ApplicationController
     @provider = current_provider
 
     if !can? :read, @monthly
-      return redirect_to reports_path
+      return redirect_to reporting.reports_path
     end
 
     #computes number of trips in and out of district by purpose
@@ -121,8 +130,8 @@ class ReportsController < ApplicationController
         .includes(:customer, :pickup_address, :dropoff_address).completed
 
     by_purpose = {}
-    TRIP_PURPOSES.each do |purpose|
-      by_purpose[purpose] = {'purpose' => purpose, 'in_district' => 0, 'out_of_district' => 0}
+    TripPurpose.all.each do |purpose|
+      by_purpose[purpose.name] = {'purpose' => purpose.name, 'in_district' => 0, 'out_of_district' => 0}
     end
     @total = {'in_district' => 0, 'out_of_district' => 0}
 
@@ -140,8 +149,8 @@ class ReportsController < ApplicationController
     end
 
     @trips_by_purpose = []
-    TRIP_PURPOSES.each do |purpose|
-      @trips_by_purpose << by_purpose[purpose]
+    TripPurpose.all.each do |purpose|
+      @trips_by_purpose << by_purpose[purpose.name]
     end
 
     #compute monthly totals
@@ -164,7 +173,7 @@ class ReportsController < ApplicationController
   def show_trips_for_verification
     query_params = params[:query] || {}
     @query = Query.new(query_params)
-    @trip_results = TRIP_RESULT_CODES.map { |k,v| [v,k] }
+    @trip_results = TripResult.pluck(:name, :id)
 
     unless @trips.present?
       @trips = Trip.for_provider(current_provider_id).for_date_range(@query.start_date,@query.end_date).
@@ -179,7 +188,7 @@ class ReportsController < ApplicationController
     if @trips.empty?
       redirect_to({:action => :show_trips_for_verification}, :notice => "Trips updated successfully" )
     else
-      @trip_results = TRIP_RESULT_CODES.map { |k,v| [v,k] }
+      @trip_results = TripResult.pluck(:name, :id)
       render :action => :show_trips_for_verification
     end
   end
@@ -308,7 +317,7 @@ class ReportsController < ApplicationController
 
     cab = Driver.new(:name=>'Cab') #dummy driver for cab trips
 
-    trips = Trip.scheduled.for_provider(current_provider_id).for_date(@date).includes(:pickup_address,:dropoff_address,:customer,:mobility,{:run => :driver}).order(:pickup_time)
+    trips = Trip.scheduled.for_provider(current_provider_id).for_date(@date).includes(:pickup_address, :dropoff_address, :customer, :mobility, {run: :driver}).order(:pickup_time)
     if @query.driver_id == -2 # All
       # No additional filtering
     elsif @query.driver_id == -1 # Cab
@@ -318,6 +327,7 @@ class ReportsController < ApplicationController
       trips = trips.for_driver(@query.driver_id)
     end
     @trips = trips.group_by {|trip| trip.run ? trip.run.driver : cab }
+    @trips_by_customer = trips.group_by(&:customer)
   end
 
   def daily_manifest_with_cab
@@ -380,7 +390,7 @@ class ReportsController < ApplicationController
 
     @query = Query.new(params[:query])
     date_range = @query.start_date..@query.end_date
-    @customers = Customer.joins(:trips).where('trips.pickup_time' => date_range).includes(:trips).uniq()
+    @customers = Customer.unscoped.joins(:trips).where('trips.pickup_time' => date_range).includes(:trips).uniq()
   end
 
   def cctc_summary_report
@@ -552,16 +562,16 @@ class ReportsController < ApplicationController
       },
       rides_not_given: {
         turndowns: {
-          rc: trip_queries[:in_range][:rc].where(trip_result: "TD").count,
-          stf: trip_queries[:in_range][:stf][:all].where(trip_result: "TD").count,
+          rc: trip_queries[:in_range][:rc].by_result('TD').count,
+          stf: trip_queries[:in_range][:stf][:all].by_result('TD').count,
         },
         cancels: {
-          rc: trip_queries[:in_range][:rc].where(trip_result: "CANC").count,
-          stf: trip_queries[:in_range][:stf][:all].where(trip_result: "CANC").count,
+          rc: trip_queries[:in_range][:rc].by_result('CANC').count,
+          stf: trip_queries[:in_range][:stf][:all].by_result('CANC').count,
         },
         no_shows: {
-          rc: trip_queries[:in_range][:rc].where(trip_result: "NS").count,
-          stf: trip_queries[:in_range][:stf][:all].where(trip_result: "NS").count,
+          rc: trip_queries[:in_range][:rc].by_result('NS').count,
+          stf: trip_queries[:in_range][:stf][:all].by_result('NS').count,
         },
       },
       rider_donations: {
@@ -572,9 +582,9 @@ class ReportsController < ApplicationController
       new_rider_ethinic_heritage: {ethnicities: []}, # We will loop over and add the rest of these later
     }
 
-    TRIP_PURPOSES.sort.each do |tp|
-     trip = {
-        name: tp,
+    TripPurpose.order(:name).each do |tp|
+      trip = {
+        name: tp.name,
         oaa3b: trip_queries[:in_range][:all].where(funding_source_id: FundingSource.pick_id_by_name("OAA")).where(trip_purpose: tp).total_ride_count,
         rc: trip_queries[:in_range][:rc].where(trip_purpose: tp).total_ride_count,
         trimet: trip_queries[:in_range][:all].where(funding_source_id: FundingSource.pick_id_by_name("TriMet Non-Medical")).where(trip_purpose: tp).total_ride_count,
@@ -585,12 +595,12 @@ class ReportsController < ApplicationController
             mileage: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp).total_mileage
           },
           wheelchair: {
-            count: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp, service_level: "Wheelchair").total_ride_count,
-            mileage: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp, service_level: "Wheelchair").total_mileage
+            count: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp).by_service_level("Wheelchair").total_ride_count,
+            mileage: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp).by_service_level("Wheelchair").total_mileage
           },
           ambulatory: {
-            count: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp, service_level: "Ambulatory").total_ride_count,
-            mileage: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp, service_level: "Ambulatory").total_mileage
+            count: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp).by_service_level("Ambulatory").total_ride_count,
+            mileage: trip_queries[:in_range][:stf][:taxi].where(trip_purpose: tp).by_service_level("Ambulatory").total_mileage
           },
         },
         unreimbursed: trip_queries[:in_range][:all].where(funding_source_id: FundingSource.pick_id_by_name("Unreimbursed")).where(trip_purpose: tp).total_ride_count,
@@ -648,6 +658,11 @@ class ReportsController < ApplicationController
 
   private
 
+  def set_reports
+    @reports = all_report_infos # get all report infos (id, name) both generic and customized reports
+    @custom_report = CustomReport.find params[:id]
+  end
+
   def prep_with_cab
     authorize! :read, Trip
 
@@ -670,9 +685,8 @@ class ReportsController < ApplicationController
   def hms_to_hours(hms)
     #argument is a string of the form hours:minutes:seconds.  We would like
     #a float of hours
-    if !hms or hms.empty?
-      return 0
-    end
+    return 0 if hms == 0 || hms.blank?
+
     hours, minutes, seconds = hms.split(":").map &:to_i
     hours ||= 0
     minutes ||= 0

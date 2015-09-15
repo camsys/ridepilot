@@ -1,0 +1,40 @@
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: false, tab_class: 'admin' %>
+
+<div id="page-header" class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1><%= translate_helper("recurring_vehicle_maintenance_compliances_index_heading") %></h1>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <div class="pull-right">
+      <% unless Rails.env.production? or Rails.env.staging? %>
+        <%= link_to "Generate Events", generate_recurring_vehicle_maintenance_compliances_path, method: :put, data: { confirm: "For testing purposes only. This button is not available in production. In production, event generation would be handled by a cron task.\n\nAre you sure you want to trigger event generation for ALL recurring vehicle maintenance compliance events across ALL providers?" }, class: "btn action-button" %>
+      <% end %>
+      <%= link_to translate_helper("new_recurring_vehicle_maintenance_compliance_link_text"), new_recurring_vehicle_maintenance_compliance_path, class: "btn action-button" %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <table class="table table-striped table-bordered" id="documents-table">
+      <thead>
+        <tr>
+          <th class="col-sm-2"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_event_name") %></th>
+          <th class="col-sm-2"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_recurrence_type") %></th>
+          <th class="col-sm-2"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_start_date") %></th>
+          <th class="col-sm-2"><%= translate_helper("recurring_vehicle_maintenance_compliance_recurrence_scheduling_heading") %></th>
+          <th class="col-sm-2"><%= translate_helper("recurring_vehicle_maintenance_compliance_compliance_based_scheduling_heading") %></th>
+          <th class="col-sm-2"><%= translate_helper("recurring_vehicle_maintenance_compliance_events_scheduled_heading") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @recurring_vehicle_maintenance_compliances.empty? %>
+          <tr>
+            <td colspan="6"><%= translate_helper("recurring_vehicle_maintenance_compliances_empty") %></td>
+          </tr>
+        <% end %>
+        <%= render partial: 'recurring_vehicle_maintenance_compliance', collection: @recurring_vehicle_maintenance_compliances %>
+      </tbody>
+    </table>
+  </div>
+</div>

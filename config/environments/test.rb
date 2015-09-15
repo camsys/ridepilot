@@ -31,9 +31,13 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
   config.action_mailer.default_url_options = { :host => 'www.example.com' }
+  config.action_mailer.raise_delivery_errors = false
+  config.devise.mailer_sender = "test@example.com"
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
+
+  Rails.application.routes.default_url_options[:locale] = I18n.locale
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true

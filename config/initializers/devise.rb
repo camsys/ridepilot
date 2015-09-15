@@ -5,12 +5,7 @@ Devise.setup do |config|
   # random tokens. Changing this key will render invalid all existing
   # confirmation, reset password and unlock tokens in the database.
   config.secret_key = '716be6ff4b0a79e02d74dda6b081fd02876ce90d757c60fda397e08affea0491cc6bdaff9b164081bad13b7ad65091e6cbdfb5610645203ee4b4840e4f755549'
-
-  # ==> Mailer Configuration
-  # Configure the e-mail address which will be shown in Devise::Mailer,
-  # note that it will be overwritten if you use your own mailer class
-  # with default "from" parameter.
-  config.mailer_sender = EMAIL_FROM
+  config.mailer_sender = ENV['SYSTEM_SEND_FROM_ADDRESS']
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
@@ -256,4 +251,45 @@ Devise.setup do |config|
   # When using omniauth, Devise cannot automatically set Omniauth path,
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
+
+  # ==> Security Extension
+  # Configure security extension for devise
+
+  # Should the password expire (e.g 3.months)
+  config.expire_password_after = ApplicationSetting.defaults['devise.expire_password_after']
+
+  # Need 1 char of A-Z, a-z and 0-9
+  # config.password_regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/
+
+  # How many passwords to keep in archive
+  # Note: Changing the password 4 times results in the old_passwords table
+  # containing passwords 1, 2, 3, and 4. With a password_archiving_count of 4,
+  # changing it a 5th time results in password 5 being added and password 1
+  # being dropped, and thus able to be used again after 5 changes.
+  config.password_archiving_count = ApplicationSetting.defaults['devise.password_archiving_count']
+
+  # Deny old password (true, false, count)
+  config.deny_old_passwords = true
+
+  # enable email validation for :secure_validatable. (true, false, validation_options)
+  # dependency: need an email validator like rails_email_validator
+  # config.email_validation = true
+
+  # captcha integration for recover form
+  # config.captcha_for_recover = true
+
+  # captcha integration for sign up form
+  # config.captcha_for_sign_up = true
+
+  # captcha integration for sign in form
+  # config.captcha_for_sign_in = true
+
+  # captcha integration for unlock form
+  # config.captcha_for_unlock = true
+
+  # captcha integration for confirmation form
+  # config.captcha_for_confirmation = true
+
+  # Time period for account expiry from last_activity_at
+  # config.expire_after = 90.days
 end

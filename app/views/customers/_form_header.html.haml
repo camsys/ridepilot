@@ -1,0 +1,25 @@
+.clearfix.col-sm-12#page-header
+  - if edit_mode == :new
+    .pull-right
+      = f.submit translate_helper(:save), class: 'btn action-button'
+      = link_to translate_helper(:cancel), customers_path, class: "btn btn-default"
+    %h1
+      = translate_helper("new_customer")
+  - else
+    .pull-right
+      - if edit_mode == :edit
+        = f.submit translate_helper(:update), class: 'btn action-button'
+        = link_to translate_helper(:cancel), customers_path, class: "btn btn-default"
+      - else
+        = link_to translate_helper("new_trip_link_text"), new_trip_path(:customer_id=>@customer.id), :class=>'btn action-button' if !@read_only_customer
+        = button_tag :type => 'button', id: 'inactivateCustomer', "data-target" => "#inactivateCustomerDialog", "data-toggle" => "modal", :class => "btn action-button btn-danger" do
+          = translate_helper(:inactivate)
+        - if !@customer.new_record? && can?(:destroy, @customer)
+          - if @customer.trips.present?
+            = link_to(translate_helper("merge"), @customer, :id => 'customer_merge', :class=>'btn action-button btn-danger')
+          - else
+            = link_to(translate_helper("delete"), @customer, data: {:confirm => translate_helper("delete_customer_confirm")}, :method => :delete, :id => 'customer_delete', :class=>'btn action-button btn-danger') 
+        = link_to translate_helper("edit"), edit_customer_path(@customer), :class=>'btn action-button' if !@customer.new_record? && can?(:edit, @customer)
+        = link_to translate_helper(:back), customers_path, class: "btn btn-default"
+    %h1
+      = translate_helper("customer")

@@ -15,7 +15,7 @@ class FundingSourcesController < ApplicationController
 
   def create
     if not params["provider"]
-      flash[:alert] = "New funding sources must be associated with at least one provider"
+      flash.now[:alert] = "New funding sources must be associated with at least one provider"
       @providers = Provider.all
       @checked_providers = []
       render :action=>:new

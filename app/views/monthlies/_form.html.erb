@@ -6,30 +6,30 @@
 
     <ol class="section first">
       <li>
-        <%= f.label :start_date, "Month" %>
-        <%= f.date_select :start_date, :order => [:month, :year] %>    
+        <%= f.label :start_date, translate_helper("monthlies_start_date") %>
+        <%= f.date_select :start_date, :order => [:month, :year] rescue nil%>    
       </li>
 
       <li>
-        <%= f.label :funding_source_id, "Funding Source:" %>
+        <%= f.label :funding_source_id, translate_helper("funding_source") %>
         <%= f.collection_select :funding_source_id, @funding_sources, :id, :name %>
       </li>
     </ol>
 
     <ol class="section second">
       <li>
-        <%= f.label :volunteer_escort_hours %>
+        <%= f.label :volunteer_escort_hours, translate_helper("volunteer_escort_hours") %>
         <%= f.text_field :volunteer_escort_hours %>
       </li>
 
       <li>
-        <%= f.label :volunteer_admin_hours %>
+        <%= f.label :volunteer_admin_hours, translate_helper("volunteer_admin_hours") %>
         <%= f.text_field :volunteer_admin_hours %>
       </li>
     </ol>
 
     <div class="actions">    
-      <%= f.submit %>
+      <%= f.submit translate_helper("monthlies_form_submit") %>
     </div>
 
   </fieldset>

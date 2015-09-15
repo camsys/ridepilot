@@ -12,7 +12,9 @@ RSpec.describe "Users" do
       visit new_user_session_path
       fill_in 'user_email', :with => user.email
       fill_in 'Password', :with => 'password'
-      click_button 'Log in'
+      click_button 'Log In'
+      
+      # TODO add sme actual assertions
     end
   end
 end

@@ -1,7 +1,7 @@
 <%= form_for @device_pool do |f| %>
   <% if @device_pool.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@device_pool.errors.count, "error") %> prohibited this device pool from being saved:</h2>
+      <h2><%= translate_helper("device_pool_form_error_message", count: @device_pool.errors.count)%></h2>
       <ul>
         <% @device_pool.errors.full_messages.each do |msg| %>
           <li><%= msg %></li>
@@ -13,12 +13,12 @@
   <fieldset class="new-device_pool">
     <ol class="section first">
       <li>
-        <%= f.label :name %>
+        <%= f.label :name, translate_helper("device_pool_name") %>
         <%= f.text_field :name %>
       </li>
 
       <li>
-        <%= f.label :color, "Color" %>
+        <%= f.label :color, translate_helper("device_pool_color") %>
         <%= f.text_field :color, :style => "display:none;", :value => "##{@device_pool.color}" %>
       </li>
     </ol>
@@ -28,7 +28,7 @@
       });
     </script>
     <div class="actions">
-      <%= f.submit %>
+      <%= f.submit translate_helper("submit") %>
     </div>
   </fieldset>
 

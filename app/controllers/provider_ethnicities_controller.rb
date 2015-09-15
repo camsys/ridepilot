@@ -14,7 +14,7 @@ class ProviderEthnicitiesController < ApplicationController
   def create
     @provider_ethnicity.provider = current_provider
     if @provider_ethnicity.save
-      flash[:notice] = "Ethnicity created"
+      flash.now[:notice] = "Ethnicity created"
       redirect_to provider_path(current_provider)
     else
       render :action => :new
@@ -24,7 +24,7 @@ class ProviderEthnicitiesController < ApplicationController
   def update
     @provider_ethnicity.provider = current_provider
     if @provider_ethnicity.update_attributes(provider_ethnicity_params)
-      flash[:notice] = "Ethnicity updated"
+      flash.now[:notice] = "Ethnicity updated"
       redirect_to provider_path(current_provider)
     else
       render :action => :edit

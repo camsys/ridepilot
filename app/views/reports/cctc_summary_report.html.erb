@@ -1,3 +1,4 @@
+<%= render 'custom_report_header'%>
 <%= content_for :head do %>
 <style>
   table {
@@ -42,10 +43,6 @@
   .b {font-weight: bold}
   
   @media print {
-    #session-timeout-warning, #header, #crossbar, #page-header, #new_query, p.notice {
-      display: none;
-    }
-    
     /* Unfortunately, it is still not possible for us to reasonably support 
      * precise printing of page-breaks across web browsers.
      */
@@ -63,42 +60,42 @@
 </style>
 <% end %>
 
-<%= content_for :title, "Clackamas County Transportation Consortium Summary Report: #{@provider.name}, #{@start_date.strftime("%B %Y")}" %>
-<div id="page-header">
-  <h1>Clackamas County Transportation Consortium Summary Report: <%= @provider.name %>, <%= @start_date.strftime("%B %Y") %></h1>
+<%= content_for :title, translate_helper("cctc_summary_report_page_title",provider:@provider.name,start_date: @start_date.strftime("%B %Y")) %>
+<div id="page-header" class="clearfix">
+  <h1><%= translate_helper("cctc_summary_provider_heading",provider:@provider.name,start_date: @start_date.strftime("%B %Y")) %></h1>
 </div>
 
 <% if @query %> 
   <%= form_for @query, :url=>url_for(:action=>:cctc_summary_report), :html=>{:method=>:get} do |f| %>
     <fieldset class="select-month">
       <p>
-        <%= f.date_select :start_date, :order => [:month,:year] %>
-        <%= f.submit "Update" %>
+        <%= f.date_select :start_date, :order => [:month,:year] rescue nil%>
+        <%= f.submit translate_helper("update") %>
       </p>
     </fieldset>
   <% end %>
 <% end %>
 
 <div style="text-align: center" id="cctc-report">
-  <h2>Clackamas County Transportation Consortium</h2>
+  <h2><%= translate_helper("cctc_summary_report_heading") %></h2>
   
-  <h2>Monthly Report</h2>
+  <h2><%= translate_helper("monthly_report") %></h2>
   
   <table>
     <tbody>
       <tr>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
-        <td colspan="2" class="b a_c v_b">STF Ride Miles</td>
+        <td colspan="2" class="b a_c v_b"><%= translate_helper("monthly_report") %></td>
       </tr>
       <tr>
-        <td style="width: 100px" class="b">1. Member:</td>
+        <td style="width: 100px" class="b"><%= translate_helper("cctc_member_label") %></td>
         <td style="width: 250px" class="b"><%= @provider.name %></td>
-        <td style="width: 75px" class="b b_full">Van / Bus</td>
-        <td style="width: 75px" class="b b_full">Taxi</td>
+        <td style="width: 75px" class="b b_full"><%= translate_helper("cctc_van_label") %></td>
+        <td style="width: 75px" class="b b_full"><%= translate_helper("cctc_taxi_label") %></td>
       </tr>
       <tr>
-        <td class="b">2. Month/Yr:</td>
+        <td class="b"><%= translate_helper("cctc_month_label") %></td>
         <td class="b"><%= @start_date.strftime("%B %Y") %></td>
         <td class="b_full"><%= @report[:total_miles][:stf][:van_bus] %></td>
         <td class="b_full"><%= @report[:total_miles][:stf][:taxi] %></td>
@@ -113,38 +110,38 @@
       <tr class="b_none b">
         <td>&nbsp;</td>
         <td>&nbsp;</td>
-        <td>A.</td>
-        <td>B.</td>
-        <td>C.</td>
-        <td>D.</td>
-        <td colspan="2">E.</td>
+        <td><%= translate_helper("cctc_a_label")%></td>
+        <td><%= translate_helper("cctc_b_label")%></td>
+        <td><%= translate_helper("cctc_c_label")%></td>
+        <td><%= translate_helper("cctc_d_label")%></td>
+        <td colspan="2"><%= translate_helper("cctc_e_label")%></td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
       </tr>
       <tr class="b">
         <td rowspan="3">&nbsp;</td>
-        <td rowspan="2" class="a_l">Funding Sources</td>
-        <td rowspan="2">OAA<br>III B</td>
-        <td rowspan="2">Ride<br>Connection</td>
-        <td>Tri-Met</td>
-        <td>SDSD</td>
-        <td colspan="2">USDOT</td>
-        <td rowspan="2">Unreimb.<br>Rides</td>
-        <td rowspan="3">Total<br>Rides</td>
+        <td rowspan="2" class="a_l"><%= translate_helper("cctc_funding_source_label")%></td>
+        <td rowspan="2"><%= translate_helper("cctc_oaa_3b_label") %></td>
+        <td rowspan="2"><%= translate_helper("cctc_ride_connection_label") %></td>
+        <td><%= translate_helper("cctc_tri-met_label") %></td>
+        <td><%= translate_helper("cctc_sdsd_label") %></td>
+        <td colspan="2"><%= translate_helper("cctc_usdot_label") %></td>
+        <td rowspan="2"><%= translate_helper("cctc_unreimbursable_label") %></td>
+        <td rowspan="3"><%= translate_helper("cctc_total_rides_label") %></td>
       </tr>
       <tr class="b">
-        <td colspan="2">Non-Medical T-XXX</td>
-        <td colspan="2">STF - New Rides</td>
+        <td colspan="2"><%= translate_helper("cctc_non-medical_label") %></td>
+        <td colspan="2"><%= translate_helper("cctc_stf-new_rides_label") %></td>
       </tr>
       <tr class="b">
-        <td class="a_l">Type of Ride</td>
-        <td>Out</td>
-        <td>Out</td>
-        <td>Out</td>
-        <td>Out</td>
-        <td>Van</td>
-        <td>Taxi</td>
-        <td>Out</td>
+        <td class="a_l"><%= translate_helper("cctc_type_of_ride_label") %></td>
+        <td><%= translate_helper("cctc_out_label") %></td>
+        <td><%= translate_helper("cctc_out_label") %></td>
+        <td><%= translate_helper("cctc_out_label") %></td>
+        <td><%= translate_helper("cctc_out_label") %></td>
+        <td><%= translate_helper("cctc_van_label") %></td>
+        <td><%= translate_helper("cctc_taxi_label") %></td>
+        <td><%= translate_helper("cctc_out_label") %></td>
       </tr>
       <% @report[:trip_purposes][:trips].each_with_index do |trip, index| %>
         <tr>
@@ -162,7 +159,7 @@
       <% end %>
       <tr>
         <td><%= @report[:trip_purposes].size + 2 %></td>
-        <td class="a_l b">Total Number of 1-way rides</td>
+        <td class="a_l b"><%= translate_helper("cctc_one_way_rides_label") %></td>
         <td><%= @report[:trip_purposes][:total_rides][:oaa3b] %></td>
         <td><%= @report[:trip_purposes][:total_rides][:rc] %></td>
         <td><%= @report[:trip_purposes][:total_rides][:trimet] %></td>
@@ -174,7 +171,7 @@
       </tr>
       <tr>
         <td rowspan="2">&nbsp;</td>
-        <td class="a_l">Per Ride Reimbursement Rate</td>
+        <td class="a_l"><%= translate_helper("cctc_reimbursement_rates_heading") %></td>
         <td><%= reimbursement_rate(@provider.oaa3b_per_ride_reimbursement_rate) %></td>
         <td><%= reimbursement_rate(@provider.ride_connection_per_ride_reimbursement_rate) %></td>
         <td><%= reimbursement_rate(@provider.trimet_per_ride_reimbursement_rate) %></td>
@@ -184,7 +181,7 @@
         <td class="s_50">&nbsp;</td>
         <td class="s_50">&nbsp;</td>
       </tr>
-        <td class="a_l b">Reimbursement Due</td>
+        <td class="a_l b"><%= translate_helper("cctc_reimbursement_due_label") %></td>
         <td><%= reimbursement_due(@report[:trip_purposes][:reimbursements_due][:oaa3b], @provider.oaa3b_per_ride_reimbursement_rate) %></td>
         <td><%= reimbursement_due(@report[:trip_purposes][:reimbursements_due][:rc], @provider.ride_connection_per_ride_reimbursement_rate) %></td>
         <td><%= reimbursement_due(@report[:trip_purposes][:reimbursements_due][:trimet], @provider.trimet_per_ride_reimbursement_rate) %></td>
@@ -202,15 +199,17 @@
       </tr>
     </tbody>
   </table>
-  <p>Ambulatory STF Taxi Rides Reimbursed at Admin Fee (<%= reimbursement_rate(@provider.stf_taxi_per_ride_administrative_fee) %>/ride) + Load Fee (<%= reimbursement_rate(@provider.stf_taxi_per_ride_ambulatory_load_fee) %>/ride) + Mileage (<%= reimbursement_rate(@provider.stf_taxi_per_mile_ambulatory_reimbursement_rate) %>/mile)</p>
-  <p>Wheelchair STF Taxi Rides Reimbursed at Admin Fee (<%= reimbursement_rate(@provider.stf_taxi_per_ride_administrative_fee) %>/ride) + Load Fee (<%= reimbursement_rate(@provider.stf_taxi_per_ride_wheelchair_load_fee) %>/ride) + Mileage (<%= reimbursement_rate(@provider.stf_taxi_per_mile_wheelchair_reimbursement_rate) %>/mile)</p>
-  <p><sup>*</sup> Calculations require reimbursement rates not provided in system.</p>
+
+  <%= translate_helper("cctc_ambulatory_reimbursement_summary", stf_rate: reimbursement_rate(@provider.stf_taxi_per_ride_administrative_fee),stf_ambulatory_load_fee: reimbursement_rate(@provider.stf_taxi_per_ride_ambulatory_load_fee), stf_taxi_ambulatory_rate: reimbursement_rate(@provider.stf_taxi_per_mile_ambulatory_reimbursement_rate)) %>
   
+  <%= translate_helper("cctc_wheelchair_reimbursement_summary", stf_taxi_admin_fee: reimbursement_rate(@provider.stf_taxi_per_ride_administrative_fee), stf_wheelchair_load_fee: reimbursement_rate(@provider.stf_taxi_per_ride_wheelchair_load_fee), stf_wheelchair_mileage_rate: reimbursement_rate(@provider.stf_taxi_per_mile_wheelchair_reimbursement_rate)) %>
+  
+  <%= translate_helper("cctc_wheelchair_disclaimer")%>
   <hr>
 
-  <h2>Monthly Rider and Driver Report</h2>
+  <h2><%= translate_helper("cctc_monthly_rider_and_driver_heading") %></h2>
   
-  <p class="b">This form has totals of information for all vehicles. All are current reporting period numbers, not YTD, unless specified.</p>
+  <%= translate_helper("cctc_monthly_rider_and_driver_description") %>
   
   <table>
     <tr class="cctc-table-head">
@@ -226,8 +225,8 @@
       <td style="width: 75px"></td>
     </tr>
     <tr>
-      <td rowspan="2" colspan="5" class="b a_l">Total miles driven for all rides provided during month:</td>
-      <td colspan="2" class="a_l">Ride Connection:</td>
+      <td rowspan="2" colspan="5" class="b a_l"><%= translate_helper("cctc_total_miles_label") %></td>
+      <td colspan="2" class="a_l"><%= translate_helper("cctc_ride_connection_label") %></td>
       <td class="b_full2"><%= @report[:total_miles][:rc] %></td>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
@@ -255,25 +254,25 @@
     </tr>
     <tr>
       <td colspan="4">&nbsp;</td>
-      <td colspan="2" class="b">Over 60</td>
-      <td colspan="2" class="b">Under 60</td>
-      <td colspan="2" class="b">ADA Eligible</td>
+      <td colspan="2" class="b"><%= translate_helper("cctc_over_60_label") %></td>
+      <td colspan="2" class="b"><%= translate_helper("cctc_under_60_label") %></td>
+      <td colspan="2" class="b"><%= translate_helper("ada_eligible") %></td>
     </tr>
     <tr>
       <td>&nbsp;</td>
-      <td class="b">Rider Information</td>
-      <td class="b b_full2">RC</td>
-      <td class="b b_full2">STF</td>
-      <td class="b b_full2">RC</td>
-      <td class="b b_full2">STF</td>
-      <td class="b b_full2">RC</td>
-      <td class="b b_full2">STF</td>
-      <td class="b b_full2">Over 60</td>
-      <td class="b b_full2">Under 60</td>
+      <td class="b"><%= translate_helper("cctc_rider_information_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_RC_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_STF_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_RC_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_STF_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_RC_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_STF_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_over_60_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_under_60_label") %></td>
     </tr>
     <tr>
       <td>1.</td>
-      <td class="a_l"># Riders New This Month</td>
+      <td class="a_l"><%= translate_helper("cctc_new_riders_label") %></td>
       <td class="b_full"><%= @report[:rider_information][:riders_new_this_month][:over_60][:rc]  + @report[:rider_information][:riders_ytd][:under_60][:rc] %></td>
       <td class="b_full"><%= @report[:rider_information][:riders_new_this_month][:over_60][:stf] + @report[:rider_information][:riders_ytd][:under_60][:stf] %></td>
       <td class="b_full"><%= @report[:rider_information][:riders_new_this_month][:over_60][:rc] %></td>
@@ -285,7 +284,7 @@
     </tr>
     <tr>
       <td>2.</td>
-      <td class="a_l"># Riders YTD</td>
+      <td class="a_l"><%= translate_helper("cctc_riders_ytd_label") %></td>
       <td class="b_full"><%= @report[:rider_information][:riders_ytd][:over_60][:rc]  + @report[:rider_information][:riders_ytd][:under_60][:rc] %></td>
       <td class="b_full"><%= @report[:rider_information][:riders_ytd][:over_60][:stf] + @report[:rider_information][:riders_ytd][:under_60][:stf] %></td>
       <td class="b_full"><%= @report[:rider_information][:riders_ytd][:over_60][:rc] %></td>
@@ -312,9 +311,9 @@
     </tr>
     <tr>
       <td>&nbsp;</td>
-      <td class="b">New Rider Ethnic Heritage</td>
-      <td class="b b_full2">RC</td>
-      <td class="b b_full2">STF</td>
+      <td class="b"><%= translate_helper("cctc_new_rider_ethnicity") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_RC_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_STF_label") %></td>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
@@ -353,28 +352,28 @@
     </tr>
     <tr>
       <td>&nbsp;</td>
-      <td class="b">Driver Information</td>
-      <td class="b" colspan="2">Paid</td>
-      <td class="b" colspan="2">Volunteer</td>
-      <td class="b" colspan="2">Totals</td>
+      <td class="b"><%= translate_helper("cctc_driver_information_label") %></td>
+      <td class="b" colspan="2"><%= translate_helper("cctc_paid_label") %></td>
+      <td class="b" colspan="2"><%= translate_helper("cctc_volunteer_label") %></td>
+      <td class="b" colspan="2"><%= translate_helper("cctc_totals_label") %></td>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
-      <td class="b b_full2">RC</td>
-      <td class="b b_full2">STF</td>
-      <td class="b b_full2">RC</td>
-      <td class="b b_full2">STF</td>
-      <td class="b b_full2">RC</td>
-      <td class="b b_full2">STF</td>
+      <td class="b b_full2"><%= translate_helper("cctc_RC_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_STF_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_RC_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_STF_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_RC_label") %></td>
+      <td class="b b_full2"><%= translate_helper("cctc_STF_label") %></td>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
       <td>1.</td>
-      <td class="a_l">Number of Driver Hours</td>
+      <td class="a_l"><%= translate_helper("cctc_number_of_driver_hours_label") %></td>
       <td class="b_full"><%= @report[:driver_information][:number_of_driver_hours][:paid][:rc] %></td>
       <td class="b_full"><%= @report[:driver_information][:number_of_driver_hours][:paid][:stf] %></td>
       <td class="b_full"><%= @report[:driver_information][:number_of_driver_hours][:volunteer][:rc] %></td>
@@ -386,7 +385,7 @@
     </tr>
     <tr>
       <td>2.</td>
-      <td class="a_l">Number of Active Drivers</td>
+      <td class="a_l"><%= translate_helper("cctc_number_of_active_drivers_label") %></td>
       <td class="b_full"><%= @report[:driver_information][:number_of_active_drivers][:paid][:rc] %></td>
       <td class="b_full"><%= @report[:driver_information][:number_of_active_drivers][:paid][:stf] %></td>
       <td class="b_full"><%= @report[:driver_information][:number_of_active_drivers][:volunteer][:rc] %></td>
@@ -398,7 +397,7 @@
     </tr>
     <tr>
       <td>3.</td>
-      <td class="a_l">Drivers New this Month</td>
+      <td class="a_l"><%= translate_helper("cctc_drivers_new_this_month_label") %></td>
       <td class="b_full"><%= @report[:driver_information][:drivers_new_this_month][:paid][:rc] %></td>
       <td class="b_full"><%= @report[:driver_information][:drivers_new_this_month][:paid][:stf] %></td>
       <td class="b_full"><%= @report[:driver_information][:drivers_new_this_month][:volunteer][:rc] %></td>
@@ -410,7 +409,7 @@
     </tr>
     <tr>
       <td>4.</td>
-      <td class="a_l">Escort Hours</td>
+      <td class="a_l"><%= translate_helper("cctc_escort_hours_label") %></td>
       <td class="b_full s_50">&nbsp;</td>
       <td class="b_full s_50">&nbsp;</td>
       <td class="b_full"><%= @report[:driver_information][:escort_hours][:rc] %></td>
@@ -422,7 +421,7 @@
     </tr>
     <tr>
       <td>5.</td>
-      <td class="a_l">Administrative Hours</td>
+      <td class="a_l"><%= translate_helper("cctc_administrative_hours_label") %></td>
       <td class="b_full s_50">&nbsp;</td>
       <td class="b_full s_50">&nbsp;</td>
       <td class="b_full"><%= @report[:driver_information][:administrative_hours][:rc] %></td>
@@ -449,17 +448,17 @@
     </tr>
     <tr>
       <td>&nbsp;</td>
-      <td class="b">Rides Not Given</td>
-      <td class="b" colspan="2">Ride Connection</td>
+      <td class="b"><%= translate_helper("cctc_rides_not_given_label") %></td>
+      <td class="b" colspan="2"><%= translate_helper("cctc_ride_connection_label") %></td>
       <td>&nbsp;</td>
-      <td class="b" colspan="2">STF</td>
+      <td class="b" colspan="2"><%= translate_helper("cctc_STF_label") %></td>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
       <td>1.</td>
-      <td class="a_l">Turndowns</td>
+      <td class="a_l"><%= translate_helper("cctc_turndowns_label") %></td>
       <td class="b_full" colspan="2"><%= @report[:rides_not_given][:turndowns][:rc] %></td>
       <td>&nbsp;</td>
       <td class="b_full" colspan="2"><%= @report[:rides_not_given][:turndowns][:stf] %></td>
@@ -469,7 +468,7 @@
     </tr>
     <tr>
       <td>2.</td>
-      <td class="a_l">Cancels</td>
+      <td class="a_l"><%= translate_helper("cctc_cancels_label") %></td>
       <td class="b_full" colspan="2"><%= @report[:rides_not_given][:cancels][:rc] %></td>
       <td>&nbsp;</td>
       <td class="b_full" colspan="2"><%= @report[:rides_not_given][:cancels][:stf] %></td>
@@ -479,7 +478,7 @@
     </tr>
     <tr>
       <td>3.</td>
-      <td class="a_l">No Shows</td>
+      <td class="a_l"><%= translate_helper("cctc_no_shows_label") %></td>
       <td class="b_full" colspan="2"><%= @report[:rides_not_given][:no_shows][:rc] %></td>
       <td>&nbsp;</td>
       <td class="b_full" colspan="2"><%= @report[:rides_not_given][:no_shows][:stf] %></td>
@@ -504,7 +503,7 @@
     </tr>
     <tr>
       <td>&nbsp;</td>
-      <td class="b">Rider Donations</td>
+      <td class="b"><%= translate_helper("cctc_rider_donations_label") %></td>
       <td class="b_b2" colspan="2"><%= number_to_currency(@report[:rider_donations][:rc], :precesion => 2) %></td>
       <td>&nbsp;</td>
       <td class="b_b2" colspan="2"><%= number_to_currency(@report[:rider_donations][:stf], :precesion => 2) %></td>
@@ -534,9 +533,9 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td class="b_t2 v_t a_l" colspan="4">Generated By</td>
+      <td class="b_t2 v_t a_l" colspan="4"><%= translate_helper("cctc_generated_by_label") %></td>
       <td>&nbsp;</td>
-      <td class="b_t2 v_t a_l" colspan="4">Date Generated</td>
+      <td class="b_t2 v_t a_l" colspan="4"><%= translate_helper("cctc_date_generated_label") %></td>
       <td>&nbsp;</td>
     </tr>
   </table>

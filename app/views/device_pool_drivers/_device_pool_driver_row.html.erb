@@ -2,7 +2,7 @@
   <td><%= device_pool_driver.name %></td>
   <% if can? :edit, device_pool_driver %>
     <td>
-      <%= link_to "Remove", device_pool_device_pool_driver_path(device_pool_driver.device_pool, device_pool_driver), :method => "delete", :remote => true, "data-type" => :json, :class => "delete device_pool_driver" %>
+      <%= link_to translate_helper("remove_device_pool_driver"), device_pool_device_pool_driver_path(device_pool_driver.device_pool, device_pool_driver), :method => "delete", :remote => true, "data-type" => :json, :class => "delete device_pool_driver" %>
     </td>
   <% end %>
 </tr>

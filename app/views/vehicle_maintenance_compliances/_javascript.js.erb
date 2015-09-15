@@ -1,0 +1,16 @@
+$("#vehicle_maintenance_compliance_due_type").on("change", function() {
+  var $this = $(this);
+  if ($this.val() == "date") {
+    $(".due-type-date").fadeIn();
+    $(".due-type-mileage").fadeOut();
+  } else if ($this.val() == "mileage") {
+    $(".due-type-date").fadeOut();
+    $(".due-type-mileage").fadeIn();
+  } else if ($this.val() == "both") {
+    $(".due-type-date").fadeIn();
+    $(".due-type-mileage").fadeIn();
+  } else {
+    $(".due-type-date").fadeOut();
+    $(".due-type-mileage").fadeOut();
+  }
+}).trigger("change");

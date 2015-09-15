@@ -1,0 +1,38 @@
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'drivers' %>
+
+<div id="page-header" class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1><%= translate_helper("index_driver_heading") %></h1>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <% if can? :create, Driver %>
+      <div class="pull-right">
+        <%= link_to translate_helper("new_driver_link_text"), new_driver_path, class: "btn action-button" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 col-md-6">
+    <table class="table table-striped table-bordered" id="documents-table">
+      <thead>
+        <tr>
+          <th class="col-sm-4"><%= translate_helper("driver_form_name") %></th>
+          <th class="col-sm-2"><%= translate_helper("driver_form_active") %></th>
+          <th class="col-sm-2"><%= translate_helper("paid") %></th>
+          <th class="col-sm-2"><%= translate_helper("driver_form_available") %></th>
+          <th class="col-sm-2"><%= translate_helper("driver_overdue_events") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @drivers.empty? %>
+          <tr>
+            <td colspan="4"><%= translate_helper("drivers_empty") %></td>
+          </tr>
+        <% end %>
+        <%= render partial: 'driver', collection: @drivers %>
+      </tbody>
+    </table>
+  </div>
+</div>

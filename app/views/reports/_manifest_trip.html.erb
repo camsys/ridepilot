@@ -14,26 +14,39 @@
   </tr>
   <tr class="addresses">
     <td class="pickup">
-      PU: <%= trip.pickup_address.try(:text) || '(Pickup Unspecified)' %>
+      PU: <%= trip.pickup_address.try(:text) || translate_helper("pickup_unspecified") %>
     </td>
     <td class="dropoff">
-      DO: <%= trip.dropoff_address.try(:text) || '(Dropoff Unspecified)' %>
+      DO: <%= trip.dropoff_address.try(:text) || translate_helper("dropoff_unspecified") %>
     </td>
   </tr>
   <% if trip.notes.present? %>
     <tr>
       <td colspan="2" class="notes">
-        Trip notes: <%= trip.notes %>
+        <%= translate_helper("trip_notes_label") %> <%= trip.notes %>
       </td>
     </tr>
   <% end %>
   <% if show_status %>
     <tr>
       <td class="notes">
-        Run: <%= trip.run_text %><span class='address_separator'></span>
+        <%= translate_helper("trip_run_label") + trip.run_text %><span class='address_separator'></span>
       </td>
       <td>
-        Result: <%= trip.trip_result.present? ? trip.trip_result : "Pending" %>
+        <%= translate_helper("trip_result_label") % trip.trip_result_name || translate_helper("pending") %>
+      </td>
+    </tr>
+  <% end %>
+  <% if (later_customer_trips = later_trips_for_customer(trip.customer, trip)).any? %>
+    <tr>
+      <td colspan="2" class="later-rides">
+        <% later_customer_trips.each do |trip| %>
+          <p>
+            <%= translate_helper("later_trips") %> at 
+            <%= trip.pickup_time.strftime('%l:%M %P') %> with 
+            <%= trip.run ? trip.run.driver.name : "Cab" %>
+          </p>
+        <% end %>
       </td>
     </tr>
   <% end %>

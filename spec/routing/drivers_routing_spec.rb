@@ -11,8 +11,8 @@ RSpec.describe DriversController, type: :routing do
       expect(:get => "/drivers/new").to route_to("drivers#new")
     end
 
-    it "does not route to #show" do
-      expect(:get => "/drivers/1").to_not route_to("drivers#show", :id => "1")
+    it "routes to #show" do
+      expect(:get => "/drivers/1").to route_to("drivers#show", :id => "1")
     end
 
     it "routes to #edit" do
@@ -30,6 +30,5 @@ RSpec.describe DriversController, type: :routing do
     it "routes to #destroy" do
       expect(:delete => "/drivers/1").to route_to("drivers#destroy", :id => "1")
     end
-
   end
 end

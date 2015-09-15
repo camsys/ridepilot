@@ -1,5 +1,29 @@
-<div id="page-header">
-  <h1>Create New Vehicle</h1>
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'vehicles' %>
+
+<div id="page-header" class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1><%= translate_helper("new_vehicle_heading") %></h1>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <% if can? :manage, @vehicle %>
+      <div class="pull-right">
+        <button class="btn action-button" id="vehicle_form_submit">
+          <%= translate_helper("save") %>
+        </button>
+        <%= link_to translate_helper("cancel"), vehicles_path, class: "btn action-button" %>
+      </div>
+    <% end %>
+  </div>
 </div>
 
 <%= render :partial=>"form" %>
+
+<%= javascript_tag do %>
+  $(document).ready(function(){
+    $("form.new_vehicle .form-actions").hide();
+    
+    $("#vehicle_form_submit").on("click", function(){
+      $("form.new_vehicle").submit();
+    });
+  });
+<% end %>

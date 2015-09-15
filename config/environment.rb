@@ -1,24 +1,31 @@
 # Load the Rails application.
 require File.expand_path('../application', __FILE__)
 
+Rails.application.routes.default_url_options[:host] = ENV['RIDEPILOT_HOST']
+
+I18n.available_locales = ["en"]
+
+#Deprecated; Values have been moved to trip_results table
 TRIP_RESULT_CODES = {
   "COMP"  => "Complete",    # the trip was (as far as we know) completed
   "NS"    => "No-show",     # the customer did not show up for the trip
   "CANC"  => "Cancelled",   # the trip was cancelled by the customer
   "TD"    => "Turned down", # the provider told the customer that it could not provide the trip
   "UNMET" => "Unmet Need"   # a trip that was outside of the service parameters (too early, too late, too far, etc).
-}
+}.freeze
 
-TRIP_PURPOSES = ["Life-Sustaining Medical", "Medical", "Nutrition", "Personal/Support Services", "Recreation", "School/Work", "Shopping", "Volunteer Work", "Center"]
+#Deprecated; Values have been moved to trip_purposes table
+TRIP_PURPOSES = ["Life-Sustaining Medical", "Medical", "Nutrition", "Personal/Support Services", "Recreation", "School/Work", "Shopping", "Volunteer Work", "Center"].freeze
 
-SERVICE_LEVELS = ["Wheelchair", "Ambulatory"]
+#Deprecated; Values have been moved to service_levels table
+SERVICE_LEVELS = ["Wheelchair", "Ambulatory"].freeze
 
-TRIP_VERIFICATION_DISPLAY_OPTIONS = ['All Trips','Cab Trips','Not Cab Trips']
+TRIP_VERIFICATION_DISPLAY_OPTIONS = ["All Trips", "Cab Trips", "Not Cab Trips"].freeze
 
 BUSINESS_HOURS = {
   :start => 7,
   :end => 18,
-}
+}.freeze
 
 PER_PAGE = 30
 
@@ -82,9 +89,21 @@ STATE_NAME_TO_POSTAL_ABBREVIATION = {
   "WEST VIRGINIA" => "WV",
   "WISCONSIN" => "WI",
   "WYOMING" => "WY"
-}
+}.freeze
 
-EMAIL_FROM = "apps@rideconnection.org"
+GOOGLE_MAP_DEFAULTS = {
+  bounds: {
+    north: 42.0,
+    west:  -114.0,
+    south: 37.0,
+    east:  -109.0    
+  },
+  viewport: {
+    center_lat: 40.77,
+    center_lng: -111.9,
+    zoom: 11
+  }
+}.freeze
 
 # Initialize the Rails application.
 Rails.application.initialize!

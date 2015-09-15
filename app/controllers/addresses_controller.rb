@@ -44,6 +44,7 @@ class AddressesController < ApplicationController
     addresses = Address.accessible_by(current_ability).where(["((LOWER(address) like '%' || ? || '%' ) and  (city || ', ' || state || ' ' || zip like ? || '%')) or LOWER(building_name) like '%' || ? || '%' or LOWER(name) like '%' || ? || '%' ", address, city_state_zip, term, term]).where(:provider_id => current_provider_id, :inactive => false)
 
     if addresses.size > 0
+
       #there are some existing addresses
       address_json = addresses.map { |address| address.json }
 
@@ -67,7 +68,7 @@ class AddressesController < ApplicationController
 
       #only addresses within one decimal degree of the trimet district
       addresses = addresses.find_all { |address|
-        point = RGeo::Geos.factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f, 4326)
+        point = RGeo::Geographic.spherical_factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f)
         Region.count(:conditions => ["name='TriMet' and st_distance(the_geom, ?) <= 1", point]) > 0
       }
 
@@ -83,7 +84,8 @@ class AddressesController < ApplicationController
                     :city => address['city'],
                     :state => STATE_NAME_TO_POSTAL_ABBREVIATION[address['state'].upcase],
                     :zip => address['postcode'],
-                    :the_geom => RGeo::Geos.factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f, 4326)
+                    :the_geom => RGeo::Geographic.spherical_factory(srid: 4326).point(address['lon'].to_f, address['lat'].to_f),
+                    :notes => address['notes']
                     )
         address_obj.json
 
@@ -98,12 +100,13 @@ class AddressesController < ApplicationController
   def edit; end
   
   def create
-    the_geom       = params[:lat].to_s.size > 0 ? RGeo::Geos.factory(srid: 4326).point(params[:lon].to_f, params[:lat].to_f, 4326) : nil
+    
+    the_geom       = params[:lat].to_s.size > 0 ? RGeo::Geographic.spherical_factory(srid: 4326).point(params[:lon].to_f, params[:lat].to_f, 4326) : nil
     prefix         = params['prefix'] || ""
     address_params = {}
 
     # Some kind of faux strong parameters...
-    for param in ['name', 'building_name', 'address', 'city', 'state', 'zip', 'phone_number', 'in_district', 'default_trip_purpose']
+    for param in ['name', 'building_name', 'address', 'city', 'state', 'zip', 'phone_number', 'in_district', 'trip_purpose_id', 'notes']
       address_params[param] = params[prefix + "_" + param]
     end
 
@@ -123,11 +126,46 @@ class AddressesController < ApplicationController
       attrs = address.attributes
       attrs[:label] = address.text.gsub(/\s+/, ' ')
       attrs[:prefix] = prefix
-      attrs.merge!('phone_number' => address.phone_number, 'trip_purpose' => address.default_trip_purpose ) if prefix == "dropoff"
+      attrs.merge!('phone_number' => address.phone_number, 'trip_purpose' => address.trip_purpose ) if prefix == "dropoff"
       render :json => attrs.to_json
     else
       errors = address.errors.messages
       errors['prefix'] = prefix
+      render :json => errors
+    end
+  end
+
+  def validate
+    
+    the_geom       = params[:lat].to_s.size > 0 ? RGeo::Geographic.spherical_factory(srid: 4326).point(params[:lon].to_f, params[:lat].to_f, 4326) : nil
+    prefix         = params['prefix'] || ""
+    address_params = {}
+
+    # Some kind of faux strong parameters...
+    for param in ['name', 'building_name', 'address', 'city', 'state', 'zip', 'phone_number', 'in_district', 'trip_purpose_id', 'notes']
+      address_params[param] = params[prefix + "_" + param]
+    end
+
+    address_params[:provider_id] = current_provider_id
+    address_params[:the_geom]    = the_geom
+
+    if params[:address_id].present?
+      address = Address.find(params[:address_id])
+      address.attributes = address_params
+    else
+      address = Address.new(address_params)
+    end
+
+    if address.valid?
+      render :json => {
+        success: true,
+        prefix: prefix,
+        address_text: address.address_text,
+        attributes: address.attributes
+      }
+    else
+      errors = address.errors.messages
+      errors[:prefix] = prefix
       render :json => errors
     end
   end
@@ -143,8 +181,9 @@ class AddressesController < ApplicationController
   end
 
   def update
+
     if @address.update_attributes address_params
-      flash[:notice] = "Address '#{@address.name}' was successfully updated"
+      flash.now[:notice] = "Address '#{@address.name}' was successfully updated"
       redirect_to provider_path(@address.provider)
     else
       render :action => :edit
@@ -164,9 +203,60 @@ class AddressesController < ApplicationController
     end
   end
 
+  def check_loading_status
+    status = {
+      is_loading: current_provider.address_upload_flag.is_loading 
+    }
+
+    status[:summary] = TranslationEngine.translate_text(:address_file_uploaded) if !status[:is_loading]
+
+    render json: status
+  end
+
+  def upload
+    error_msgs = []
+
+    if !can?(:load, Address)
+      error_msgs << TranslationEngine.translate_text(:not_authorized)
+    else
+      address_file = params[:address][:file] if params[:address]
+      
+      if !address_file.nil?
+        if File.extname(address_file.original_filename) != '.csv'
+          error_msgs << TranslationEngine.translate_text(:address_file_should_be_csv)
+        elsif current_provider.address_upload_flag.is_loading
+          error_msgs << TranslationEngine.translate_text(:address_file_being_uploading)
+        else
+          begin
+            # Make an object in your bucket for your upload
+            s3_file = S3_BUCKET.object("/provider_addresses/" + address_file.original_filename)
+            # Upload the file
+            s3_file.put(body: address_file, acl: 'public-read')
+
+            AddressUploadWorker.perform_async(s3_file.public_url, current_provider.id) #sidekiq needs to run
+          rescue Exception => ex
+            current_provider.address_upload_flag.uploaded!
+            error_msgs << ex.message
+          end
+        end
+      else
+        error_msgs << TranslationEngine.translate_text(:select_address_file_to_upload)
+      end
+    end
+
+    if error_msgs.size > 0
+      full_error_msg = error_msgs.join(' ')
+    end
+
+    respond_to do |format|
+      format.js
+      format.html {redirect_to provider_url(current_provider), alert: full_error_msg }
+    end
+  end
+
   private
   
   def address_params
-    params.require(:address).permit(:name, :building_name, :address, :city, :state, :zip, :in_district, :provider_id, :phone_number, :inactive, :default_trip_purpose)
+    params.require(:address).permit(:name, :building_name, :address, :city, :state, :zip, :in_district, :provider_id, :phone_number, :inactive, :trip_purpose_id, :notes)
   end
 end

@@ -1,0 +1,7 @@
+.row.form-group
+  = search_form.label "#{field.title || field.name}", class: 'col-sm-3' rescue nil
+  .col-sm-9
+    - lookup_table = field.lookup_table
+    - lookup_table.data_model.reset_column_information if lookup_table
+    - lookup_table_data = filter_lookup_table_data(lookup_table)
+    = search_form.collection_select "#{field.name}_in", lookup_table_data, "#{lookup_table.id_field_name}", "#{lookup_table.display_field_name}", {:include_blank => field.filter_type.name != Reporting::FilterType::MULTI_SELECT}, {:multiple => field.filter_type.name == Reporting::FilterType::MULTI_SELECT, class: 'form-control'}

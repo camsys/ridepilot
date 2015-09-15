@@ -1,7 +1,11 @@
 class V1::DevicePoolDriversController < ApplicationController
   force_ssl :only => [:update, :index]
 
+  # Don't use Devise authentication for API calls
   skip_before_filter :authenticate_user!
+  
+  # Don't use protect_from_forgery for API calls
+  skip_before_filter :verify_authenticity_token
   
   before_filter :authenticate_driver!
   before_filter :authorize_device_pool_driver_for_user!

@@ -1,0 +1,17 @@
+<tr class="vehicle_warranty-<%= vehicle_warranty.id %>">
+  <td>
+    <p class="form-control-static">
+      <%= vehicle_warranty.expiration_date.to_s(:long) %>
+    </p>
+  </td>
+  <td>
+    <p class="form-control-static">
+      <%= link_to_unless @readonly, vehicle_warranty.description, polymorphic_path([vehicle_warranty.vehicle, vehicle_warranty], action: :edit), remote: true %>
+    </p>
+  </td>
+  <% unless @readonly %>
+    <td>
+      <%= link_to "X", polymorphic_path([vehicle_warranty.vehicle, vehicle_warranty]), remote: true, method: :delete, data: { confirm: translate_helper("vehicle_warranty_delete_confirm") }, class: "btn btn-danger btn-sm pull-right" %>
+    </td>
+  <% end %>
+</tr>

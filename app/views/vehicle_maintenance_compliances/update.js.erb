@@ -1,0 +1,4 @@
+$('#modal-dialog').modal('hide');
+var $new_row = $("<%= j (render @vehicle_maintenance_compliance) %>").hide();
+$('#vehicle_maintenance_compliances-table .vehicle_maintenance_compliance-<%= @vehicle_maintenance_compliance.id %>').slideUp('fast').replaceWith($new_row);
+$new_row.slideDown('slow');

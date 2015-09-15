@@ -1,0 +1,54 @@
+<div id="page-header" class="clearfix">
+  <h1><%= translate_helper("change_expiration_heading") %></h1>
+</div>
+
+<% if current_user.errors.any? %>
+  <div id="error_explanation">
+    <h2>
+      <h2>translate_helper("user_form_error_message", count: current_user.errors.count)</h2>
+    </h2>
+    <ul>
+      <% current_user.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for @user, :url => change_expiration_path(id: @user.id) do |f| %>
+<fieldset>
+  <ol class="section first">
+    <li>
+      <%= f.label :expires_at, translate_helper("user_expires_at") %>
+      <%= f.text_field :expires_at, :value => @user.expires_at.try(:to_s, :form) %>
+      <p><small>Set an empty value to activate account</small></p>
+    </li>  
+    <li>
+      <%= f.label :inactivation_reason, translate_helper("user_inactivation_reason") %>
+      <%= f.text_field :inactivation_reason %>
+    </li>
+  </ol>
+  <div class="actions">
+    <%= f.submit translate_helper("change_expiration_submit") %>
+  </div>
+</fieldset>
+<% end %>
+
+<script type='text/javascript'>
+
+  $(function(){
+    $('input[type=text]#user_expires_at').datetimepicker({
+          buttonImage: "<%=  image_path 'calendar-clock.png' %>",
+          buttonImageOnly: true,
+          constrainInput: false,
+          dateFormat: 'D yy-mm-dd',
+          hourGrid: 2,
+          minuteGrid: 15,
+          showOn: "both",
+          stepHour: 1,
+          stepMinute: 15,
+          timeFormat: 'hh:mm tt',
+    });
+  });
+
+</script>

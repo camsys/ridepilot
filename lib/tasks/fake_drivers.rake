@@ -1,10 +1,3 @@
-CENTER_LAT = 45.523
-CENTER_LNG = -122.676
-BOUND_NORTH = 45.65
-BOUND_SOUTH = 45.35
-BOUND_EAST = -122.3
-BOUND_WEST = -123.0
-
 PERIOD = 15 # Seconds between updates
 
 namespace :test do
@@ -42,16 +35,16 @@ namespace :test do
     while true do
       drivers.each do |driver|
         driver.status = 'active'
-        if driver.lat.blank? then driver.lat = CENTER_LAT.to_s end
-        if driver.lng.blank? then driver.lng = CENTER_LNG.to_s end
+        if driver.lat.blank? then driver.lat = GOOGLE_MAP_DEFAULTS[:viewport][:center_lat].to_s end
+        if driver.lng.blank? then driver.lng = GOOGLE_MAP_DEFAULTS[:viewport][:center_lng].to_s end
         # Move a small random amount
         lat_offset = (Random.rand(20)-10)/1000.0
         lng_offset = (Random.rand(20)-10)/1000.0
         lat = driver.lat.to_f + lat_offset
         lng = driver.lng.to_f + lng_offset
         # Bounce back to center if it goes too far
-        if lat > BOUND_NORTH or lat < BOUND_SOUTH then lat = CENTER_LAT end
-        if lng > BOUND_EAST or lng < BOUND_WEST then lng = CENTER_LNG end
+        if lat > GOOGLE_MAP_DEFAULTS[:bounds][:north] or lat < GOOGLE_MAP_DEFAULTS[:bounds][:south] then lat = GOOGLE_MAP_DEFAULTS[:viewport][:center_lat] end
+        if lng > GOOGLE_MAP_DEFAULTS[:bounds][:east] or lng < GOOGLE_MAP_DEFAULTS[:bounds][:west] then lng = GOOGLE_MAP_DEFAULTS[:viewport][:center_lng] end
         driver.lat = lat.to_s
         driver.lng = lng.to_s
         driver.posted_at = DateTime.now

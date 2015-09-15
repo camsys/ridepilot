@@ -1,0 +1,33 @@
+<div id="page-header" class="clearfix">
+  <h1><%= translate_helper("edit_application_settings_heading") %></h1>
+</div>
+
+<%= form_tag(application_settings_path, method: :put ) do %>
+  <fieldset>
+    <ol class="section first">
+      <li class="selfclear">
+        <%= label_tag :application_setting_devise_password_archiving_count, translate_helper("application_settings_password_archiving_count") %>
+        <%= number_field_tag "application_setting[devise.password_archiving_count]", @settings['devise.password_archiving_count'], in: 1..99, id: :application_setting_devise_password_archiving_count %>
+        <p>
+          <small>This should be one less than the number of passwords you don't want the user to be able to reuse.
+            For instance, with an archive count of 4, changing the password 4 times results in passwords 1, 2, 3,
+            and 4 being stored in the archive table. Changing it a 5th time results in password 5 being added and
+            password 1 being dropped, and thus able to be used again after 5 changes.</small>
+        </p>
+      </li>
+
+
+      <li class="selfclear">
+        <%= label_tag :application_setting_devise_expire_password_after, translate_helper("application_settings_expire_password_after") %>
+        <%= number_field_tag "application_setting[devise.expire_password_after]", (@settings['devise.expire_password_after'] || 0).to_i / 1.day, in: 0..365, id: :application_setting_devise_expire_password_after %> days
+        <p>
+          <small>Setting this to zero will disable password expiration</small>
+        </p>
+      </li>
+    </ol>
+  </fieldset>
+
+  <div class="actions">
+    <%= submit_tag translate_helper("submit") %>
+  </div>
+<% end %>

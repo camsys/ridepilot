@@ -1,14 +1,4 @@
-<div id="page-header">
-  <h1>Editing Trip</h1>
-  <%= render :partial => 'weekday_select' %>
-  <div class="clearfix"></div>
-</div>
-
-<div id="calendar" data-start-time="<%= @week_start.to_i * 1000 %>"></div>
-
-<%= render 'list', :display => "none" %>
-
-<%= render 'form' %>
+<%= render 'form', edit_mode: :edit %>
 
 <%= render 'javascript' %>
 

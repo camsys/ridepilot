@@ -1,0 +1,36 @@
+.panel.panel-primary#trip_other_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:other)
+  .panel-body{style: 'padding: 5px;'}
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :customer_informed, translate_helper("trip_called_back")
+      .col-sm-9
+        = f.check_box :customer_informed
+        - if @trip.customer_informed
+          = "on #{@trip.called_back_at}" if @trip.called_back_at.present?
+          = "by #{@trip.called_back_by.email}" if @trip.called_back_by.present?
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :trip_result, translate_helper("trip_result")
+      .col-sm-9
+        = f.select :trip_result_id, @trip_results,  { :include_blank => true }, {class: 'form-control'} 
+
+    .form-group.col-sm-12.donation
+      .col-sm-3
+        = f.label :donation, translate_helper("trip_donation")
+      .col-sm-6.col-md-3
+        = f.text_field :donation, :size => 8, class: 'form-control'
+
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :funding_source_id, translate_helper("funding_source")
+      .col-sm-9
+        = f.collection_select :funding_source_id, @funding_sources, :id, :name, { :include_blank => true }, {class: 'form-control'}
+
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :service_level, translate_helper("trip_service_level")
+      .col-sm-9
+        = f.select :service_level_id, @service_levels, { :include_blank => true }, {class: 'form-control'} 

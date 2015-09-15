@@ -1,16 +1,17 @@
-<%= content_for :title, "Verify Runs#{@query.try(:start_date).try(:strftime, ": %B %Y")}" %>
-<div id="page-header">
-<h1>Verify Runs<%= @query.try(:start_date).try(:strftime, ": %B %Y") %></h1>
+<%= render 'custom_report_header'%>
+<%= content_for :title, (translate_helper("show_runs_report_title") + "#{@query.try(:start_date).try(:strftime, ": %B %Y")}") %>
+<div id="page-header" class="clearfix">
+<h1><%= translate_helper("show_runs_report_heading") + @query.try(:start_date).try(:strftime, ": %B %Y") %></h1>
 </div>
 
 <% if @query %> 
   <%= form_for @query, :url=>url_for(:action=>:show_runs_for_verification), :html=>{:method=>:get} do |f| %>
     <fieldset class="select-month">
       <p>
-        <%= f.date_select  :start_date, :order => [:month,:day,:year] %>
-        through 
-        <%= f.date_select  :before_end_date, :order => [:month,:day,:year] %>
-        <%= f.submit "Update" %>
+        <%= f.date_select  :start_date, :order => [:month,:day,:year] rescue nil%>
+        <%= translate_helper("through") %> 
+        <%= f.date_select  :before_end_date, :order => [:month,:day,:year] rescue nil%>
+        <%= f.submit translate_helper(:update) %>
       </p>
     </fieldset>
   <% end %>
@@ -19,22 +20,22 @@
 <%= form_tag :action => "update_runs_for_verification" do |f| %>
   <table>
     <tr>
-      <th>Date</th>
+      <th><%= translate_helper("date") %></th>
       <th></th>
-      <th>Vehicle</th>
-      <th>Driver</th>
-      <th>Actual Start Time</th>
-      <th>Actual End Time</th>
-      <th>Odometer Start</th>
-      <th>Odometer End</th>
-      <th>Unpaid Break Time</th>
-      <th>Driver Paid?</th>
+      <th><%= translate_helper("vehicle") %></th>
+      <th><%= translate_helper("driver") %></th>
+      <th><%= translate_helper("actual_start_time") %></th>
+      <th><%= translate_helper("actual_end_time") %>/th>
+      <th><%= translate_helper("odometer_start") %></th>
+      <th><%= translate_helper("odometer_end") %></th>
+      <th><%= translate_helper("unpaid_break_time") %></th>
+      <th><%= translate_helper("driver_paid") %></th>
     </tr>
     
     <% @runs.group_by {|run| run.date.beginning_of_week}.each do |day, runs| %>
       <tr>
         <th colspan="11">
-          Week of <%= day.strftime("%B %d, %Y") %>
+          <%= translate_helper("week_of") + day.strftime("%B %d, %Y") %>
         </th>
       <tr>
       <% runs.each do |run| %>
@@ -85,6 +86,6 @@
     <% end %>
   </table>
   <div class="actions">
-    <%= submit_tag "Update Runs" %>
+    <%= submit_tag translate_helper("show_runs_submit") %>
   </div>
 <% end %>

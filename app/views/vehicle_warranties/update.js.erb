@@ -1,0 +1,4 @@
+$('#modal-dialog').modal('hide');
+var $new_row = $("<%= j (render @vehicle_warranty) %>").hide();
+$('#vehicle_warranties-table .vehicle_warranty-<%= @vehicle_warranty.id %>').slideUp('fast').replaceWith($new_row);
+$new_row.slideDown('slow');

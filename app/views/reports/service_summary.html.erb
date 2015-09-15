@@ -1,52 +1,52 @@
-<%= content_for :title, "Service Summary: #{@provider.name}, #{@start_date.strftime("%B %Y")}" %>
-<div id="page-header">
-  <h1>Reports: Service Summary</h1>
-</div>
+<%= render 'custom_report_header'%>
+<%= content_for :title, translate_helper("service_summary_title",provider:@provider.name,start_date:@start_date.strftime("%B %Y")) %>
 
+<div class="filter-form" style="padding-top: 10px;">
 <%= form_for @query, :url=>url_for(:action=>:service_summary), :html=>{:method=>:get} do |f| %>
   <fieldset class="select-month">
     <p>
-      <%= f.date_select  :start_date, :order => [:month,:year] %>
-      <%= f.submit "Report" %>
+      <%= f.date_select  :start_date, :order => [:month,:year] rescue nil%>
+      <%= f.submit translate_helper("service_summary_report_submit") %>
     </p>
   </fieldset>
 <% end %>
+</div>
 
 <%= render :partial => 'header' %>
 
 <table>
   <tr>
     <th colspan="5" class="table-header print-only">
-      Service Summary Section 1 - Trip Data
+      <%= translate_helper("service_summary_section_one_heading") %>
     </th>
   </tr>
   <tr>
     <th colspan="2">
     </th>
     <th colspan="3" class="service-header">
-      STF Service
+      <%= translate_helper("stf_service_label") %>
     </th>
   </tr>
   <tr>
     <th class="line-number">
-      Line #
+      <%= translate_helper("line_number_label") %>
     </th>
     <th>
     </th>
     <th class="data">
-      In District
+      <%= translate_helper("in_district") %>
     </th>
     <th class="data">
-      Out of District
+      <%= translate_helper("out_of_district") %>
     </th>
     <th class="data">
-      Total
+      <%= translate_helper("total") %>
     </th>
   </tr>
 
   <tr>
     <th></th>
-    <th class="section-header">Trips</th>
+    <th class="section-header"><%= translate_helper("trips") %></th>
     <td colspan="3" class="greyed-out"></td>
   </tr>
 
@@ -63,7 +63,7 @@
 
   <tr>
     <th><%= i += 1 %></th>
-    <td class="total-label">Total Trips</td>
+    <td class="total-label"><%= translate_helper("total_trips") %></td>
     <td class="numeric total"><%= @total['in_district'] %></td>
     <td class="numeric total"><%= @total['out_of_district'] %></td>
     <td class="numeric total"><%= @total['in_district'] + @total['out_of_district'] %></td>
@@ -71,54 +71,54 @@
 
   <tr>
     <th><%= i += 1 %></th>
-    <td>Total miles driven</td>
+    <td><%= translate_helper("total_miles_driven") %></td>
     <td colspan="2" class="greyed-out"></td>
     <td class="numeric"><%= @total_miles_driven %></td>
   </tr>
 
   <tr>
     <th><%= i += 1 %></th>
-    <td>Turndowns</td>
+    <td><%= translate_helper("turndowns") %></td>
     <td colspan="2" class="greyed-out"></td>
     <td class="numeric"><%= @turndowns %></td>
   </tr>
 
   <tr>
     <th></th>
-    <th class="section-header">Drivers</th>
+    <th class="section-header"><%= translate_helper("drivers") %></th>
     <td colspan="3" class="greyed-out"></td>
   </tr>
 
   <tr>
     <th><%= i += 1 %></th>
-    <td>Driver hours: Volunteer</td>
+    <td><%= translate_helper("driver_hours_volunteer") %></td>
     <td colspan="2" class="greyed-out"></td>
     <td class="numeric"><%= @volunteer_driver_hours %></td>
   </tr>
 
   <tr>
     <th><%= i += 1 %></th>
-    <td>Driver hours: Paid</td>
+    <td><%= translate_helper("driver_hours_paid") %></td>
     <td colspan="2" class="greyed-out"></td>
     <td class="numeric"><%= @paid_driver_hours %></td>
   </tr>
 
   <tr>
     <th><%= i += 1 %></th>
-    <td class="total-label">Total Driver hours</td>
+    <td class="total-label"><%= translate_helper("total_driver_hours") %></td>
     <td colspan="2" class="greyed-out"></td>
     <td class="numeric total"><%= @paid_driver_hours + @volunteer_driver_hours %></td>
   </tr>
 
   <tr>
     <th></th>
-    <th class="section-header">Volunteer Hours</th>
+    <th class="section-header"><%= translate_helper("volunteer_hours") %></th>
     <td colspan="3" class="greyed-out"></td>
   </tr>
 
   <tr>
     <th><%= i += 1 %></th>
-    <td>Volunteer hours: Escort</td>
+    <td><%= translate_helper("volunteer_hours_escort") %></td>
     <td colspan="2" class="greyed-out"></td>
     <td class="numeric">
       <%= @monthly.volunteer_escort_hours %>
@@ -127,7 +127,7 @@
 
   <tr>
     <th><%= i += 1 %></th>
-    <td>Volunteer hours: Administrative</td>
+    <td><%= translate_helper("volunteer_hours_administrative") %></td>
     <td colspan="2" class="greyed-out"></td>
     <td class="numeric">
       <%= @monthly.volunteer_admin_hours %>
@@ -136,13 +136,13 @@
 
   <tr>
     <th></th>
-    <th class="section-header">Ride Information</th>
+    <th class="section-header"><%= translate_helper("ride_information") %></th>
     <td colspan=3 class="greyed-out"></td>
   </tr>
 
   <tr>
     <th><%= i += 1 %></th>
-    <td>Unduplicated riders (First ride this fiscal year)</td>
+    <td><%= translate_helper("unduplicated_riders") %></td>
     <td colspan="2" class="greyed-out"></td>
     <td class="numeric"><%= @undup_riders %></td>
   </tr>

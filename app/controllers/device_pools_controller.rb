@@ -8,7 +8,7 @@ class DevicePoolsController < ApplicationController
     @device_pool.color    = @device_pool.color.gsub(/#/, "")
     
     if @device_pool.save
-      flash[:notice] = "Device pool created"
+      flash.now[:notice] = "Device pool created"
       redirect_to provider_path(current_provider)
     else
       render :action=>:new
@@ -21,7 +21,7 @@ class DevicePoolsController < ApplicationController
     params[:device_pool][:color] = params[:device_pool][:color].gsub(/#/, "")
     
     if @device_pool.update_attributes(device_pool_params)
-      flash[:notice] = "Device pool updated"
+      flash.now[:notice] = "Device pool updated"
       redirect_to provider_path(current_provider)
     else
       render :action=>:edit
@@ -32,7 +32,7 @@ class DevicePoolsController < ApplicationController
     @device_pool.destroy
     respond_to do |format|
       format.html {
-        flash[:notice] = "Device pool deleted"
+        flash.now[:notice] = "Device pool deleted"
         redirect_to provider_path(current_provider)        
       }
       format.js { 

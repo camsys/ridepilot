@@ -1,19 +1,20 @@
-<div id="page-header">
-  <h1>Listing cab runs</h1>
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'cab_trips' %>
+<div id="page-header" class="clearfix">
+  <h1><%=translate_helper("listing_cab_runs")%></h1>
 </div>
 
 <div class="wc-nav ui-buttonset" data-current-week-start="<%= @week_start.to_i * 1000 %>" data-start-time="<%= @week_start.to_i * 1000 %>">
   <button class="wc-prev ui-button ui-widget ui-state-default ui-button-text-icon-primary ui-button-icon-only ui-corner-left" role="button" aria-disabled="false" title="previous">
     <span class="ui-button-icon-primary ui-icon ui-icon-seek-prev"></span>
-    <span class="ui-button-text">previous</span>
+    <span class="ui-button-text"><%=translate_helper("previous")%></span>
   </button>
   <button class="wc-today ui-button ui-widget ui-state-default ui-button-text-icon-primary" role="button" aria-disabled="false">
     <span class="ui-button-icon-primary ui-icon ui-icon-home"></span>
-    <span class="ui-button-text">This Week</span>
+    <span class="ui-button-text"><%=translate_helper("this_week")%></span>
   </button>
   <button class="wc-next ui-button ui-widget ui-state-default ui-button-text-icon-primary ui-button-icon-only ui-corner-right" role="button" aria-disabled="false" title="next">
     <span class="ui-button-icon-primary ui-icon ui-icon-seek-next"></span>
-    <span class="ui-button-text">next</span>
+    <span class="ui-button-text"><%=translate_helper("next")%></span>
   </button>
 </div>
 
@@ -27,10 +28,11 @@
   </span>
 </h2>
 
-<table id="cab_trips">
+<table id="cab_trips" class="table table-striped table-bordered" >
   <tr class="head">
-    <th>Date</th>
+    <th><%=translate_helper("date")%></th>
     <th></th>
+    <th><%=translate_helper("trips_reimbursement_cost")%></th>
   </tr>
   <%= render "grouped_cab_trips" %>
 </table>

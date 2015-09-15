@@ -1,0 +1,3 @@
+- trip_run_id = trip.run_id
+- trip_run_id = -1 if trip.cab
+= select("trip", "run_id", @runs_for_dropdown, { selected: trip.adjusted_run_id}, {id: "#{trip.id}-run-list", class: 'trip-run-options', data: {"trip-id": trip.id, "run-id": trip.adjusted_run_id} })

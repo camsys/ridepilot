@@ -1,0 +1,40 @@
+- edit_mode = :edit if !defined? edit_mode
+
+.panel.panel-primary#run_date_time_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:date_and_time)
+  .panel-body{style: 'padding: 5px;'}
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :date, translate_helper("date") 
+      .col-sm-9
+        = f.text_field :date, :size => 10, :value => format_time_for_listing_day(@run.scheduled_start_time), class: 'date-picker form-control', readonly: true
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :scheduled_start_time, translate_helper("scheduled_start_time")
+      .col-sm-9
+        = f.text_field :scheduled_start_time, :size => 8, :value => @run.scheduled_start_time.try(:to_s, :time_only), class: 'time-picker form-control', readonly: true
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :scheduled_end_time, translate_helper("scheduled_end_time")
+      .col-sm-9
+        = f.text_field :scheduled_end_time, :size => 8, :value => @run.scheduled_end_time.try(:to_s, :time_only), class: 'time-picker form-control', readonly: true
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :actual_start_time, translate_helper("actual_start_time")
+      .col-sm-9
+        = f.text_field :actual_start_time, :size => 8, :value => @run.actual_start_time.try(:to_s, :time_only), class: 'time-picker form-control', readonly: true
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :actual_end_time, translate_helper("actual_end_time")
+      .col-sm-9
+        = f.text_field :actual_end_time, :size => 8, :value => @run.actual_end_time.try(:to_s, :time_only), class: 'time-picker form-control', readonly: true
+
+- if edit_mode != :show 
+  = render "shared/date_time_picker_javascript"
+  :javascript
+    $(document).ready(function() {
+      makeDatePickers();
+      makeTimePickers();
+    });

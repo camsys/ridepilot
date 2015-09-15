@@ -1,0 +1,78 @@
+.action-button {
+  @extend .btn-primary;
+  color: white !important;
+  text-shadow: none;
+  margin-right: 5px;
+  padding: 3px 6px;
+  min-width: 5em;
+  @media(min-width:$screen-md-min){
+    min-height:34px; //this is the height for breadcrumb;
+  }
+  font-weight: bold;
+}
+
+a.btn-default
+{
+  color: #000;
+}
+
+#customer_providers
+{
+  /*border: solid 1px black;
+  border-radius: 4px;*/
+  padding: 8px 8px 8px 0px;
+  margin-bottom: 12px;
+}
+
+#customer_providers div
+{
+  padding: 0px;
+}
+
+.checkbox
+{
+  margin: 0px;
+}
+
+.radio + .radio,
+.checkbox + .checkbox 
+{
+  margin: 0px;
+}
+
+.field_with_errors {
+  @extend .has-error;
+}
+
+/* Get rid of the top blue border applied to all tables in Ridepilot, when using
+   bootstrap table styling
+*/
+table.table 
+{
+  border-top: 0 none;
+  border-bottom: 0 none;
+  border-collapse: collapse;
+  background: transparent;
+}
+
+// calendar
+.fc-view {
+  overflow: scroll;
+  //max-height: 500px !important;
+
+  table {
+    min-width: 1000px !important;
+  }
+}
+
+th.fc-resourceName {
+  width: 1px; // set a small width so let it grow to max text length
+}
+
+.fc-event {
+  cursor: pointer;
+}
+
+.row-highlight {
+  background-color: yellow !important; 
+}

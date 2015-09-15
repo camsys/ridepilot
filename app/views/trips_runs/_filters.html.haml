@@ -1,0 +1,43 @@
+.panel.panel-primary.filters-panel#run_trip_filter_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:trips_runs_filter)
+  .panel-body{style: 'padding: 5px;'}
+    = form_for :run_trip_filters, url: trips_runs_path, html: { :id => "run_trip_filter_form" }, :method => :get do |f|
+      .btns.pull-right
+        = f.submit  translate_helper(:ok), id: 'submitRunTripFilters', class: 'btn action-button', role: 'button'
+        = button_tag  translate_helper(:reset), id: 'resetRunTripFilters', class: 'btn action-button', role: 'button'
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :run_trip_day, translate_helper("run_trip_day")
+        = f.text_field :run_trip_day, :value => format_time_for_listing_day(@run_trip_day), class: 'date-picker form-control', readonly: true
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :vehicle_id, translate_helper(:vehicle)
+        = f.select :vehicle_id, options_from_collection_for_select( @vehicles, :id, :name, session[:vehicle_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :driver_id, translate_helper(:driver)
+        = f.select :driver_id, options_from_collection_for_select( @drivers, :id, :name, session[:driver_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :status_id, translate_helper(:status)
+        = f.select :status_id, options_for_select( [[translate_helper(:scheduled), 1], [translate_helper(:unscheduled), 2]], session[:status_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :run_result_id, translate_helper(:run_result)
+        = f.select :run_result_id, options_for_select( [[translate_helper(:complete), 1], [translate_helper(:incomplete), 2]], session[:run_result_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
+      .col-sm-12{style: 'padding: 5px;'}
+        = f.label :trip_result_id, translate_helper(:trip_result)
+        = f.select :trip_result_id, options_from_collection_for_select( TripResult.all, :id, :name, session[:trip_result_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
+
+= render "shared/date_time_picker_javascript"
+:javascript
+  $(document).ready(function(){
+    makeDatePickers();
+    
+    $('#resetRunTripFilters').on('click', function() {
+      $('#run_trip_filter_form input').val('');
+      $('#run_trip_filter_form select').val('');
+
+      $('#run_trip_filter_form select').submit();
+    });
+
+  });
+      
+    

@@ -6,8 +6,13 @@ RSpec.describe RunsController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Run. As you add validations to Run, be sure to
   # adjust the attributes here as well.
+  before(:each) do
+    @driver = create(:driver)
+    @vehicle = create(:vehicle)
+  end
+
   let(:valid_attributes) {
-    attributes_for(:run)
+    attributes_for(:run, :driver_id => @driver.id, :vehicle_id => @vehicle.id)
   }
 
   let(:invalid_attributes) {
@@ -99,12 +104,12 @@ RSpec.describe RunsController, type: :controller do
 
       it "accepts nested trip attributes" do        
         run = create(:run, :provider => @current_user.current_provider)
-        trip = create(:trip, :provider => @current_user.current_provider, :run => run, :trip_purpose => "Shopping")
+        trip = create(:trip, :provider => @current_user.current_provider, :run => run, :trip_purpose => create(:trip_purpose, name: "Shopping"))
         expect {
           put :update, {:id => run.to_param, :run => new_attributes.merge({
-            :trips_attributes => { "0" => { :id => trip.id, :trip_purpose => "Eating" }}}
+            :trips_attributes => { "0" => { :id => trip.id, :trip_purpose_id => create(:trip_purpose, name: "Eating").id }}}
           )}
-        }.to change{ trip.reload.trip_purpose }.from("Shopping").to("Eating")
+        }.to change{ trip.reload.trip_purpose.name }.from("Shopping").to("Eating")
       end
 
       it "assigns the requested run as @run" do

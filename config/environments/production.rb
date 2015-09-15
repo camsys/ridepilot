@@ -35,11 +35,11 @@ Rails.application.configure do
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
   # Specifies the header that your server uses for sending files.
-  config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
+  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
 
   # Set to :debug to see everything in the log.
   config.log_level = :info
@@ -77,7 +77,9 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Needed for sending new users' confirmation email
-  config.action_mailer.default_url_options = { :host => 'apps2.rideconnection.org/ridepilot' }
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.default_url_options = { :host => ENV['RIDEPILOT_HOST'] }
 end
 
 # Turn off auto TLS for e-mail

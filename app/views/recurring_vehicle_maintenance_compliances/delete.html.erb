@@ -1,0 +1,48 @@
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: false, tab_class: 'admin' %>
+
+<div id="page-header" class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1><%= translate_helper("delete_recurring_vehicle_maintenance_compliance_heading") %></h1>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <div class="pull-right">
+      <button class="btn action-button" id="recurring_vehicle_maintenance_compliance_form_submit">
+        <%= translate_helper("delete_recurring_vehicle_maintenance_compliance_confirm_button") %>
+      </button>
+      <%= link_to translate_helper("cancel"), @recurring_vehicle_maintenance_compliance, class: "btn action-button" %>
+    </div>
+  </div>
+</div>
+
+<%= form_for @recurring_vehicle_maintenance_compliance, method: :delete, html: {class: :delete_recurring_vehicle_maintenance_compliance} do |f| %>
+  <div class="row">
+    <div class="col-sm-12 col-md-4 col-md-offset-4">
+      <div class="panel panel-warning">
+        <div class="panel-heading">
+          <h2 class="panel-title"><%= translate_helper("delete_recurring_vehicle_maintenance_compliance_confirm_heading", event_name: @recurring_vehicle_maintenance_compliance.event_name) %></h2>
+        </div>
+        <div class="panel-body">
+          <div class="checkbox">
+            <%= label_tag :destroy_with_incomplete_children do %>
+              <%= check_box_tag :destroy_with_incomplete_children, "1" %>
+              <%= translate_helper("delete_recurring_vehicle_maintenance_compliance_incude_incomplete_dependents") %>
+            <% end %>
+          </div>
+          <div class="form-actions"><%= f.submit translate_helper("delete_recurring_vehicle_maintenance_compliance_confirm_button"), class: "btn action-button", confirm: translate_helper("delete_recurring_vehicle_maintenance_compliance_confirm") %></div>
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
+    </div><!-- END .col-md-6 -->
+  </div><!-- END .row -->
+<% end %>
+
+<%= javascript_tag do %>
+  $(document).ready(function(){
+    $("form.delete_recurring_vehicle_maintenance_compliance .form-actions").hide();
+    
+    $("#recurring_vehicle_maintenance_compliance_form_submit").on("click", function(){
+      if (confirm('<%= j translate_helper("delete_recurring_vehicle_maintenance_compliance_confirm") %>')) {
+        $("form.delete_recurring_vehicle_maintenance_compliance").submit();
+      }
+    });
+  });
+<% end %>

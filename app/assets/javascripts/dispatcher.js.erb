@@ -1,56 +1,26 @@
-function Dispatcher (tree_id, map_id, bounds, viewport) {
-  self           = this,
-  this.tree      = null,
-  this.map       = null,
-  this.bounds    = null,
-  this.viewport  = null,
-  this.markers   = {},
-  this._data     = null, 
-  this._infoWindow = new google.maps.InfoWindow({ content : "" }),
-  this._tree_elem  = $("#" + tree_id),
-  this._map_elem = $("#" + map_id),
-  this._timeout  = null,
-  this.last_search_marker = null,
-  this.search_markers = [],
+function Dispatcher (tree_id, map, bounds, viewport) {
+  var self = this;
+  this.tree      = null;
+  this.map       = map;
+  this.bounds    = bounds;
+  this.viewport  = viewport;
+  this.markers   = {};
+  this._data     = null;
+  this._infoWindow = new google.maps.InfoWindow({ content : "" });
+  this._tree_elem  = $("#" + tree_id);
+  this._map_elem = $("#" + map.id);
+  this._timeout  = null;
+  this.last_search_marker = null;
+  this.search_markers = [];
   
-  this.init = function(map_id, bounds, viewport){
+  this.init = function(){
     $(window).resize(self.adjustMapHeight).resize();
-    
-    if (bounds && validate_bounds(bounds).length == 0) {
-      // Save bounds as a Google LatLngBounds
-      self.bounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(bounds.south, bounds.west),
-        new google.maps.LatLng(bounds.north, bounds.east));
-    } else {
-      self.bounds = null;
-    }
-    if (viewport) {
-      self.viewport = {
-        center:new google.maps.LatLng(viewport.center_lat, viewport.center_lng),
-        zoom: viewport.zoom
-      };
-    } else {
-      // If not provided, use Portland area as default
-      self.viewport = {
-        center: new google.maps.LatLng(45.523, -122.676),
-        zoom: 11
-      };
-    }
-
-    self.map = new google.maps.Map( document.getElementById(map_id), {
-      zoom      : self.viewport.zoom,
-      mapTypeId : google.maps.MapTypeId.ROADMAP,
-      center    : self.viewport.center
-    });
-
+    self.initTree();
+    self._resetRefreshTimer();
     google.maps.event.addListener(self.map, "click", function(){
       self._infoWindow.close();
     });
-    
-    self.initTree();
-    
-    self._resetRefreshTimer();
-  },
+  };
   
   this.adjustMapHeight = function() {
     var height = $(window).height() -
@@ -62,7 +32,7 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
       $("#main > .notice").outerHeight(true) + "px";
     self._map_elem.css("height", height);
     $('.column_wrapper').css("height", height);
-  },
+  };
   
   this.initTree = function(){
     self.tree = self._tree_elem.jstree({
@@ -99,7 +69,7 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
         items : self.jsTreeContextMenu
       }
     });
-  },
+  };
   
   this.jsTreeContextMenu = function(node) {
     if ($(node).attr("rel") == "device_pool") {
@@ -121,7 +91,7 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
     } else {
       return false;
     }
-  },
+  };
   
   this.jsTreeRemoveNode = function(node) {
     if (confirm("Are you sure you want to delete this device pool?")) {
@@ -138,12 +108,12 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
           }
       });
     }
-  },
+  };
   
   this.positionMarkers = function() {
     if ( self.markers.length < 1 ) self.initMarkers();
     else self.updateMarkers();
-  },
+  };
   
   this.initMarkers = function(){
     $.each(self._data, function(){
@@ -151,10 +121,10 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
         var device_pool = this;
         $.each(device_pool.children, function(){
           self.createMarker(device_pool, this);
-        })
-      })
+        });
+      });
     });
-  }, 
+  }; 
   
   this.updateMarkers = function() {
     $.each(self._data, function(){
@@ -170,7 +140,7 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
         });
       });
     });
-  },
+  };
   
   this.createMarker = function(device_pool, device) {
     var marker = new StyledMarker({
@@ -187,41 +157,40 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
     });
 
     return marker;
-  },
+  };
   
   this._marker_html = function(device) {
-    return '<div class="marker_detail">\
-      <h2>' + device.name + '</h2>\
-      <h3>' + device.status + '</h3>\
-      <h4>Updated: ' + device.posted_at + '</h4>\
-    </div>';
-  },
+    return '<div class="marker_detail">' +
+      '<h2>' + device.name + '</h2>' +
+      '<h3>' + device.status + '</h3>' +
+      '<h4>Updated: ' + device.posted_at + '</h4>' +
+    '</div>';
+  };
   
   this._open_window_for_marker = function(marker) {
     self.last_search_marker = marker;
     self._infoWindow.setContent(marker.html);
     self._infoWindow.open(self.map, marker);
-  },
-  
+  };
   
   this._resetRefreshTimer = function() {
     self._timeout = window.clearTimeout( self._timeout );
     self._timeout = window.setTimeout( self.refresh, 120000 );
-  },
+  };
   
   this.refresh = function() {
     self._resetRefreshTimer();
     self._infoWindow.close();
     self._tree_elem.jstree("refresh");
-  },
+  };
   
   this.uncheckNode = function(node){
     self._tree_elem.jstree("uncheck_node", node );
-  },
+  };
   
   this.checkNode = function(node){
     self._tree_elem.jstree("check_node", node );
-  },
+  };
     
   this.createNodeListeners = function(){   
     // Driver name click   
@@ -248,7 +217,7 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
     self._tree_elem.bind("change_state.jstree", function(e, d) {
       var tagName = d.args[0].tagName;
       var refreshing = d.inst.data.core.refreshing;
-      if (refreshing == true && refreshing == "undefined") {
+      if (refreshing === true && refreshing == "undefined") {
         return;
       }
       if (tagName == "INS") {
@@ -271,7 +240,7 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
         }
       }
     });
-  },
+  };
 
   // Remember selected checkboxes for later
   this.updateSelection = function() {
@@ -279,7 +248,7 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
     if (selected) {
       selected = selected.split(" ");
     } else {
-      selected = new Array();
+      selected = [];
     }
     $('#' + tree_id + ' li[rel="device"]').each(function() {
       var checked = $(this).hasClass("jstree-checked");
@@ -314,22 +283,21 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
     $.each(markers, function(){
       var marker = this;
       marker.setMap(null);
-    })
+    });
   };
   
   this.showMarkers = function(markers){
     $.each(markers, function(){
       var marker = this;
       marker.setMap(self.map);
-    })
+    });
   };
 
   this.locateAddress = function(address) {
     $("#search-spinner").css("visibility", "visible");
     $("#search-message").html("");
     var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({address: address, bounds: self.bounds},
-                     function(results, status) {
+    geocoder.geocode({address: address, bounds: self.bounds}, function(results, status) {
       $("#search-spinner").css("visibility", "hidden");
       if (status == google.maps.GeocoderStatus.OK) {
         self.showSearchResult(results[0]);
@@ -360,7 +328,7 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
       var node = $('<span class="search-result" id="search-result-' + i + '">' +
                    result.formatted_address + '</span>');
       div.append(node);
-      if (i == 0) {
+      if (i === 0) {
         node.addClass("selected");
       }
       node.click(function() {
@@ -373,27 +341,27 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
         self.showSearchResult(result);
         node.addClass("selected");
       });
-    }
+    };
     for (var i in results) {
-      build_result_node(results[i], i);
+      if (results.hasOwnProperty(i)) build_result_node(results[i], i);
     }
     div.hide();
-  }
+  };
 
   this.showSearchResult = function(result) {
-    var _search_marker;
     self.map.setCenter(result.geometry.location);
-    _search_marker = new google.maps.Marker({
+    var _search_marker = new google.maps.Marker({
       map: self.map,
       position: result.geometry.location,
       animation: google.maps.Animation.DROP,
       title: result.formatted_address
     });
     _search_marker.html = '<div class="marker_detail">' +
-                              '<h2>Search Result:</h2>' +
-                              '<h3>' + result.formatted_address +
-                              '</h3><p><small><a href="javascript:d.clearSearchResult()">' +
-                              'Remove Marker</a></small></p></div>';
+      '<h2>Search Result:</h2>' +
+      '<h3>' + result.formatted_address +
+      '</h3><p><small><a href="javascript:dispatch.clearSearchResult()">' +
+      'Remove Marker</a></small></p>' +
+    '</div>';
     google.maps.event.addListener(_search_marker, "click", function(){
       self._open_window_for_marker(_search_marker);
     });
@@ -439,7 +407,7 @@ function Dispatcher (tree_id, map_id, bounds, viewport) {
     }
     self.map.panTo(p);
     if (m) self._open_window_for_marker(m);
-  },
+  };
 
-  this.init(map_id, bounds, viewport);
+  this.init();
 }

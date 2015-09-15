@@ -1,0 +1,4 @@
+$('#modal-dialog').modal('hide');
+var $new_row = $("<%= j (render @driver_history) %>").hide();
+$('#driver_histories-table .driver_history-<%= @driver_history.id %>').slideUp('fast').replaceWith($new_row);
+$new_row.slideDown('slow');

@@ -2,33 +2,31 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    ride_connection = Provider.ride_connection
     can_manage_all = false
 
     can :read, Mobility
+    can :read, TripPurpose
+    can :read, TripResult
+    can :read, ServiceLevel
     can :read, Region
 
     for role in user.roles
-      if role.provider == ride_connection && role.admin?
+      if role.system_admin?
         can_manage_all = true
-        can :manage, :all 
+        can :manage, :all
         break
       end
     end
     
     unless can_manage_all
       for role in user.roles
-        if role.provider == ride_connection 
-          can :read, :all 
+        if role.editor?
+          action = :manage
         else
-          if role.editor?
-            action = :manage
-          else
-            action = :read
-          end
-          can action, Provider, :id => role.provider.id
-          cannot :create, Provider
+          action = :read
         end
+        can action, Provider, :id => role.provider.id
+        cannot :create, Provider
       end
     end
 
@@ -43,32 +41,36 @@ class Ability
       action = [:read, :search]
     end
 
-    can :read, FundingSource, {:providers => {:id => provider.id}}      
-    can action, Address, :provider_id => provider.id
-    can action, Customer, :provider_id => provider.id
-    can action, DevicePool, :provider_id => provider.id if provider.dispatch?
-    can action, Driver, :provider_id => provider.id
-    can action, Monthly, :provider_id => provider.id
-    can action, ProviderEthnicity, :provider_id => provider.id
-    can action, RepeatingTrip, :provider_id => provider.id
-    can action, Run, :provider_id => provider.id if provider.scheduling?
-    can action, Trip, :provider_id => provider.id if provider.scheduling?
-    can action, Vehicle, :provider_id => provider.id
-    can action, VehicleMaintenanceEvent, :provider_id => provider.id
-        
-    can action, DevicePoolDriver do |device_pool_driver|
-      device_pool_driver.provider_id == provider.id
-    end
+    can :read,   FundingSource, :providers => {:id => provider.id}
+    can action,  Address, :provider_id => provider.id
+    can action,  Customer, :provider_id => provider.id
+    can action,  DevicePool, :provider_id => provider.id if provider.dispatch?
+    can action,  DevicePoolDriver, :provider_id => provider.id
+    can :manage, DevicePoolDriver, :driver_id => user.driver.id if user.driver.present?
+    can action,  Document, :documentable => {:provider_id => provider.id}
+    can action,  Driver, :provider_id => provider.id
+    can action,  Monthly, :provider_id => provider.id
+    can action,  ProviderEthnicity, :provider_id => provider.id
+    can action,  RepeatingTrip, :provider_id => provider.id
+    can action,  Run, :provider_id => provider.id if provider.scheduling?
+    can action,  Trip, :provider_id => provider.id if provider.scheduling?
+    can action,  Vehicle, :provider_id => provider.id
     
-    can :manage, DevicePoolDriver do |device_pool_driver|
-      device_pool_driver.driver_id == user.driver.id if user.driver
-    end
-
     if role.admin?
-      can :manage, User, {:roles => {:provider_id => provider.id}}
+      can :manage, DriverCompliance, :driver => {:provider_id => provider.id}
+      can :manage, DriverHistory, :driver => {:provider_id => provider.id}
+      # can :manage, LookupTable
+      can :manage, RecurringDriverCompliance, :provider_id => provider.id
+      can :manage, RecurringVehicleMaintenanceCompliance, :provider_id => provider.id
+      can :manage, User, :roles => {:provider_id => provider.id}
+      can :manage, VehicleMaintenanceEvent, :vehicle => {:provider_id => provider.id}
+      can :manage, VehicleMaintenanceCompliance, :vehicle => {:provider_id => provider.id}
+      can :manage, VehicleWarranty, :vehicle => {:provider_id => provider.id}
+      can :load,   Address
     else
-      can :read, User, {:roles => {:provider_id => provider.id}}
+      can :read, User, :roles => {:provider_id => provider.id}
     end
 
+    can :access, Reporting::Report
   end
 end

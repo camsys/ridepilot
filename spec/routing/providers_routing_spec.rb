@@ -47,6 +47,10 @@ RSpec.describe ProvidersController, type: :routing do
       expect(:post => "/providers/1/change_allow_trip_entry_from_runs_page").to route_to("providers#change_allow_trip_entry_from_runs_page", :id => "1")
     end
 
+    it "routes to #change_fields_required_for_run_completion" do
+      expect(:post => "/providers/1/change_fields_required_for_run_completion").to route_to("providers#change_fields_required_for_run_completion", :id => "1")
+    end
+
     it "routes to #save_region" do
       expect(:post => "/providers/1/save_region").to route_to("providers#save_region", :id => "1")
     end

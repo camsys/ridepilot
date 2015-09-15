@@ -1,0 +1,59 @@
+= form.hidden_field :provider_id
+
+.form-group.col-sm-12
+  .col-sm-3
+    = form.label :name, translate_helper(:address_name) 
+  .col-sm-9
+    = form.text_field :name, class: 'form-control'
+.form-group.col-sm-12
+  .col-sm-3
+    = form.label :building_name, translate_helper(:building_name) 
+  .col-sm-9
+    = form.text_field :building_name, class: 'form-control'
+.form-group.col-sm-12
+  .col-sm-3
+    = form.label :address, translate_helper(:address) 
+  .col-sm-9
+    = form.text_field :address, class: 'form-control'
+.form-group.col-sm-12
+  .col-sm-3
+    = form.label :city, translate_helper(:city) 
+  .col-sm-9
+    = form.text_field :city, class: 'form-control'
+.form-group.col-sm-12
+  .col-sm-3
+    = form.label :state, translate_helper(:state) 
+  .col-sm-2
+    = form.text_field :state, size: 2, class: 'form-control'
+.form-group.col-sm-12
+  .col-sm-3
+    = form.label :zip, translate_helper(:zip) 
+  .col-sm-9
+    = form.text_field :zip, class: 'form-control'
+.form-group.col-sm-12
+  .col-sm-3
+    = form.label :notes, translate_helper(:address_notes) 
+  .col-sm-9
+    = form.text_field :notes, class: 'form-control'
+
+- if editing_address
+  .form-group.col-sm-12
+    .col-sm-3
+      = form.label :phone_number, translate_helper(:phone_number) 
+    .col-sm-9
+      = form.text_field :phone_number, class: 'form-control'
+  .form-group.col-sm-12
+    .col-sm-3
+      = form.label :in_district, translate_helper(:in_district) 
+    .col-sm-9
+      = form.select :in_district, [[translate_helper("unspecified"),nil], [translate_helper("yes"), true], [translate_helper("no"), false]], {}, {class: 'form-control'}
+  .form-group.col-sm-12
+    .col-sm-3
+      = form.label :default_trip_purpose, translate_helper(:default_trip_purpose) 
+    .col-sm-9
+      = form.select :trip_purpose_id, TripPurpose.all.map { |tp| [tp.name, tp.id] }, {:include_blank => true}, {class: 'form-control'}
+  .form-group.col-sm-12
+    .col-sm-3
+      = form.label :inactive, translate_helper(:inactive) 
+    .col-sm-9
+      = form.check_box :inactive

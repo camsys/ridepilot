@@ -130,7 +130,7 @@ RSpec.describe AddressesController, type: :controller do
           :the_geom => "",
           :phone_number => "555-5555",
           :inactive => false,
-          :default_trip_purpose => "Purpose",
+          :trip_purpose => create(:trip_purpose, name: "Purpose") ,
         }
       }
 

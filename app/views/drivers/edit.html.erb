@@ -1,5 +1,29 @@
-<div id="page-header">
-  <h1>Edit Driver</h1>
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'drivers' %>
+
+<div id="page-header" class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1><%= translate_helper("edit_driver_heading") %></h1>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <% if can? :manage, @driver %>
+      <div class="pull-right">
+        <button class="btn action-button" id="driver_form_submit">
+          <%= translate_helper("save") %>
+        </button>
+        <%= link_to translate_helper("cancel"), @driver, class: "btn action-button" %>
+      </div>
+    <% end %>
+  </div>
 </div>
 
-<%= render :partial=>"form" %>
+<%= render partial: "form" %>
+
+<%= javascript_tag do %>
+  $(document).ready(function(){
+    $("form.edit_driver .form-actions").hide();
+    
+    $("#driver_form_submit").on("click", function(){
+      $("form.edit_driver").submit();
+    });
+  });
+<% end %>

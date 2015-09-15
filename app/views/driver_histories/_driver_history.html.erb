@@ -1,0 +1,17 @@
+<tr class="driver_history-<%= driver_history.id %>">
+  <td>
+    <p class="form-control-static">
+      <%= driver_history.event_date.to_s(:long) %>
+    </p>
+  </td>
+  <td>
+    <p class="form-control-static">
+      <%= link_to_unless @readonly, driver_history.event, polymorphic_path([driver_history.driver, driver_history], action: :edit), remote: true %>
+    </p>
+  </td>
+  <% unless @readonly %>
+    <td>
+      <%= link_to "X", polymorphic_path([driver_history.driver, driver_history]), remote: true, method: :delete, data: { confirm: translate_helper("driver_history_delete_confirm") }, class: "btn btn-danger btn-sm pull-right" %>
+    </td>
+  <% end %>
+</tr>

@@ -1,0 +1,18 @@
+.clearfix.col-sm-12#page-header
+  - if edit_mode == :new
+    .pull-right
+      = f.submit translate_helper(:save), class: 'btn action-button'
+      = link_to translate_helper(:cancel), trips_path, class: "btn btn-default"
+    %h1
+      = translate_helper("new_trip")
+  - else
+    .pull-right
+      - if edit_mode == :edit
+        = f.submit translate_helper(:update), class: 'btn action-button'
+        = link_to translate_helper(:cancel), trips_path, class: "btn btn-default"
+      - else
+        = link_to(translate_helper("delete"), @trip, data: {:confirm => translate_helper("delete_trip_confirm")}, :method => :delete, :id => 'trip_delete', :class=>'btn action-button btn-danger') if !@trip.new_record? && can?(:destroy, @trip)
+        = link_to translate_helper("edit"), edit_trip_path(@trip), :class=>'btn action-button' if !@trip.new_record? && can?(:edit, @trip)
+        = link_to translate_helper(:back), trips_path, class: "btn btn-default"
+    %h1
+      = translate_helper("trip")

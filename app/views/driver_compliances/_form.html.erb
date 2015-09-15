@@ -1,0 +1,66 @@
+<% remote ||= false %>
+<%= nested_form_for [@driver, @driver_compliance], remote: remote do |f| %>
+  <% if @driver_compliance.errors.any? %>
+    <div class="panel panel-danger">
+      <div class="panel-heading"><%= translate_helper("driver_compliance_form_error", count: @driver_compliance.errors.count) %></div>
+      <div class="panel-body">
+        <ul>
+          <% @driver_compliance.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+  
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-primary">
+        <div class="panel-body form-horizontal">
+          <div class="form-group">
+            <%= f.label :event, translate_helper("driver_compliance_form_event"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_field :event, class: "form-control" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :notes, translate_helper("driver_compliance_form_notes"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_area :notes, class: "form-control", rows: 3 %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :due_date, translate_helper("driver_compliance_form_due_date"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <div class="input-group datepicker-icon">
+                <%= f.text_field :due_date, class: "form-control datepicker" %>
+                <div class="input-group-btn">
+                  <button class="btn btn-default" type="button">
+                    <%= image_tag "calendar-clock.png" %>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :compliance_date, translate_helper("driver_compliance_form_compliance_date"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <div class="input-group datepicker-icon">
+                <%= f.text_field :compliance_date, class: "form-control datepicker" %>
+                <div class="input-group-btn">
+                  <button class="btn btn-default" type="button">
+                    <%= image_tag "calendar-clock.png" %>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
+      
+      <%= render partial: "document_associations/form_panel", locals: {f: f, documents: @driver_compliance.driver.documents} %>
+    </div><!-- END .col-md-12 -->
+  </div><!-- END .row -->
+  
+  <div class="row form-actions"><%= f.submit translate_helper("driver_compliance_form_submit"), class: "btn action-button" %></div>
+<% end %>

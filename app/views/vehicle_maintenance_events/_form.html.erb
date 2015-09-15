@@ -1,56 +1,90 @@
-<%= form_for @vehicle_maintenance_event do |f| %>
-  <%= f.hidden_field :vehicle_id %>
-
-  <fieldset>
-
-    <ol class="section first">
-      <li>
-        <%= f.label :service_date, "Service Date:" %>
-        <%= f.text_field :service_date %>
-      </li>
-
-      <li>
-        <%= f.label :invoice_date %>
-        <%= f.text_field :invoice_date %>
-      </li>
-
-      <li>
-        <%= f.label :odometer %>
-        <%= f.text_field :odometer %>
-      </li>
-
-      <li>
-        <%= f.label :vendor_name %>
-        <%= f.text_field :vendor_name %>
-      </li>
-    </ol>
-
-    <ol class="section second">
-      <li>
-        <%= f.label :invoice_number %>
-        <%= f.text_field :invoice_number %>
-      </li>
-
-      <li>
-        <%= f.label :invoice_amount %>
-        <%= f.text_field :invoice_amount %>
-      </li>
-
-      <li>
-        <%= f.label :reimbursable %>
-        <%= f.select :reimbursable, [["Yes", "true"], ["No", "false"]], {:selected => @vehicle_maintenance_event.reimbursable.to_s } %>
-      </li>
-
-      <li>
-        <%= f.label :services_performed %>
-        <%= f.text_area :services_performed %>
-      </li>
-    </ol>
-
-    <div class="actions">
-      <%= f.submit %>
+<% remote ||= false %>
+<%= nested_form_for [@vehicle, @vehicle_maintenance_event], remote: remote do |f| %>
+  <% if @vehicle_maintenance_event.errors.any? %>
+    <div class="panel panel-danger">
+      <div class="panel-heading"><%= translate_helper("vehicle_maintenance_event_form_error", count: @vehicle_maintenance_event.errors.count) %></div>
+      <div class="panel-body">
+        <ul>
+          <% @vehicle_maintenance_event.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
     </div>
-
-  </fieldset>
-
+  <% end %>
+  
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-primary">
+        <div class="panel-body form-horizontal">
+          <div class="form-group">
+            <%= f.label :service_date, translate_helper("service_date"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <div class="input-group datepicker-icon">
+                <%= f.text_field :service_date, class: "form-control datepicker" %>
+                <div class="input-group-btn">
+                  <button class="btn btn-default" type="button">
+                    <%= image_tag "calendar-clock.png" %>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :odometer, translate_helper("odometer"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_field :odometer, class: "form-control" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :vendor_name, translate_helper("vendor_name"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_field :vendor_name, class: "form-control" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :invoice_date, translate_helper("invoice_date"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <div class="input-group datepicker-icon">
+                <%= f.text_field :invoice_date, class: "form-control datepicker" %>
+                <div class="input-group-btn">
+                  <button class="btn btn-default" type="button">
+                    <%= image_tag "calendar-clock.png" %>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :invoice_number, translate_helper("invoice_number"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_field :invoice_number, class: "form-control" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :invoice_amount, translate_helper("invoice_amount"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_field :invoice_amount, class: "form-control" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :reimbursable, translate_helper("reimbursable"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.select :reimbursable, [["Yes", "true"], ["No", "false"]], {:selected => @vehicle_maintenance_event.reimbursable.to_s }, class: "form-control" %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :services_performed, translate_helper("services_performed"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_area :services_performed, class: "form-control", rows: 3 %> %>
+            </div>
+          </div>
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
+      
+      <%= render partial: "document_associations/form_panel", locals: {f: f, documents: @vehicle_maintenance_event.vehicle.documents} %>
+    </div><!-- END .col-md-12 -->
+  </div><!-- END .row -->
+  
+  <div class="row form-actions"><%= f.submit translate_helper("maintenance_form_submit"), class: "btn action-button" %></div>
 <% end %>

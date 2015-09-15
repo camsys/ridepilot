@@ -1,0 +1,14 @@
+%h4
+  = translate_helper(:lookup_table)
+- table_id = table.try(:id)
+%select.form-control.lookup-table-list#lookupTableList{onChange:"window.location.href=this.value"}
+  - tables.each do |table|
+    - if table.id == table_id
+      %option{value: "#{lookup_table_path(table)}", selected: true}
+        = table.caption
+    - else
+      %option{value: "#{lookup_table_path(table)}"}
+        = table.caption
+
+
+  

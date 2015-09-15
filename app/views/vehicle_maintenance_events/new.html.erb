@@ -1,10 +1,5 @@
-<div id="page-header">
-  <h1>Add Maintenance Event</h1>
+<div id="page-header" class="clearfix">
+  <h1><%= translate_helper("new_maintenance_heading") %></h1>
 </div>
 
-<%= render :partial=>'form' %>
-
-<% if current_user && can?(:edit, Provider) %>
-<hr />
-<%= link_to 'Back', provider_path(current_user.current_provider), :class=>'action-bttn' %>
-<% end %>
+<%= render partial: "form" %>

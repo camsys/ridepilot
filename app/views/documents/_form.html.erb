@@ -1,0 +1,60 @@
+<% remote ||= false %>
+<%= form_for [@parent, @document], html: { multipart: true }, remote: remote do |f| %>
+  <% if @document.errors.any? %>
+    <div class="panel panel-danger">
+      <div class="panel-heading"><%= translate_helper("document_form_error", count: @document.errors.count) %></div>
+      <div class="panel-body">
+        <ul>
+          <% @document.errors.full_messages.uniq.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+  
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-primary">
+        <div class="panel-body form-horizontal">
+          <div class="form-group">
+            <%= f.label :description, translate_helper("document_form_description"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_field :description, class: "form-control" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :document, translate_helper("document_form_file_name"), class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.file_field :document, class: "form-control", html: { "aria-describedby" => (@document.persisted? ? "document_form_file_name_current" : "") } %>
+              <% if @document.persisted? %>
+                <span id="document_form_file_name_current" class="help-block"><%= translate_helper("document_form_file_name_currently") %> &quot;<%= link_to @document.document_file_name, @document.document.url, target: "_blank" %>&quot;</span>
+              <% end %>
+            </div>
+          </div>
+          <% if @document.persisted? %>
+            <div class="form-group">
+              <%= label_tag "", translate_helper("document_form_file_size"), class: "col-md-3 control-label" %>
+              <div class="col-md-9">
+                <p class="form-control-static"><%= number_to_human_size @document.document_file_size %></p>
+              </div>
+            </div>
+            <div class="form-group">
+              <%= label_tag "", translate_helper("document_form_upload_date"), class: "col-md-3 control-label" %>
+              <div class="col-md-9">
+                <p class="form-control-static"><%= @document.document_updated_at.to_s(:long) %></p>
+              </div>
+            </div>
+          <% end %>
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
+
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("document_associations_associables_heading") %></div>
+        <%= render partial: "document_associations/document_association_for_document", locals: {document_associations: @document.document_associations} %>
+      </div><!-- END .panel -->
+    </div><!-- END .col-md-12 -->
+  </div><!-- END .row -->
+
+  <div class="row form-actions"><%= f.submit translate_helper("document_form_submit"), class: "btn action-button" %></div>
+<% end %>

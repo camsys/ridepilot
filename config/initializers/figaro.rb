@@ -1,0 +1,1 @@
+Figaro.require_keys("SYSTEM_ADMIN_EMAIL", "SYSTEM_ADMIN_PASSWORD") unless Rails.env.test?

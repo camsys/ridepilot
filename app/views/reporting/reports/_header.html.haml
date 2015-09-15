@@ -1,0 +1,12 @@
+.row.info-header
+  .col-sm-12
+    .btns.pull-right
+      = button_tag type: :submit, id: 'runReporting', class: 'btn action-button controls' do
+        = translate_helper(:run)
+    %h1
+      = translate_helper(:reports)
+
+  :javascript
+    $('#runReporting').on('click', function() {
+      $('.filter-form form').submit();
+    });

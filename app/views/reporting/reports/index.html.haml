@@ -1,0 +1,4 @@
+= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'reports'
+= render partial: 'header'
+    
+= render partial: 'list', locals: {reports: @reports, is_generic_report: @is_generic_report}

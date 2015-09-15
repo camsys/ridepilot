@@ -1,0 +1,15 @@
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: false, tab_class: 'admin' %>
+
+<div id="page-header" class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1><%= translate_helper("show_recurring_driver_compliance_heading") %></h1>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <div class="pull-right">
+      <%= link_to translate_helper("delete_recurring_driver_compliance_button"), delete_recurring_driver_compliance_path(@recurring_driver_compliance), class: "btn action-button" %>
+      <%= link_to translate_helper("edit_recurring_driver_compliance_button"), edit_recurring_driver_compliance_path(@recurring_driver_compliance), class: "btn action-button" %>
+    </div>
+  </div>
+</div>
+
+<%= render partial: "form" %>

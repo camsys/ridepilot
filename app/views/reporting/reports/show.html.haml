@@ -1,0 +1,7 @@
+= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'reports'
+= render partial: 'header'
+
+= render partial: 'list', locals: {reports: @reports, report_id: @report.id, is_generic_report: true}
+
+.filter-form
+  = render partial: 'reporting/filters/form', locals: {report: @report, filter_groups: @filter_groups}

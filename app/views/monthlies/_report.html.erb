@@ -1,0 +1,32 @@
+<% if @monthlies.size == 0 %>
+  <p><%= translate_helper("no_monthly_reports_available") %></p>
+<% else %>
+  <table>
+    <tr>
+      <th><%= translate_helper("month") %></th>
+      <th><%= translate_helper("funding_source_column_heading") %></th>
+      <th><%= translate_helper("volunteer_escort_hours") %></th>
+      <th><%= translate_helper("volunteer_admin_hours") %></th>
+      <% if can? :edit, Monthly %>
+        <th></th>
+      <% end %>
+    </tr>
+    
+    <% for monthly in @monthlies %>
+      <tr>
+        <td><%= monthly.start_date.try(:strftime, "%B %Y") %></td>
+        <td><%= monthly.funding_source.try(:name) %></td>
+        <td><%= monthly.volunteer_escort_hours.to_i %></td>
+        <td><%= monthly.volunteer_admin_hours.to_i %></td>
+        <% if can? :edit, monthly %>
+          <td><%= link_to translate_helper("edit"), edit_monthly_path(monthly) %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<% if can? :edit, Monthly %>
+  <hr />
+  <p><%= link_to translate_helper("new_monthly_link_text"), new_monthly_path, :class=>'action-bttn new-report' %></p>
+<% end %>

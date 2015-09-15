@@ -1,10 +1,16 @@
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: false, tab_class: 'admin' %>
 <ul>
-  <% if can? :edit, "Providers" %><li><%= link_to "Providers", providers_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Customers", customers_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Funding Sources", funding_sources_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Trips", trips_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Runs", runs_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Reports", reports_path %></li><% end %>
-  <% if show_scheduling? %><li><%= link_to "Vehicles, drivers and users", provider_path(current_user.current_provider) %></li><% end %>
-  <% if show_dispatch? %><li><%= link_to "Dispatch", dispatch_path %></li><% end %>
+  <% if can? :manage, ApplicationSetting %><li><%= link_to translate_helper("application_settings_link_text"), application_settings_path %></li><% end %>
+  <% if can? :edit, "Providers" %><li><%= link_to translate_helper("providers_link_text"), providers_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("customers_link_text"), customers_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("funding_sources_link_text"), funding_sources_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("trips_link_text"), trips_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("runs_link_text"), runs_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("reports_link_text"), reporting.reports_path %></li><% end %>
+  <% if show_scheduling? %><li><%= link_to translate_helper("current_provider_link_text"), provider_path(current_user.current_provider) %></li><% end %>
+  <% if show_dispatch? %><li><%= link_to translate_helper("dispatch_link_text"), dispatch_path %></li><% end %>
+  <% if can? :manage, RecurringDriverCompliance %><li><%= link_to translate_helper("recurring_driver_compliances_link_text"), recurring_driver_compliances_path %></li><% end %>
+  <% if can? :manage, RecurringVehicleMaintenanceCompliance %><li><%= link_to translate_helper("recurring_vehicle_maintenance_compliances_link_text"), recurring_vehicle_maintenance_compliances_path %></li><% end %>
+  <% if can? :manage, LookupTable %><li><%= link_to translate_helper("lookup_tables_link_text"), lookup_tables_path %></li><% end %>
+  <% if can? :manage, Translation %><li><%= link_to translate_helper("translation_engine_link_text"), translation_engine.translations_path %></li><% end %>
 </ul>

@@ -1,0 +1,45 @@
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'vehicles' %>
+
+<div id="page-header" class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1><%= translate_helper("index_vehicle_heading") %></h1>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <% if can? :create, Vehicle %>
+      <div class="pull-right">
+        <%= link_to translate_helper("new_vehicle_link_text"), new_vehicle_path, class: "btn action-button" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <table class="table table-striped table-bordered" id="vehicles-table">
+      <thead>
+        <tr>
+          <th class="col-sm-2"><%= translate_helper("name") %></th>
+          <th><%= translate_helper("vehicle_year") %></th>
+          <th><%= translate_helper("vehicle_make") %></th>
+          <th><%= translate_helper("vehicle_model") %></th>
+          <th><%= translate_helper("license_plate") %></th>
+          <th class="col-sm-2"><%= translate_helper("vin") %></th>
+          <th class="col-sm-2"><%= translate_helper("vehicle_location") %></th>
+          <th class="col-sm-2"><%= translate_helper("default_driver") %></th>
+          <th><%= translate_helper("vehicle_form_active_label") %></th>
+          <th><%= translate_helper("vehicle_form_last_odometer_reading") %></th>
+          <th><%= translate_helper("vehicle_overdue_events") %></th>
+          <th><%= translate_helper("vehicle_expired_warranties") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @vehicles.empty? %>
+          <tr>
+            <td colspan="12"><%= translate_helper("no_vehicles") %></td>
+          </tr>
+        <% end %>
+        <%= render partial: 'vehicle', collection: @vehicles %>
+      </tbody>
+    </table>
+  </div>
+</div>

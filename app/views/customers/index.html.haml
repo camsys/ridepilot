@@ -1,0 +1,29 @@
+= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'customers'
+
+.clearfix.row#page-header{style: 'padding: 0px;'}
+  - if can? :create, Customer
+    .pull-right
+      = link_to translate_helper("new_group"), new_customer_path(group: true), :class=>'btn action-button'
+      = link_to translate_helper("new_customer"), new_customer_path, :class=>'btn action-button'
+  %h1
+    =translate_helper("customer_listing")
+
+.row.col-sm-12
+  = form_tag found_customers_path, :class=>'customer-search', :method=>:get do 
+    %label{for:"customer_id"}
+      Search:
+    = autocomplete_field_tag 'customer_name', params[:term], autocomplete_customers_path, :size => 30, :id_element => "#customer_id", "submit-buttons" => "#show_details #new_trip" 
+    = hidden_field_tag 'customer_id' 
+    = submit_tag translate_helper("search"), :id=>:show_details
+
+.row.col-sm-12{style: 'text-align: center; padding: 5px 0px;'}
+  - ("A".."Z").to_a.each do |letter| 
+    - if params[:letter] == letter 
+      %span.current
+        = letter
+    - else 
+      = link_to letter, customers_path(:letter => letter)
+
+.row.col-sm-12
+  = render :partial=>"customer_listing", :locals=>{:show_inactivated_date=>@show_inactivated_date}
+  = will_paginate @customers

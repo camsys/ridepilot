@@ -1,0 +1,9 @@
+- if defined? model_name && defined? table_name && defined? provider_id
+  - invisible_field_names = FieldConfig.per_table(provider_id, table_name).invisible_fields.pluck(:field_name)
+  :javascript
+    var prefix = "#{model_name}";
+    var fieldNames = #{invisible_field_names || []}
+    fieldNames.forEach(function(fieldName) {
+      var inputName = prefix + "\\[" + fieldName + "\\]";
+      $("form input[name="  + inputName + "], form textarea[name="  + inputName + "], form select[name="  + inputName + "]").parents('.form-group, li').hide();
+    });

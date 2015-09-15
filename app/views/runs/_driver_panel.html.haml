@@ -1,0 +1,20 @@
+.panel.panel-primary#run_driver_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:driver)
+  .panel-body{style: 'padding: 5px;'}
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :driver, translate_helper("driver")
+      .col-sm-9
+        = f.collection_select :driver_id, @drivers, :id, :name, {include_blank: true}, {class: 'form-control'}
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :unpaid_driver_break_time, translate_helper("unpaid_break_time")
+      .col-sm-9
+        = f.text_field :unpaid_driver_break_time, class: 'form-control'
+    .form-group.col-sm-12
+      .col-sm-3
+        = f.label :paid, translate_helper("paid")
+      .col-sm-9
+        = f.select :paid, [[translate_helper("yes"), "true"], [translate_helper("no"), "false"]], {:selected => @run.paid.to_s }, class: 'form-control'

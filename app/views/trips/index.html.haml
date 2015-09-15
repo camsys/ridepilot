@@ -1,0 +1,14 @@
+= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'trips'
+.clearfix.row#page-header{style: 'padding: 0px;'}
+  - if can? :create, Trip
+    = link_to translate_helper("new_trip_link_text"), new_trip_path, :class=>'btn action-button pull-right'
+  %h1= translate_helper("trips")+ ": " + format_time_as_title_for_listing_day(@start_pickup_date) + " - " + format_time_as_title_for_listing_day(@end_pickup_date)
+  .clearfix
+
+.col-md-3{style: 'padding: 0px 15px 0px 0px;'}
+  = render :partial => 'filters'
+.col-md-9{style: 'padding: 0px;'}
+  = render 'calendar', base_path: trips_path, resources: @day_resources, events: @trips_json
+
+  = render :partial => 'list'
+

@@ -1,12 +1,11 @@
-<div id="page-header">
-  <h1>Create New User</h1>
+<div id="page-header" class="clearfix">
+  <h1><%= translate_helper("new_user_heading") %></h1>
 </div>
 
 <%= form_for @user, :url=>url_for(:action=>:create_user) do |f| %>
   <% if @user.errors.any? || @errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@user.errors.count + @errors.try(:count).try(:to_i), "error") %> prohibited this run from being saved:</h2>
-
+      <h2>translate_helper("user_form_error_message", count: @user.errors.count)</h2>
       <ul>
       <% @user.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -21,18 +20,18 @@
   <fieldset>
     <ol class="section first">
       <li>
-        <%= f.label :email, "Email:" %>
+        <%= f.label :email, translate_helper("email") %>
         <%= f.text_field :email %>
       </li>
 
       <li>
-        <%= f.label :permissions, "Permissions:" %>
-        <%= select :role, :level, [["Admin", 100], ["Editor", 50], ["User", 0]] %>
+        <%= f.label :permissions, translate_helper("permissions") %>
+        <%= select :role, :level, Role.editable_role_array_by_user(current_user) %>
       </li>
     </ol>
 
     <div class="actions">
-      <%= f.submit "Create User" %>
+      <%= f.submit translate_helper("new_user_submit") %>
     </div>
   </fieldset>
 <% end %>

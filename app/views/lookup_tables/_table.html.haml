@@ -1,0 +1,45 @@
+.col-sm-12{style: 'padding: 10px 0px;'}
+  - if table.add_value_allowed
+    = render partial: 'add_value_button', locals: {table: table}
+  - if table.edit_value_allowed
+    = render partial: 'edit_value_button', locals: {table: table}
+  - if table.delete_value_allowed
+    = render partial: 'delete_value_button', locals: {table: table}
+%table.table.table-condensed.table-striped.table-bordered.table-hover#lookupTable
+  %thead
+    %th
+      = table.value_column_name.titleize
+  %tbody
+    - table.values(current_provider.try(:id)).each do |item|
+      %tr{data: {"model-id": item.id}}
+        %td
+          = item[table.value_column_name]
+
+:javascript
+  $(document).ready(function(){
+    var enableEditingButtons = function() {
+      $('#editLookupTableValue').removeAttr('disabled');
+      $('#deleteLookupTableValue').removeAttr('disabled');
+    };
+
+    var disableEditingButtons = function() {
+      $('#editLookupTableValue').prop('disabled', 'disabled');
+      $('#deleteLookupTableValue').prop('disabled', 'disabled');
+    };
+
+    var table = $('#lookupTable').dataTable();
+
+    // select & deselect table row
+    $('#lookupTable tbody').on( 'click', 'tr', function () {
+      if ( $(this).hasClass('selected') ) {
+        $(this).removeClass('selected');
+        disableEditingButtons();
+      }
+      else {
+        table.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+        enableEditingButtons();
+      }
+    } );
+    
+  });

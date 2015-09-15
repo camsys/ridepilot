@@ -1,0 +1,14 @@
+- edit_mode = :edit if !defined? edit_mode
+
+.panel.panel-primary#customer_providers_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:customer_providers_panel)
+  .panel-body
+    = f.association :authorized_providers, as: :check_boxes, label: false, :item_wrapper_class => 'col-md-12', :label_html => { :class => 'col-md-12', :wrapper => false }
+
+:javascript
+  $(document).ready(function() {
+    $("#customer_authorized_provider_ids_#{@customer.provider.try(:id)}").prop('checked', 'checked').prop('disabled', 'disabled');
+  });
+  

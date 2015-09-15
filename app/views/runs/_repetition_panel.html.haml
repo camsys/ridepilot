@@ -1,0 +1,33 @@
+.panel.panel-primary#run_repetition_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:repetition)
+  .panel-body{style: 'padding: 5px;'}
+    .form-group.col-sm-12
+      .col-sm-3
+        %label
+          = translate_helper(:days_of_week)
+      .col-sm-9
+        - day_names = TranslationEngine.translate_text("date.day_names").split(",")
+        = f.check_box :repeats_mondays 
+        = day_names[1][0] 
+        &nbsp;
+        = f.check_box :repeats_tuesdays 
+        = day_names[2][0] 
+        &nbsp;
+        = f.check_box :repeats_wednesdays
+        = day_names[3][0] 
+        &nbsp;
+        = f.check_box :repeats_thursdays 
+        = day_names[4][0]
+        &nbsp;
+        = f.check_box :repeats_fridays 
+        = day_names[5][0]
+        &nbsp;
+    .form-group.col-sm-12
+      .col-sm-3
+        %label
+          = translate_helper(:repeat_every)
+      .col-sm-6.col-md-3
+        = f.text_field :repetition_interval, :size => 2, class: 'col-sm-6 col-md-3 form-control'
+        = translate_helper(:weeks)

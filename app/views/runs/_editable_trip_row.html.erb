@@ -1,0 +1,6 @@
+<tr class="trip">
+  <%= render 'non_editable_trip_fields', trip: trip %>
+  <td>
+    <%= trip_fields.select :trip_result_id, TripResult.pluck(:name, :id), :include_blank => true %>
+  </td>
+</tr>

@@ -1,0 +1,38 @@
+<tr class="<%= vehicle.active ? 'active' : 'inactive' %>">
+  <td>
+    <%= link_to_if can?(:read, vehicle), vehicle.name, vehicle %>
+  </td>
+  <td>
+    <%= vehicle.year %>
+  </td>
+  <td>
+    <%= vehicle.make %>
+  </td>
+  <td>
+    <%= vehicle.model %>
+  </td>
+  <td>
+    <%= vehicle.license_plate %>
+  </td>
+  <td>
+    <%= vehicle.vin %>
+  </td>
+  <td>
+    <%= vehicle.garaged_location %>
+  </td>
+  <td>
+    <%= vehicle.default_driver.try :name %>
+  </td>
+  <td>
+    <%= vehicle.active ? translate_helper("active") : translate_helper("inactive") %>
+  </td>
+  <td>
+    <%= number_to_human vehicle.last_odometer_reading %> mi.
+  </td>
+  <td>
+    <%= vehicle.compliant? ? translate_helper("no") : translate_helper("yes") %>
+  </td>
+  <td>
+    <%= vehicle.expired? ? translate_helper("yes") : translate_helper("no") %>
+  </td>
+</tr>

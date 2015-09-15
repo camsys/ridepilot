@@ -1,85 +1,17 @@
-<div id="page-header">
-  <h1>Vehicle Details</h1>
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'vehicles' %>
+
+<div id="page-header" class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1><%= translate_helper("vehicle_show_heading") %></h1>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <% if can? :manage, @vehicle %>
+      <div class="pull-right">
+        <%= link_to translate_helper("delete_vehicle_button"), @vehicle, method: :delete, data: { confirm: translate_helper("delete_vehicle_confirmation") }, class: "btn action-button" %>
+        <%= link_to translate_helper("edit_vehicle_button"), edit_vehicle_path(@vehicle), class: "btn action-button" %>
+      </div>
+    <% end %>
+  </div>
 </div>
 
-<p class="profile-actions selfclear">
-  <% if can? :edit, @vehicle %>
-  <%= link_to "Add maintenance event", new_vehicle_maintenance_event_path(:vehicle_id=>@vehicle), :class=>'new-maintenance' %>
-  <% end %>
-  <span class="separator">|</span>
-  <% if can? :edit, @vehicle %>
-  <%= link_to "Edit Vehicle", edit_vehicle_path(@vehicle), :class=>'edit edit-vehicle' %>
-  <% end %>
-</p>
-
-<div class="vehicle-profile selfclear">
-
-<dl>
-  <dt>Name:</dt>
-  <dd><%= @vehicle.name %></dd>
-
-  <dt>Make:</dt>
-  <dd><%= @vehicle.make %></dd>
-
-  <dt>Model:</dt>
-  <dd><%= @vehicle.model %></dd>
-</dl>
-
-<dl>
-  <dt>License plate:</dt>
-  <dd><%= @vehicle.license_plate %></dd>
-
-  <dt>Vin:</dt>
-  <dd><%= @vehicle.vin %></dd>
-
-  <dt>Garaged:</dt>
-  <dd><%= @vehicle.garaged_location %></dd>
-
-  <dt>Show vehicle on vehicle report:</dt>
-  <dd><%= @vehicle.reportable ? 'Yes' : 'No' %></dd>
-</dl>
-
-</div>
-
-<% if @vehicle.vehicle_maintenance_events.size > 0 %>
-<table>
-
-  <tr>
-    <th>Service date</th>
-    <th>Invoice date</th>
-    <th>Odometer</th>
-    <th>Vendor name</th>
-    <th>Invoice number</th>
-    <th>Invoice Amount</th>
-    <th>Reimbursable</th>
-    <th>Services Performed</th>
-    <% if can? :edit, @vehicle %>
-    <th></th>
-    <% end %>
-  </tr>
-
-  <% for event in @vehicle.vehicle_maintenance_events %>
-  <tr>
-    <td><%= event.service_date %></td>
-    <td><%= event.invoice_date %></td>
-    <td><%= event.odometer %></td>
-    <td><%= event.vendor_name %></td>
-    <td><%= event.invoice_number %></td>
-    <td><%= event.invoice_amount %></td>
-    <td><%= event.reimbursable %></td>
-    <td><%= event.services_performed %></td>
-    <% if can? :edit, @vehicle %>
-    <td><%= link_to "Edit", edit_vehicle_maintenance_event_path(event), :class=>'edit-maintenance' %></td>
-    <% end %>
-  </tr>
-  <% end %>
-
-</table>  
-
-<% else %> 
-<% end %>
-
-<% if current_user && can?(:edit, Provider) %>
-<hr />
-<%= link_to 'Back', provider_path(current_user.current_provider), :class=>'action-bttn' %>
-<% end %>
+<%= render partial: "form" %>

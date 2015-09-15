@@ -3,9 +3,11 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  before_filter :apply_application_settings
   before_filter :do_not_track
   before_filter :authenticate_user!
   before_filter :get_providers
+  before_filter :set_locale
   before_filter :set_cache_buster_for_xhr
   
   rescue_from CanCan::AccessDenied do |exception|
@@ -17,14 +19,13 @@ class ApplicationController < ActionController::Base
       return
     end
 
-    ride_connection = Provider.ride_connection
     @provider_map = []
-    for role in current_user.roles
-      if role.provider == ride_connection 
-        @provider_map = Provider.all.collect {|provider| [ provider.name, provider.id ] }
-        break
+    if current_user.super_admin?
+      @provider_map = Provider.all.collect {|provider| [ provider.name, provider.id ] }
+    else
+      for role in current_user.roles
+        @provider_map << [role.provider.name, role.provider_id]
       end
-      @provider_map << [role.provider.name, role.provider_id]
     end
     @provider_map.sort!{|a, b| a[0] <=> b[0] }
   end
@@ -35,12 +36,24 @@ class ApplicationController < ActionController::Base
 
   private
   
+  def apply_application_settings
+    ApplicationSetting.apply!
+  end
+  
   def current_provider
-    return current_user.current_provider
+    current_user.current_provider
+  end
+
+  def default_url_options(options={}) # This overrides/extends
+    { locale: I18n.locale }
+  end
+
+  def set_locale
+    I18n.locale = params[:locale] || I18n.default_locale
   end
 
   def current_provider_id
-    return current_provider.try(:id)
+    current_provider.try(:id)
   end
 
   def do_not_track

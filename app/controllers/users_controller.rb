@@ -24,14 +24,14 @@ class UsersController < ApplicationController
           @user.password = User.generate_password
           raw, enc = Devise.token_generator.generate(User, :reset_password_token)
           @user.reset_password_token = enc
-          @user.reset_password_sent_at = Time.now.utc
-          @user.current_provider_id = current_provider_id
+          @user.reset_password_sent_at = Time.zone.now.utc
+          @user.current_provider = current_provider
           @user.save!
           new_user = true
         end
 
         @role.user = @user
-        @role.provider_id = current_provider_id
+        @role.provider = current_provider
         @role.level = params[:role][:level]
         @role.save!
 
@@ -43,8 +43,13 @@ class UsersController < ApplicationController
     end
 
     if record_valid
-      NewUserMailer.new_user_email(@user, new_password).deliver if new_user
-      flash[:notice] = "%s has been added and a password has been emailed" % @user.email
+      # NewUserMailer doesn't server the purpose by design
+      #NewUserMailer.new_user_email(@user, new_password).deliver if new_user
+
+      # send password reset instructions instead
+      @user.send_reset_password_instructions  if new_user
+
+      flash.now[:notice] = "%s has been added and the instructions has been emailed" % @user.email
       redirect_to provider_path(current_provider)
     else
       user_errors = @user.valid? ? {} : @user.errors.messages
@@ -61,21 +66,39 @@ class UsersController < ApplicationController
   def change_password
     if current_user.update_password(change_password_params)
       sign_in(current_user, :bypass => true)
-      flash[:notice] = "Password changed"
-      redirect_to '/'
+      flash.now[:notice] = "Password changed"
+      redirect_to root_path
     else
       flash.now[:alert] = "Error updating password"
       render :action=>:show_change_password
     end
   end
 
+  def show_change_expiration
+    @user = User.find(params[:id])
+    authorize! :manage, @user
+  end
+
+  def change_expiration
+    @user = User.find(params[:id])
+    authorize! :manage, @user
+    
+    if @user.update_attributes(change_expiration_params)
+      flash.now[:alert] = "Expiration set"
+      redirect_to @user.current_provider
+    else
+      flash.now[:alert] = "Error setting expiration"
+      render action: :show_change_expiration
+    end
+  end
+
   def change_provider
     provider = Provider.find(params[:provider_id])
     if can? :read, provider
-      current_user.current_provider_id = provider.id
+      current_user.current_provider = provider
       current_user.save!
     end
-    redirect_to params[:come_from]
+    redirect_to provider_path(provider)
   end
 
   def check_session
@@ -96,6 +119,10 @@ class UsersController < ApplicationController
   
   def create_user_params
     params.require(:user).permit(:email)
+  end
+  
+  def change_expiration_params
+    params.require(:user).permit(:expires_at, :inactivation_reason)
   end
   
   def change_password_params

@@ -1,19 +1,66 @@
 <div id="weekday_select">
-  <p>Select Days of Week...</p>
-  <div id="weekday_select_buttons" style="display: none">
-    <input type="checkbox" id="weekday_sun" />
-    <label for="weekday_sun">Sun</label>
-    <input type="checkbox" id="weekday_mon" />
-    <label for="weekday_mon">Mon</label>
-    <input type="checkbox" id="weekday_tue" />
-    <label for="weekday_tue">Tue</label>
-    <input type="checkbox" id="weekday_wed" />
-    <label for="weekday_wed">Wed</label>
-    <input type="checkbox" id="weekday_thu" />
-    <label for="weekday_thu">Thu</label>
-    <input type="checkbox" id="weekday_fri" />
-    <label for="weekday_fri">Fri</label>
-    <input type="checkbox" id="weekday_sat" />
-    <label for="weekday_sat">Sat</label>
+  <label style="width: 100%;"><%= translate_helper("days_of_week") %></label>
+  <% days_abbr = translate_helper("date.day_name_initials").split(",") %>
+  <div id="weekday_select_buttons" class="btn-group col-sm-12" data-toggle="buttons" style="padding:0px;">
+    <label for="weekday_sun" class="btn btn-default">
+      <%= days_abbr[0] %>
+      <input type="checkbox" autocomplete="off" id="weekday_sun"/>
+    </label>
+    <label for="weekday_mon" class="btn btn-default">
+      <%= days_abbr[1] %>
+      <input type="checkbox" autocomplete="off" id="weekday_mon"/>
+    </label>
+    <label for="weekday_tue" class="btn btn-default">
+      <%= days_abbr[2] %>
+      <input type="checkbox" autocomplete="off" id="weekday_tue"/>
+    </label>
+    <label for="weekday_wed" class="btn btn-default">
+      <%= days_abbr[3] %>
+      <input type="checkbox" autocomplete="off" id="weekday_wed"/>
+    </label>
+    <label for="weekday_thu" class="btn btn-default">
+      <%= days_abbr[4] %>
+      <input type="checkbox" autocomplete="off" id="weekday_thu"/>
+    </label>
+    <label for="weekday_fri" class="btn btn-default">
+      <%= days_abbr[5] %>
+      <input type="checkbox" autocomplete="off" id="weekday_fri"/>
+    </label>
+    <label for="weekday_sat" class="btn btn-default">
+      <%= days_abbr[6] %>
+      <input type="checkbox" autocomplete="off" id="weekday_sat"/>
+    </label>
+
   </div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    function initWeekdaySelect() {
+      var buttons = $('#weekday_select input');
+      var daysToShow = <%= @days_of_week %>;
+      $('.days_of_week_hidden_field').val(daysToShow);
+
+      daysToShow.forEach(function(i) {
+        $('#weekday_select_buttons .btn').eq(i).button('toggle');
+      });
+      
+      $('#weekday_select input').bind("change", updateWeekdays);
+    }
+
+    function updateWeekdays() {
+      // Determine first and last days selected
+      var buttons = $('#weekday_select input');
+      var daysToShow = [];
+      for (var i = 0; i < 7; i++) {
+        if ($(buttons.get(i)).is(':checked')) {
+          daysToShow.push(i);
+        } 
+      }
+
+      $('.days_of_week_hidden_field').val(daysToShow);
+    }
+
+    initWeekdaySelect();
+  });
+</script>

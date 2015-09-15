@@ -1,41 +1,317 @@
 <%= form_for @driver do |f| %>
   <% if @driver.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@driver.errors.count, "error") %> prohibited this driver from being saved:</h2>
-
-      <ul>
-      <% @driver.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+    <div class="panel panel-danger">
+      <div class="panel-heading"><%= translate_helper("driver_form_error", count: @driver.errors.count) %></div>
+      <div class="panel-body">
+        <ul>
+          <% @driver.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
     </div>
   <% end %>
 
-  <fieldset class="new-driver">
-    <ol class="section first">
-      <li>
-        <%= f.label :name %>
-        <%= f.text_field :name %>
-      </li>
-
-      <li>
-        <%= f.label :active %>
-        <%= f.select :active, [["Active", "true"], ["Inactive", "false"]], {:selected => @driver.active.to_s} %>
-      </li>
-
-      <li>
-        <%= f.label :paid %>
-        <%= f.select :paid, [["Paid", "true"], ["Volunteer", "false"]], {:selected => @driver.paid.to_s} %>
-      </li>
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("driver_form_details_heading") %></div>
+        <div class="panel-body form-horizontal">
+          <div class="form-group">
+            <%= f.label :name, translate_helper("driver_form_name"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :name, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :email, translate_helper("driver_form_email"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :email, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :active, translate_helper("driver_form_active"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.select :active, [["Active", "true"], ["Inactive", "false"]], { selected: @driver.active.to_s }, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :paid, translate_helper("paid"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.select :paid, [["Paid", "true"], ["Volunteer", "false"]], { selected: @driver.paid.to_s }, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :user_id, translate_helper("driver_form_associated_user"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.collection_select :user_id, @available_users, :id, :email, { include_blank: true }, { class: "form-control", disabled: @readonly } %>
+            </div>
+          </div>  
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
       
-      <li>
-        <%= f.label :user_id, "Associated User" %>
-        <%= f.collection_select :user_id, @available_users, :id, :email, :include_blank => true %>
-      </li>
-    </ol>
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("driver_address_heading") %></div>
+        <div class="panel-body form-horizontal">
+          <%= f.fields_for :address, @driver.address do |address_form| %>
+            <%= address_form.hidden_field :provider_id %>
+            <div class="form-group">
+                <%= address_form.label :name, translate_helper("address_name"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :name, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
 
-    <div class="actions">
-      <%= f.submit %>
-    </div>
+            <div class="form-group">
+                <%= address_form.label :building_name, translate_helper("building_name"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :building_name, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
 
+            <div class="form-group">
+                <%= address_form.label :address, translate_helper("address"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :address, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :city, translate_helper("city"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :city, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :state, translate_helper("state"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :state, class: "form-control", disabled: @readonly, maxlength: 2 %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :zip, translate_helper("zip"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :zip, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :notes, translate_helper("address_notes"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_area :notes, rows: 3, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+
+            <div class="form-group">
+                <%= address_form.label :phone_number, translate_helper("phone_number"), class: "col-md-2 control-label" %>
+              <div class="col-md-10">
+                <%= address_form.text_field :phone_number, class: "form-control", disabled: @readonly %>
+              </div>
+            </div>  
+          <% end %>
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
+      
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("operating_hours_heading") %></div>
+        <div class="panel-body form-inline">
+          <table class="table table-condensed">
+            <tbody>
+              <% Date::DAYNAMES.each_with_index do |day_name, day_value| %>
+                <% hours = @hours[day_value] %>
+                <tr class="<%= (!hours.nil? and hours.errors.any?) ? "row_with_errors" : "" %>">
+                  <td class="col-md-2">
+                    <p class="form-control-static"><strong><%= day_name %></strong></p>
+                  </td>
+                  <% if @readonly %>
+                    <td class="col-md-10">
+                      <p class="form-control-static">
+                        <% if hours.nil? or hours.is_unavailable? %>
+                          <%= translate_helper("operating_hours_unavailable") %>
+                        <% elsif hours.is_24_hours? %>
+                          <%= translate_helper("operating_hours_24_hours") %>
+                        <% else %>
+                          <%= translate_helper("operating_hours_open") %>
+                          <%= hours.start_time.strftime("%l:%M%P") %>
+                          - <%= hours.end_time.strftime("%l:%M%P") %>
+                        <% end %>
+                      </p>
+                    </td>
+                  <% else %>
+                    <td class="col-md-5">
+                      <div class="col-sm-4">
+                        <%= label_tag "hours-#{day_value}-unavailable", class: "radio-inline" do %>
+                          <%= radio_button_tag "hours[#{day_value}]", 'unavailable', (hours.nil? or hours.is_unavailable?), id: "hours-#{day_value}-unavailable", class: "hours-#{day_value}", disabled: @readonly %>
+                          <%= translate_helper("operating_hours_unavailable") %>
+                        <% end %>
+                      </div>
+                      <div class="col-sm-4">
+                        <%= label_tag "hours-#{day_value}-open-24", class: "radio-inline" do %>
+                          <%= radio_button_tag "hours[#{day_value}]", 'open24', (hours.present? and hours.is_24_hours?), id: "hours-#{day_value}-open-24", class: "hours-#{day_value}", disabled: @readonly %>
+                          <%= translate_helper("operating_hours_24_hours") %>
+                        <% end %>
+                      </div>
+                      <div class="col-sm-4">
+                        <%= label_tag "hours-#{day_value}-open", class: "radio-inline" do %>
+                          <%= radio_button_tag "hours[#{day_value}]", 'open', (hours.present? and hours.is_regular_hours?), id: "hours-#{day_value}-open", class: "hours-#{day_value}", disabled: @readonly %>
+                          <%= translate_helper("operating_hours_open") %>&hellip;
+                        <% end %>
+                      </div>
+                    </td>
+                    <td class="col-md-5">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <%= label_tag "start-hour-#{day_value}", "From", style: "font-weight: normal" %>
+                          <select id="start-hour-<%= day_value %>" name="start_hour[<%= day_value %>]" class="form-control" <%= @readonly ? "readonly" : "" %>>
+                            <% @start_hours.each do |hour| %>
+                              <option value="<%= hour %>" <%= !hours.nil? and hour == hours.start_time.try(:to_s, :time_utc) ? "selected" : "" %>>
+                                <%= Time.zone.parse(hour).strftime("%l:%M%P") %>
+                              </option>
+                            <% end %>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <%= label_tag "end-hour-#{day_value}", "To", style: "font-weight: normal" %>
+                          <select id="end-hour-<%= day_value %>" name="end_hour[<%= day_value %>]" class="form-control" <%= @readonly ? "readonly" : "" %>>
+                            <% @end_hours.each do |hour| %>
+                              <option value="<%= hour %>" <%= !hours.nil? and hour == hours.end_time.try(:to_s, :time_utc) ? "selected" : "" %>>
+                                <%= Time.zone.parse(hour).strftime("%l:%M%P") %>
+                              </option>
+                            <% end %>
+                          </select>
+                        </div>
+                      </div>
+                      <% if hours.try(:errors).try(:any?) %>
+                        <p class="text-danger"><%= hours.errors.full_messages.to_sentence %></p>
+                      <% end %>
+                    </td>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
+    </div><!-- END .col-md-6 -->
+
+    <div class="col-sm-12 col-md-6">
+      <% if @driver.persisted? %>
+        <div class="panel panel-primary">
+          <div class="panel-heading"><%= translate_helper("driver_documents_heading") %></div>
+          <table class="table table-striped table-condensed" id="documents-table">
+            <thead>
+              <tr>
+                <th class="col-sm-3"><%= translate_helper("document_form_upload_date") %></th>
+                <th><%= translate_helper("document_form_description") %></th>
+                <th class="col-sm-2"><%= translate_helper("document_form_file_size") %></th>
+                <th class="col-sm-1"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @readonly and @driver.documents.empty? %>
+                <tr>
+                  <td colspan="2"><%= translate_helper("driver_documents_empty") %></td>
+                </tr>
+              <% end %>
+              <%= render partial: 'documents/document', collection: @driver.documents.default_order %>
+            </tbody>
+          </table>
+          <% unless @readonly %>
+            <div class="panel-footer">
+              <div class="clearfix">
+                <%= link_to translate_helper("driver_documents_add_link_title"), new_driver_document_path(@driver), class: "btn action-button pull-right", remote: true %>
+              </div>
+            </div>
+          <% end %>
+        </div><!-- END .panel -->
+
+        <div class="panel panel-primary">
+          <div class="panel-heading"><%= translate_helper("driver_histories_heading") %></div>
+          <table class="table table-striped table-condensed" id="driver_histories-table">
+            <thead>
+              <tr>
+                <th class="col-sm-3"><%= translate_helper("driver_history_form_event_date") %></th>
+                <th><%= translate_helper("driver_history_form_event") %></th>
+                <% unless @readonly %><th class="col-sm-1"></th><% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @readonly and @driver.driver_histories.empty? %>
+                <tr>
+                  <td colspan="2"><%= translate_helper("driver_histories_empty") %></td>
+                </tr>
+              <% end %>
+              <%= render partial: 'driver_histories/driver_history', collection: @driver.driver_histories.default_order %>
+            </tbody>
+          </table>
+          <% unless @readonly %>
+            <div class="panel-footer">
+              <div class="clearfix">
+                <%= link_to translate_helper("driver_histories_add_link_title"), new_driver_driver_history_path(@driver), class: "btn action-button pull-right", remote: true %>
+              </div>
+            </div>
+          <% end %>
+        </div><!-- END .panel -->      
+
+        <div class="panel panel-primary">
+          <div class="panel-heading"><%= translate_helper("driver_compliances_heading") %></div>
+          <table class="table table-striped table-condensed" id="driver_compliances-table">
+            <thead>
+              <tr>
+                <th class="col-sm-3"><%= translate_helper("driver_compliance_form_due_date") %></th>
+                <th><%= translate_helper("driver_compliance_form_event") %></th>
+                <th class="col-sm-3"><%= translate_helper("driver_compliance_form_compliance_date") %></th>
+                <% unless @readonly %><th class="col-sm-1"></th><% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @readonly and @driver.driver_compliances.empty? %>
+                <tr>
+                  <td colspan="3"><%= translate_helper("driver_compliances_empty") %></td>
+                </tr>
+              <% end %>
+              <%= render partial: 'driver_compliances/driver_compliance', collection: @driver.driver_compliances.default_order %>
+            </tbody>
+          </table>
+          <% unless @readonly %>
+            <div class="panel-footer">
+              <div class="clearfix">
+                <%= link_to translate_helper("driver_compliances_add_link_title"), new_driver_driver_compliance_path(@driver), class: "btn action-button pull-right", remote: true %>
+              </div>
+            </div>
+          <% end %>
+        </div><!-- END .panel -->      
+      <% end %>
+    </div><!-- END .col-md-6 -->
+  </div><!-- END .row -->
+
+  <% unless @readonly %>
+    <div class="row form-actions"><%= f.submit translate_helper("driver_form_submit"), class: "btn action-button" %></div>
+  <% end %>
 <% end %> 
+
+<%= render 'shared/hide_invisible_form_fields_js', model_name: "driver", table_name: 'drivers', provider_id:  current_provider.try(:id) %>
+
+<%= render 'shared/modal_dialog', modal_id: "modal-dialog" %>
+
+<%= javascript_tag do %>
+  $(document).ready(function(){
+    function update_hours_enabled(i) {
+      var enabled = $("input#hours-" + i + "-open").is(":checked");
+      $("select#start-hour-" + i).prop('disabled', !enabled);
+      $("select#end-hour-" + i).prop('disabled', !enabled);
+    };
+    
+    // Enable/disable behavior for operating hours on form
+    for (var i = 0; i < 7; ++i) (function(i) {
+      update_hours_enabled(i);
+      $("input.hours-" + i).click(function(e) {
+        update_hours_enabled(i);
+      });
+    })(i);
+  });
+<% end %>

@@ -1,19 +1,15 @@
 
-<table class="customer-list">
+<table class="customer-list table table-striped table-bordered" >
   <thead>
     <tr>
       <th></th>
-      <th>Name</th>
-      <th>Phone</th>
-      <th>Alternate Phone</th>
-      <th>Email</th>
-      <th>Activated Date</th>
-      <% if show_inactivated_date %>
-      <th>Inactivated Date</th>
-      <% end %>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th><%=translate_helper("name")%></th>
+      <th><%=translate_helper("phone")%></th>
+      <th><%=translate_helper("alternate_phone")%></th>
+      <th><%=translate_helper("email")%></th>
+      <th><%=translate_helper("customer_active")%></th>
+      <th><%=translate_helper("activated_date")%></th>
+      <th><%=translate_helper("inactivated_date")%></th>
     </tr>
   </thead>
 
@@ -25,13 +21,9 @@
       <td><%= customer.phone_number_1 %></td>
       <td><%= customer.phone_number_2 %></td>
       <td><%= customer.email %></td>
+      <td><%= image_tag("tick-circle.png") if customer.active? %></td>
       <td><%= customer.activated_date %></td>
-      <% if show_inactivated_date %>
       <td><%= customer.inactivated_date %></td>
-      <% end %>
-      <td><%= link_to 'New Trip', new_trip_path(:customer_id=>customer.id), :class=>'new-trip' %></td>
-      <td><%= link_to 'Edit', edit_customer_path(customer), :class=>'edit' %></td>
-      <td><% if can_delete? customer %><%= link_to 'Delete', customer, :confirm => 'Are you sure?', :method => :delete, :class=>'delete' %><% end %></td>
     </tr>
     <% end %>
   </tbody>

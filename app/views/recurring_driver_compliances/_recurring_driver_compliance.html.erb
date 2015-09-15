@@ -1,0 +1,17 @@
+<tr>
+  <td>
+    <%= link_to recurring_driver_compliance.event_name, recurring_driver_compliance %>
+  </td>
+  <td>
+    <%= recurring_driver_compliance.start_date.to_s(:long) %>
+  </td>
+  <td>
+    <%= "#{recurring_driver_compliance.recurrence_frequency} #{recurring_driver_compliance.recurrence_schedule}" %>
+  </td>
+  <td>
+    <%= recurring_driver_compliance.compliance_based_scheduling? ? translate_helper("yes") : translate_helper("no") %>
+  </td>
+  <td>
+    <%= recurring_driver_compliance.driver_compliances.any? ? translate_helper("yes") : translate_helper("no") %>
+  </td>
+</tr>

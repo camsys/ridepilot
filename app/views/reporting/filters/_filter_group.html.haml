@@ -1,0 +1,39 @@
+- if filter_group && search_form
+  - filter_group_id = filter_group.id
+  - fields = filter_group.filter_fields.order(:sort_order, :id)
+
+  .panel.panel-default
+    .panel-heading{role: 'tab', id: "filter-heading-#{filter_group_id}"}
+      %h5.panel-title
+        %a.collapsed{"data-toggle" => "collapse", "data-parent" => "#filterContainer", href: "#filter-collapse-#{filter_group_id}", "aria-expanded" => false, "aria-controls" => "filter-collapse-#{filter_group_id}"}
+          = filter_group.name
+
+    .panel-collapse.collapse{role: "tabpanel", "aria-labelledby" => "filter-heading-#{filter_group_id}", id: "filter-collapse-#{filter_group_id}"}
+      .panel-body
+
+        - fields.each do |field|
+        
+          - if !field.lookup_table
+            
+            - field_type = report.data_model.columns_hash[field.name].type rescue nil
+            - field_class = 'form-control form-control-inline'
+            - if !field.value_type.blank? && field.value_type.to_sym == :time
+              - field_class += ' is-time-field'
+            - elsif field_type == :date or field_type == :datetime
+              - field_class += ' is-date-field'
+              - is_date_field = true
+
+            - if field.filter_type.name == Reporting::FilterType::RANGE
+              = render partial: 'reporting/filters/range_filter', locals: {search_form: search_form, field: field, is_date_field: is_date_field, field_class: field_class, field_type: field_type}
+            
+            - else
+              = render partial: 'reporting/filters/regular_filter', locals: {search_form: search_form, field: field, is_date_field: is_date_field, field_class: field_class, field_type: field_type}
+          
+          - else
+            = render partial: 'reporting/filters/lookup_table_filter', locals: {search_form: search_form, field: field}
+        
+        .btns.pull-left
+          = button_tag translate_helper(:reset_filter_panel), type: 'button', class: 'btn action-button controls reset-filter-panel'
+            
+
+

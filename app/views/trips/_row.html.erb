@@ -1,0 +1,34 @@
+<tr class="trip">
+  <td>
+    <%= link_to(translate_helper("view"), trip_path(trip)) %>
+  </td>
+  <td>
+    <%= format_time_for_listing_day trip.pickup_time %>
+  </td>
+  <td>
+    <%= link_to trip.customer.name, trip.customer, :title => translate_helper("view_customer_record_link_text") %>
+  </td>
+  <td>
+    <%= trip.pickup_address.try :address_text %>
+  </td>
+  <td>
+    <%= format_time_for_listing trip.pickup_time %>
+  </td>
+  <td>
+    <%= trip.dropoff_address.try :address_text %>
+  </td>
+  <td>
+    <%= format_time_for_listing trip.appointment_time %>
+  </td>
+  <td>
+    <% if trip.run.present? %>
+      <%= link_to trip.run_text, run_path(trip.run.id) %>
+    <% end %>
+  </td>
+  <td>
+    <%= image_tag("tick-circle.png") if trip.customer_informed %>
+  </td>
+  <td>
+    <%= display_trip_result(trip.trip_result) %>
+  </td>
+</tr>

@@ -1,0 +1,10 @@
+.row.form-group
+  = search_form.label "#{field.title || field.name}", class: 'col-sm-3' rescue nil
+  .col-sm-9
+    - field_id = "#{field.name}_gteq"
+    - raw_value = params[:q][field_id] rescue ''
+    = search_form.search_field field_id, {class: field_class, type: filter_input_type(field_type), value: filter_value(raw_value, is_date_field)} rescue nil
+    = "-"
+    - field_id = "#{field.name}_lteq"
+    - raw_value = params[:q][field_id] rescue ''
+    = search_form.search_field field_id, {class: field_class + ' is-end-date', type: filter_input_type(field_type), value: filter_value(raw_value, is_date_field)} rescue nil

@@ -1,0 +1,8 @@
+<%= form_for @trips_query, :url=>url_for(:action=>:customer_receiving_trips_in_range), :html=>{:method=>:get} do |f| %>
+  <fieldset>
+    <%= f.date_select  :start_date, :order => [:month,:day,:year] rescue nil%>
+    <%= translate_helper("through") %>  
+    <%= f.date_select  :before_end_date, :order => [:month,:day,:year] rescue nil%>
+    <%= f.submit translate_helper("show") %>
+  </fieldset>
+<% end %>

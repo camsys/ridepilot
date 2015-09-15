@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :user do
     email { Faker::Internet.email }
     password 'password#1'
-    password_confirmation 'password#1'
+    password_confirmation {|u| u.password}
     association :current_provider, factory: :provider
     
     factory :editor do
@@ -28,16 +28,9 @@ FactoryGirl.define do
     # Super admins can manage ANY record, so use in controller and feature tests
     # sparingly, or when you're explicitly testing super admin functionality
     # 
-    factory :super_admin do
-      association :current_provider, factory: :provider, strategy: :build
-
-      after(:build) do |super_admin|
-        raise ActiveRecord::RecordNotFound.new("Couldn't find a Ride Connection provider!") unless ride_connection = Provider.ride_connection
-        super_admin.current_provider = ride_connection
-      end
-      
+    factory :super_admin do      
       after(:create) do |super_admin|
-        create(:role, :user => super_admin, :provider => super_admin.current_provider, :level => 100) unless super_admin.roles.any?
+        create(:role, :user => super_admin, :provider => super_admin.current_provider, :level => 200) unless super_admin.roles.any?
       end
     end
   end

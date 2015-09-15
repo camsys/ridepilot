@@ -10,8 +10,9 @@
       <td><%= address.state %></td>
       <td><%= address.phone_number %></td>
       <td><%= address.in_district? ? "In District" : "Out of District" %></td>
+      <td><%= address.notes %></td>
       <% if can? :edit, Address %>
-      <td><%= link_to "Edit", edit_address_path(address), :class=>'edit edit-address' %></td>
+      <td><%= link_to translate_helper("edit"), edit_address_path(address), :class=>'edit edit-address' %></td>
       <!-- <td><%#= link_to "Delete", address, :confirm => 'Are you sure?', :method => :delete, :class=>'delete' %></td> -->
       <% end %>
     </tr>

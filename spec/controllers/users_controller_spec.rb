@@ -21,32 +21,6 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
-  describe "GET #check_session" do
-    it "responds with JSON" do
-      get :check_session, {}
-      expect(response.content_type).to eq("application/json")
-    end
-
-    it "include an integer named last_request_at" do
-      get :check_session, {}
-      json = JSON.parse(response.body)
-      expect(json["last_request_at"]).to be_a(Integer)
-    end
-
-    it "include an integer named timeout_in" do
-      get :check_session, {}
-      json = JSON.parse(response.body)
-      expect(json["timeout_in"]).to be_a(Integer)
-    end
-  end
-
-  describe "GET #touch_session" do
-    it "responds with the string 'OK'" do
-      get :touch_session, {}
-      expect(response.body).to eq('OK')
-    end
-  end
-
   describe "POST #create_user" do
     context "with valid params" do
       context "creating a new user" do        
@@ -161,6 +135,42 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
+  describe "GET #show_change_expiration" do
+    before do
+      @user = create :user
+    end
+    
+    it "assigns the requested user as @user" do
+      get :show_change_expiration, {id: @user.id}
+      expect(assigns(:user)).to eq(@user)
+    end
+  end
+
+  describe "PUT #change_expiration" do
+    before do
+      @user = create :user, current_provider: @current_user.current_provider
+      create :role, user: @user, provider: @user.current_provider, :level => 0
+    end
+    
+    context "with valid params" do
+      let(:expiration_attributes) {{
+        :expires_at => "2015-02-25 08:50",
+        :inactivation_reason => "retired"
+      }}
+
+      it "updates the requested user's expiration" do
+        expect {
+          put :change_expiration, {id: @user.id, :user => expiration_attributes}
+        }.to change { [@user.reload.expires_at, @user.reload.inactivation_reason] }
+      end
+
+      it "redirects to the requested user's provider page" do
+        put :change_expiration, {id: @user.id, :user => expiration_attributes}
+        expect(response).to redirect_to(provider_path(@user.current_provider))
+      end
+    end
+  end
+
   describe "POST #change_provider" do
     context "while logged in as a super admin" do
       before(:each) do
@@ -178,9 +188,9 @@ RSpec.describe UsersController, type: :controller do
         }.to change { @current_user.reload.current_provider_id }.from(@old_provider.id).to(@new_provider.id)
       end
 
-      it "redirects to the come_from param" do
-        post :change_provider, {:provider_id => @new_provider.id, :come_from => "/providers"}
-        expect(response).to redirect_to("/providers")
+      it "redirects to the new provider page" do
+        post :change_provider, {:provider_id => @new_provider.id}
+        expect(response).to redirect_to("/en/providers/#{@new_provider.id}")
       end
     end
 
@@ -195,10 +205,36 @@ RSpec.describe UsersController, type: :controller do
         }.not_to change { @current_user.reload.current_provider_id }
       end
 
-      it "redirects to the come_from param" do
-        post :change_provider, {:provider_id => @new_provider.id, :come_from => "/providers"}
-        expect(response).to redirect_to("/providers")
+      it "redirects to the new provider page" do
+        post :change_provider, {:provider_id => @new_provider.id}
+        expect(response).to redirect_to("/en/providers/#{@new_provider.id}")
       end
+    end
+  end
+  
+  describe "GET #check_session" do
+    it "responds with JSON" do
+      get :check_session, {}
+      expect(response.content_type).to eq("application/json")
+    end
+
+    it "include an integer named last_request_at" do
+      get :check_session, {}
+      json = JSON.parse(response.body)
+      expect(json["last_request_at"]).to be_a(Integer)
+    end
+
+    it "include an integer named timeout_in" do
+      get :check_session, {}
+      json = JSON.parse(response.body)
+      expect(json["timeout_in"]).to be_a(Integer)
+    end
+  end
+
+  describe "GET #touch_session" do
+    it "responds with the string 'OK'" do
+      get :touch_session, {}
+      expect(response.body).to eq('OK')
     end
   end
 end

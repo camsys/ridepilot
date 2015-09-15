@@ -1,0 +1,17 @@
+.btns.pull-left
+  = button_tag id: 'resetAllFilters', class: 'btn action-button controls' do
+    = translate_helper(:reset_all_filter)
+:javascript
+  $(document).ready(function(){
+    $('.reset-filter-panel').on('click', function() {
+      $(this).parents('.panel-body').find('.form-control').each(function(){
+        $(this).val('');
+      });
+    });
+
+    $('#resetAllFilters').on('click', function() {
+      $('.filter-form .form-control').each(function(){
+        $(this).val('');
+      });
+    });
+  });

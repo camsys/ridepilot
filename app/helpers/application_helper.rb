@@ -1,11 +1,31 @@
-module ApplicationHelper
-  
+module ApplicationHelper  
+  def current_provider
+    current_user.try(:current_provider)
+  end
+
+  def current_provider_id
+    current_provider.try(:id)
+  end
+
   def show_dispatch?
-    current_user && current_user.current_provider && current_user.current_provider.dispatch?
+    current_user && current_provider && current_provider.dispatch?
   end
   
   def show_scheduling?
-    current_user && current_user.current_provider.scheduling?
+    current_user && current_provider.scheduling?
+  end
+
+  def can_edit_role?(role)
+    false if !current_user.present?
+
+    is_allowed = can? :edit, role
+    is_allowed = current_user.super_admin? if is_allowed && role.system_admin?
+
+    is_allowed
+  end
+
+  def is_admin_or_system_admin?
+    current_user.present? && (current_user.admin? || current_user.super_admin?)
   end
   
   def new_device_pool_members_options(members)
@@ -13,24 +33,32 @@ module ApplicationHelper
   end
   
   def display_trip_result(trip_result)
-    TRIP_RESULT_CODES[trip_result] || "Pending"
+    trip_result.try(:name) || "Pending"
+  end
+
+  def format_full_datetime(time)
+    time.strftime "%l:%M%P %a %d-%b-%Y" if time
   end
   
   def format_time_for_listing(time)
-    time.strftime('%l:%M%P')
+    time.strftime('%l:%M%P') if time
   end
 
   def format_time_for_listing_day(time)
-    time.strftime('%A, %v') 
+    time.strftime('%d-%b-%Y %a') if time
+  end
+
+  def format_time_as_title_for_listing_day(time)
+    time.strftime('%b %d, %Y') if time
   end
   
   def format_date_for_daily_manifest(date)
-    date.strftime('%A, %v')
+    date.strftime('%A, %v') if date
   end
   
   def delete_trippable_link(trippable)
     if can? :destroy, trippable
-      link_to trippable.trips.present? ? 'Duplicate' : 'Delete', trippable, :class => 'delete'
+      link_to trippable.trips.present? ? translate_helper("merge") : translate_helper("delete"), trippable, :class => 'delete'
     end
   end
   
@@ -86,5 +114,24 @@ module ApplicationHelper
     }
 
     return weekday_abbrevs[weekday]
+  end
+
+  def is_add_user_allowed?(user)
+    user.present? && ( user.admin? || user.super_admin?)
+  end
+
+  def add_tooltip(key)
+    if TranslationEngine.translation_exists?(key)
+      html = '<i class="fa fa-question-circle fa-2x pull-right label-help" style="margin-top:-4px;" title data-content="'
+      html << TranslationEngine.translate_text(key.to_sym)
+      html << '" aria-label="'
+      html << TranslationEngine.translate_text(key.to_sym)
+      html << '" tabindex="0"></i>'
+      return html.html_safe
+    end
+  end
+
+  def reimbursement_cost_for_trips(provider, trips)
+    number_to_currency ReimbursementRateCalculator.new(provider).total_reimbursement_due_for_trips(trips)
   end
 end

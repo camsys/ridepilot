@@ -1,17 +1,18 @@
-<%= content_for :title, "Verify Trips#{@query.try(:start_date).try(:strftime, ": %B %Y")}" %>
-<div id="page-header">
-<h1>Verify Trips<%= @query.try(:start_date).try(:strftime, ": %B %Y") %></h1>
+<%= render 'custom_report_header'%>
+<%= content_for :title, "#{translate_helper("show_trips_title")}#{@query.try(:start_date).try(:strftime, ": %B %Y")}" %>
+<div id="page-header" class="clearfix">
+<h1><%= translate_helper("show_trips_report_heading") +  @query.try(:start_date).try(:strftime, ": %B %Y") %></h1>
 </div>
 
 <% if @query %> 
   <%= form_for @query, :url=>url_for(:action=>:show_trips_for_verification), :html=>{:method=>:get} do |f| %>
     <fieldset class="select-month">
       <p>
-        <%= f.date_select  :start_date, :order => [:month,:day,:year] %>
+        <%= f.date_select  :start_date, :order => [:month,:day,:year] rescue nil%>
         through 
-        <%= f.date_select  :before_end_date, :order => [:month,:day,:year] %>
+        <%= f.date_select  :before_end_date, :order => [:month,:day,:year] rescue nil%>
         <%= f.select       :trip_display, TRIP_VERIFICATION_DISPLAY_OPTIONS %>
-        <%= f.submit "Update" %>
+        <%= f.submit translate_helper("show_trips_submit") %>
       </p>
     </fieldset>
   <% end %>
@@ -20,14 +21,15 @@
 <%= form_tag :action => "update_trips_for_verification" do |f| %>
   <table>
     <tr>
-      <th>Pickup Time</th>
-      <th>Customer Name</th>
-      <th>In Distict?</th>
-      <th>Purpose</th>
-      <th>Round Trip?</th>
-      <th>Guest Count</th>
-      <th>Attendant Count</th>
-      <th>Result</th>
+      <th><%= translate_helper("pickup_time") %></th>
+      <th><%= translate_helper("customer_name") %></th>
+      <th><%= translate_helper("in_district") %></th>
+      <th><%= translate_helper("trip_purpose") %></th>
+      <th><%= translate_helper("round_trip") %></th>
+      <th><%= translate_helper("guest_count") %></th>
+      <th><%= translate_helper("attendant_count") %></th>
+      <th><%= translate_helper("result") %></th>
+      <th><%= translate_helper("trips_reimbursement_cost") %></th>
       <th></th>
       <th></th>
     </tr>
@@ -53,6 +55,6 @@
     <% end %>
   </table>
   <div class="actions">
-    <%= submit_tag "Update Trips" %>
+    <%= submit_tag translate_helper("show_trips_submit_update") %>
   </div>
 <% end %>

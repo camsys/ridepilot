@@ -1,0 +1,44 @@
+= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'reports'
+= render partial: 'header'
+.panel.panel-default{style: 'padding: 0px;'}
+  .panel-heading
+    %h2.panel-title
+      = @report.name
+  .panel-body
+    %p
+      %select.input-sm#per_page_select
+        - [10, 25, 50, 100].each do |per_page|
+          - if per_page == @per_page.to_i
+            %option{value: "#{per_page}", selected: true}
+              = per_page
+          - else
+            %option{value: "#{per_page}"}
+              = per_page
+      :javascript
+        $('#per_page_select').on('change', function(){
+          var params = #{@params.to_json};
+          params.per_page = $(this).val();
+          window.location.href = "#{reporting.report_results_path(@report)}?" + $.param(params);
+        });
+      %span
+        = "records per page"
+    %table.table.table-bordered.table-condensed.table-striped.table-hover#datatable
+      %thead
+        %tr
+          - @fields.each do |field|
+            %th
+              = sort_link @q, (field[:title] || field[:name])
+      %tbody
+        - @results.each do |result|
+          %tr
+            - @fields.each do |field|
+              - field_type = @report.data_model.columns_hash[field[:name].to_s].type rescue nil
+              %td
+                = format_output result[field[:name].to_sym], field_type, field[:formatter]
+    .row
+      .col-sm-6
+        .pull-left
+          = page_entries_info @results, :theme => 'twitter-bootstrap-3' rescue nil
+      .col-sm-6
+        .pull-right
+          = paginate @results, :params => {per_page: @per_page}, :theme => 'twitter-bootstrap-3' rescue nil

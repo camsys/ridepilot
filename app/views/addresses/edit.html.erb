@@ -1,5 +1,5 @@
-<div id="page-header">
-  <h1>Editing Address</h1>
+<div id="page-header" class="clearfix">
+  <h1><%= translate_helper("editing_address") %></h1>
 </div>
 
 <div class="profile-actions selfclear">
@@ -11,7 +11,7 @@
 <%= form_for @address do |form| %>
   <% if @address.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@address.errors.count, "error") %> prohibited this address from being saved:</h2>
+      <h2>translate_helper("address_form_error_message", count: @address.errors.count)</h2>
       <ul>
       <% @address.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -27,7 +27,7 @@
   </fieldset>
   
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit translate_helper("submit") %>
   </div>
 <% end %>
 
@@ -35,10 +35,10 @@
   <div id="confirm-destroy" style="display:none;">
     <%= form_for @address, :html => { :method => "delete" } do |form| %>
       <fieldset>
-        <legend>Associate this addresses's trips with another address.</legend>
+        <legend><%=translate_helper("reassociate_trips")%></legend>
         <ol class="section">
           <li>
-          <%= label_tag "Address Search:" %>
+          <%= label_tag translate_helper("address_search") %>
           <%= autocomplete_field_tag 'address_term', '', autocomplete_addresses_path, :size => 30, :id_element => "#address_id" %>
           <%= hidden_field_tag 'address_id' %>
           </li>

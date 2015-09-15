@@ -1,0 +1,13 @@
+.panel.panel-primary#trip_assignment_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:assignment)
+  .panel-body{style: 'padding: 5px;'}
+    .form-group.col-sm-12
+      %label.col-sm-3
+        = translate_helper("assignment")
+      .col-sm-9
+        - if @trip.run_id
+          = @trip.run_label
+        - else
+          = translate_helper("n_a")

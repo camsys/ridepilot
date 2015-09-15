@@ -1,7 +1,9 @@
 <%- if @customer.try(:id).present? -%>
   <div id="trip_customer_name_wrapper">
     <strong id="trip_customer_name_string"><%= link_to @customer.name, @customer %></strong>
-    &nbsp;&nbsp;&nbsp;&nbsp;(<a href="#" id="change_trip_customer_link">Change Customer</a>)
+    <%- if edit_mode != :show %>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<a href="#" id="change_trip_customer_link"><%= translate_helper("change_customer") %></a>)
+    <% end %>
   </div>
 <% end %>
 <%= autocomplete_field_tag 'customer_name', @customer.try(:name), autocomplete_customers_path, 
@@ -19,10 +21,11 @@
       :default_funding_source_id => "#trip_funding_source_id",
       :default_service_level     => "#trip_service_level"
     },
-    :style => @customer.try(:id).present? ? 'display: none' : ''
+    :class => "form-control",
+    :style => @customer.try(:id).present? ? 'display: none' : '', :autocomplete => "off"
 %>
 <%- if @customer.try(:id).blank? -%>
-  <input type="button" name="new_customer" value="New Customer" id="new_customer" data-path="<%= new_customer_path %>">
+  <input type="button" class="btn" name="new_customer" value="<%= translate_helper("new") %>" id="new_customer" data-path="<%= new_customer_path %>">
 <%- end -%>
 <%= javascript_tag do %>
   $('#change_trip_customer_link').click(function(event){

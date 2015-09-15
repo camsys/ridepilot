@@ -9,7 +9,7 @@ RSpec.describe "Customers" do
       visit new_user_session_path
       fill_in 'user_email', :with => user.email
       fill_in 'Password', :with => 'password#1'
-      click_button 'Log in'
+      click_button 'Log In'
     end
     
     describe "GET /customer/:id" do
@@ -21,14 +21,14 @@ RSpec.describe "Customers" do
         before do
           @customer = create :customer, :provider => user.current_provider
           @trips    = (1..5).map { create :trip, :customer => customer }
-          visit customer_path(@customer)
+          visit customer_path(:id => @customer.id)
         end
         
-        it "shows duplicate link" do
-          expect(page.has_link?("Duplicate")).to be
+        it "shows merge link" do
+          expect(page.has_link?("Merge")).to be
         end
         
-        it "renders the duplicate customer dialog" do
+        it "renders the merge customer dialog" do
           expect(page.has_selector?("#confirm-destroy", visible: false)).to be
         end
       end
@@ -39,7 +39,7 @@ RSpec.describe "Customers" do
         end
         
         it "shows delete link" do
-          visit customer_path(@customer)
+          visit customer_path(:id=> @customer.id)
           expect(page.has_link?("Delete")).to be
         end
       end
@@ -78,7 +78,7 @@ RSpec.describe "Customers" do
           it "renders show with an error" do
             skip "redirecting to sign in for some reason" 
             
-            delete customer_path(@customer)
+            delete customer_path(:id => @customer.id)
             expect(page.has_content?("could not be deleted")).to be
           end
         end
@@ -88,7 +88,7 @@ RSpec.describe "Customers" do
         it "redirects to customer index" do
           skip "redirecting to sign in for some reason" 
           
-          delete customer_path(@customer)
+          delete customer_path(:id => @customer.id)
           expect(rendered).to redirect_to(customers_path)
         end
       end
@@ -103,7 +103,7 @@ RSpec.describe "Customers" do
       visit new_user_session_path
       fill_in 'user_email', :with => user.email
       fill_in 'Password', :with => 'password#1'
-      click_button 'Log in'
+      click_button 'Log In'
     end
     
     describe "GET /customer/:id" do
@@ -118,7 +118,7 @@ RSpec.describe "Customers" do
         end
         
         it "does not show delete link" do
-          visit customer_path(@customer)
+          visit customer_path(:id => @customer.id)
           expect(page.has_link?("Delete")).not_to be
         end
       end
@@ -129,7 +129,7 @@ RSpec.describe "Customers" do
         end
         
         it "shows the delete link" do
-          visit customer_path(@customer)
+          visit customer_path(:id => @customer.id)
           expect(page.has_link?("Delete")).to be
         end
       end
@@ -145,7 +145,7 @@ RSpec.describe "Customers" do
       it "redirects to customer index" do
         skip "redirecting to sign in for some reason" 
         
-        delete customer_path(@customer)
+        delete customer_path(:id => @customer.id)
         expect(rendered).to redirect_to(customers_path)
       end
     end

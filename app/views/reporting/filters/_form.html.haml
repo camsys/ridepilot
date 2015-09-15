@@ -1,0 +1,49 @@
+- filter_groups ||= []
+- if report && report.data_model
+  = search_form_for report.data_model.ransack(params[:q]), :url => "#{reporting.report_results_path(report)}", html: {style: 'padding-top: 10px;'} do |f|
+    .panel-group#filterContainer{role: 'tablist', "aria-multiselectable" => "true"}
+      - filter_groups.each do |filter_group|
+        = render partial: 'reporting/filters/filter_group', locals: {report: report, filter_group: filter_group.filter_group, search_form: f}
+      :javascript
+        $('.filter-form .is-date-field').datepicker({
+          pickTime: false,
+          format: 'MM/DD/YYYY',
+          language: '#{I18n.locale}'
+        });
+
+        $('.filter-form .is-time-field').timepicker({
+          format: 'HH:mm',
+          useSeconds: false,
+          pickDate: false,
+          language: '#{I18n.locale}'
+        });
+
+        // Reporting Engine only respects YYYY-MM-DD format
+        $('.filter-form').on('submit', function(){
+          $('.filter-form .is-date-field').each(function(){
+            var field_date = moment($(this).val(), 'MM/DD/YYYY');
+            var field_val = '';
+            if(field_date.isValid()) {
+              if(this.className && this.className.indexOf('is-end-date') >=0) {
+                field_val = field_date.endOf("day").format("YYYY-MM-DD HH:mm:ss");
+              } else {
+                field_val = field_date.startOf("day").format("YYYY-MM-DD HH:mm:ss");
+              }
+            }
+            $(this).val(field_val);
+          });
+        });
+
+  = render partial: 'reporting/filters/reset_buttons'
+:javascript
+  $(document).ready(function() {
+    $('.filter-form .collapse:first').collapse('show');
+
+    // multiple_select: selection change by clicking
+    $('.filter-form select option').on('mousedown', function (e) {
+        this.selected = !this.selected;
+
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+    });
+
+  });

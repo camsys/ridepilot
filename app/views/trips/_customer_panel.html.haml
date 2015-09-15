@@ -1,0 +1,32 @@
+.panel.panel-primary#trip_customer_panel
+  .panel-heading
+    %h3.panel-title
+      = translate_helper(:customer)
+  .panel-body{style: 'padding: 5px;'}
+    .form-group.col-sm-12
+      %label.col-sm-3
+        = translate_helper("customer")
+      .col-sm-9{style: 'white-space: nowrap;'}
+        = render "customer", :f => f, :trip => @trip, edit_mode: edit_mode
+    .form-group.col-sm-12
+      %label.col-sm-3
+        = translate_helper("medicaid_eligible")  
+      .col-sm-9
+        = f.check_box :medicaid_eligible
+    .form-group.col-sm-12
+      %label.col-sm-3
+        = translate_helper("trip_mobility_requirements")
+      .col-sm-9
+        = f.collection_select :mobility_id, @mobilities, :id, :name, {}, { class: 'form-control' }
+    .form-group.col-sm-12
+      %label.col-sm-3{for:"mobility_notes"}
+        = translate_helper("trip_mobility_notes")
+      .col-sm-9
+        %textarea.form-control#mobility_notes{rname:"mobility_notes", readonly:"readonly"}
+          = @customer.try :mobility_notes
+    .form-group.col-sm-12
+      %label.col-sm-3{for:"customer_private_notes"}
+        = translate_helper("customer_private_notes")
+      .col-sm-9
+        %textarea.form-control#customer_private_notes{name:"customer_private_notes", readonly:"readonly"}
+          = @customer.try :private_notes

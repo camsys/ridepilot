@@ -1,0 +1,4 @@
+$('#modal-dialog').modal('hide');
+var $new_row = $("<%= j (render @document) %>").hide();
+$('#documents-table .document-<%= @document.id %>').slideUp('fast').replaceWith($new_row);
+$new_row.slideDown('slow');

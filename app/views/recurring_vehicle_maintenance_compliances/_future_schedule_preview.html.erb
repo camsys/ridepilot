@@ -1,0 +1,15 @@
+<% count = @recurring_vehicle_maintenance_compliance.compliance_based_scheduling? ? 1 : 6 %>
+<p><strong><%= translate_helper("recurring_vehicle_maintenance_compliance_form_future_schedule_preview_header", count: count) %></strong></p>
+<div class="schedule-preview">
+  <% if @future_schedule_preview.present? %>
+    <%= render partial: "preview_dates", locals: {dates: @future_schedule_preview} %>
+  <% else %>
+    <% if @recurring_vehicle_maintenance_compliance.future_start_rule.try(:to_sym) == :time_span %>
+      <p class="text-muted"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_future_schedule_time_span_preview_placeholder_text") %></p>
+    <% elsif @recurring_vehicle_maintenance_compliance.future_start_rule.try(:to_sym) == :on_schedule %>
+      <p class="text-muted"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_future_schedule_on_schedule_preview_placeholder_text") %></p>
+    <% else %>
+      <p class="text-muted"><%= translate_helper("recurring_vehicle_maintenance_compliance_form_future_schedule_immediately_preview_placeholder_text") %></p>
+    <% end %>
+  <% end %>
+</div>

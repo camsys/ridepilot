@@ -1,0 +1,8 @@
+<p><strong><%= translate_helper("recurring_driver_compliance_form_compliance_based_schedule_preview_header") %></strong></p>
+<div class="schedule-preview">
+  <% if @compliance_based_schedule_preview.present? %>
+    <%= render partial: "preview_dates", locals: {dates: @compliance_based_schedule_preview} %>
+  <% else %>
+    <p class="text-muted"><%= translate_helper("recurring_driver_compliance_form_compliance_based_schedule_preview_placeholder_text") %></p>
+  <% end %>
+</div>

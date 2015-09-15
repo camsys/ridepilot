@@ -1,0 +1,3 @@
+$('#modal-dialog .modal-body .container-fluid').html("<%= j (render partial: 'form', locals: {remote: true}) %>");
+$('#modal-dialog .modal-title').html("<%= j translate_helper('document_form_new_heading') %>");
+$('#modal-dialog').modal('show');

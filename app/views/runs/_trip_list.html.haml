@@ -1,0 +1,22 @@
+- edit_mode = :edit if !defined? edit_mode
+%table.ride_trips
+  %thead
+    %tr
+      %th
+      %th=translate_helper("customer_column")
+      %th=translate_helper("pickup_address_column")
+      %th=translate_helper("pickup_time_column")
+      %th=translate_helper("dropoff_address_column")
+      %th=translate_helper("appointment_time_column")
+      %th=translate_helper("trip_purpose_column")
+      %th=translate_helper("trip_round_trip_column")
+      %th=translate_helper("guest_count_column")
+      %th=translate_helper("attendant_count_column")
+      %th=translate_helper("trip_result_column")
+  %tbody
+    - @run.trips.each do |trip| 
+      - if edit_mode == :edit
+        = fields_for 'trips_attributes[]', trip do |trip_fields|
+          = render 'editable_trip_row', :trip_fields => trip_fields, :trip => trip
+      - else
+        = render 'non_editable_trip_row', :trip => trip

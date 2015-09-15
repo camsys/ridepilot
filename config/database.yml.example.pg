@@ -1,0 +1,18 @@
+development:
+  adapter:  postgis
+  encoding: unicode
+  database: ridepilot_development
+  username:
+
+test: &test
+  adapter:  postgis
+  encoding: unicode
+  database: ridepilot_test
+  username:
+
+production:
+  adapter:  postgis
+  encoding: unicode
+  database: ridepilot
+  username:
+

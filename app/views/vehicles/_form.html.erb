@@ -1,78 +1,280 @@
 <%= form_for @vehicle do |f| %>
   <% if @vehicle.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@vehicle.errors.count, "error") %> prohibited this vehicle from being saved:</h2>
-
-      <ul>
-      <% @vehicle.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+    <div class="panel panel-danger">
+      <div class="panel-heading"><%= translate_helper("vehicle_form_error_message", count: @vehicle.errors.count) %></div>
+      <div class="panel-body">
+        <ul>
+          <% @vehicle.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
     </div>
   <% end %>
 
-  <fieldset>
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("vehicle_form_details_heading") %></div>
+        <div class="panel-body form-horizontal">
+          <div class="form-group">
+            <%= f.label :name, translate_helper("vehicle_form_name_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :name, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :year, translate_helper("vehicle_form_year_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :year, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :make, translate_helper("vehicle_form_make_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :make, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :model, translate_helper("vehicle_form_model_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :model, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :license_plate, translate_helper("vehicle_form_license_plate_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :license_plate, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :vin, translate_helper("vehicle_form_vin_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :vin, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :default_driver_id, translate_helper("vehicle_form_driver_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.collection_select :default_driver_id, Driver.active.for_provider(current_user.current_provider_id), :id, :name, {include_blank: true}, { class: "form-control", disabled: @readonly } %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :active, translate_helper("vehicle_form_active_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.select :active, [["Yes", "true"], ["No", "false"]], {:selected => @vehicle.active.to_s }, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :reportable, translate_helper("vehicle_form_reportable_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.select :reportable, [["Yes", "true"], ["No", "false"]], {:selected => @vehicle.reportable.to_s }, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= label_tag nil, translate_helper("vehicle_form_last_odometer_reading"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <p class="form-control-static">
+                <%= number_to_human @vehicle.last_odometer_reading %> mi.
+              </p>
+            </div>
+          </div>  
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
 
-    <ol class="section first">
-      <li>
-        <%= f.label :name %>
-        <%= f.text_field :name %>
-      </li>
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%= translate_helper("vehicle_form_information_heading") %></div>
+        <div class="panel-body form-horizontal">
+          <div class="form-group">
+            <%= f.label :garaged_location, translate_helper("vehicle_form_location_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :garaged_location, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :ownership, translate_helper("vehicle_form_ownership_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.select :ownership, Vehicle::OWNERSHIPS.map(&:to_s), { selected: @vehicle.ownership, include_blank: true }, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>  
+          <div class="form-group">
+            <%= f.label :responsible_party, translate_helper("vehicle_form_responsible_party_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_field :responsible_party, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :seating_capacity, translate_helper("vehicle_form_seating_capacity_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.number_field :seating_capacity, min: 1, class: "form-control", disabled: @readonly %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :registration_expiration_date, translate_helper("vehicle_form_registration_expiration_date_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <div class="input-group datepicker-icon">
+                <%= f.text_field :registration_expiration_date, class: "form-control datepicker", disabled: @readonly %>
+                <div class="input-group-btn">
+                  <button class="btn btn-default" type="button" <%= "disabled=\"disabled\"" if @readonly %>>
+                    <%= image_tag "calendar-clock.png" %>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :insurance_coverage_details, translate_helper("vehicle_form_insurance_coverage_details_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_area :insurance_coverage_details, class: "form-control", rows: 3, disabled: @readonly %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :accessibility_equipment, translate_helper("vehicle_form_accessibility_equipment_label"), class: "col-md-2 control-label" %>
+            <div class="col-md-10">
+              <%= f.text_area :accessibility_equipment, class: "form-control", rows: 3, disabled: @readonly %>
+            </div>
+          </div>
+        </div><!-- END .panel-body -->
+      </div><!-- END .panel -->
+    </div><!-- END .col-md-6 -->
 
-      <li>
-        <%= f.label :year %>
-        <%= f.text_field :year %>
-      </li>
+    <div class="col-sm-12 col-md-6">
+      <% if @vehicle.persisted? %>
+        <div class="panel panel-primary">
+          <div class="panel-heading"><%= translate_helper("vehicle_documents_heading") %></div>
+          <table class="table table-striped table-condensed" id="documents-table">
+            <thead>
+              <tr>
+                <th class="col-sm-3"><%= translate_helper("document_form_upload_date") %></th>
+                <th><%= translate_helper("document_form_description") %></th>
+                <th class="col-sm-2"><%= translate_helper("document_form_file_size") %></th>
+                <th class="col-sm-1"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @readonly and @vehicle.documents.empty? %>
+                <tr>
+                  <td colspan="2"><%= translate_helper("vehicle_documents_empty") %></td>
+                </tr>
+              <% end %>
+              <%= render partial: 'documents/document', collection: @vehicle.documents.default_order %>
+            </tbody>
+          </table>
+          <% unless @readonly %>
+            <div class="panel-footer">
+              <div class="clearfix">
+                <%= link_to translate_helper("vehicle_documents_add_link_title"), new_vehicle_document_path(@vehicle), class: "btn action-button pull-right", remote: true %>
+              </div>
+            </div>
+          <% end %>
+        </div><!-- END .panel -->
 
-      <li>
-        <%= f.label :make %>
-        <%= f.text_field :make %>
-      </li>
+        <div class="panel panel-primary">
+          <div class="panel-heading"><%= translate_helper("vehicle_maintenance_events_heading") %></div>
+          <table class="table table-striped table-condensed" id="vehicle-maintenance-events-table">
+            <thead>
+              <tr>
+                <th class="col-sm-1"><%= translate_helper("service_date") %></th>
+                <th class="col-sm-1"><%= translate_helper("invoice_date") %></th>
+                <th class="col-sm-1"><%= translate_helper("odometer") %></th>
+                <th class="col-sm-1"><%= translate_helper("vendor_name") %></th>
+                <th class="col-sm-1"><%= translate_helper("invoice_number") %></th>
+                <th class="col-sm-1"><%= translate_helper("invoice_amount") %></th>
+                <th class="col-sm-1"><%= translate_helper("reimbursable") %></th>
+                <th><%= translate_helper("services_performed") %></th>
+                <% unless @readonly %><th class="col-sm-1"></th><% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @readonly and @vehicle.vehicle_maintenance_events.empty? %>
+                <tr>
+                  <td colspan="8"><%= translate_helper("vehicle_maintenance_events_empty") %></td>
+                </tr>
+              <% end %>
+              <%= render partial: 'vehicle_maintenance_events/vehicle_maintenance_event', collection: @vehicle.vehicle_maintenance_events.default_order %>
+            </tbody>
+          </table>
+          <% unless @readonly %>
+            <div class="panel-footer">
+              <div class="clearfix">
+                <%= link_to translate_helper("vehicle_maintenance_event_add_link_title"), new_vehicle_vehicle_maintenance_event_path(@vehicle), class: "btn action-button pull-right", remote: true %>
+              </div>
+            </div>
+          <% end %>
+        </div><!-- END .panel -->
 
-      <li>
-        <%= f.label :model %>
-        <%= f.text_field :model %>
-      </li>
-    </ol>
+        <div class="panel panel-primary">
+          <div class="panel-heading"><%= translate_helper("vehicle_maintenance_compliances_heading") %></div>
+          <table class="table table-striped table-condensed" id="vehicle_maintenance_compliances-table">
+            <thead>
+              <tr>
+                <th class="col-sm-3"><%= translate_helper("vehicle_maintenance_compliance_form_due_string") %></th>
+                <th><%= translate_helper("vehicle_maintenance_compliance_form_event") %></th>
+                <th class="col-sm-3"><%= translate_helper("vehicle_maintenance_compliance_form_compliance_date") %></th>
+                <th class="col-sm-3"><%= translate_helper("vehicle_maintenance_compliance_form_compliance_mileage") %></th>
+                <% unless @readonly %><th class="col-sm-1"></th><% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @readonly and @vehicle.vehicle_maintenance_compliances.empty? %>
+                <tr>
+                  <td colspan="4"><%= translate_helper("vehicle_maintenance_compliances_empty") %></td>
+                </tr>
+              <% end %>
+              <%= render partial: 'vehicle_maintenance_compliances/vehicle_maintenance_compliance', collection: @vehicle.vehicle_maintenance_compliances.default_order %>
+            </tbody>
+          </table>
+          <% unless @readonly %>
+            <div class="panel-footer">
+              <div class="clearfix">
+                <%= link_to translate_helper("vehicle_maintenance_compliances_add_link_title"), new_vehicle_vehicle_maintenance_compliance_path(@vehicle), class: "btn action-button pull-right", remote: true %>
+              </div>
+            </div>
+          <% end %>
+        </div><!-- END .panel -->
 
-    <ol class="section second">
-      <li>
-        <%= f.label :license_plate %>
-        <%= f.text_field :license_plate %>
-      </li>
+        <div class="panel panel-primary">
+          <div class="panel-heading"><%= translate_helper("vehicle_warranties_heading") %></div>
+          <table class="table table-striped table-condensed" id="vehicle_warranties-table">
+            <thead>
+              <tr>
+                <th class="col-sm-3"><%= translate_helper("vehicle_warranty_form_expiration_date") %></th>
+                <th><%= translate_helper("vehicle_warranty_form_description") %></th>
+                <% unless @readonly %><th class="col-sm-1"></th><% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @readonly and @vehicle.vehicle_warranties.empty? %>
+                <tr>
+                  <td colspan="2"><%= translate_helper("vehicle_warranties_empty") %></td>
+                </tr>
+              <% end %>
+              <%= render partial: 'vehicle_warranties/vehicle_warranty', collection: @vehicle.vehicle_warranties.default_order %>
+            </tbody>
+          </table>
+          <% unless @readonly %>
+            <div class="panel-footer">
+              <div class="clearfix">
+                <%= link_to translate_helper("vehicle_warranties_add_link_title"), new_vehicle_vehicle_warranty_path(@vehicle), class: "btn action-button pull-right", remote: true %>
+              </div>
+            </div>
+          <% end %>
+        </div><!-- END .panel -->
+      <% end %>
+    </div><!-- END .col-md-6 -->
+  </div><!-- END .row -->
 
-      <li>
-        <%= f.label :vin %>
-        <%= f.text_field :vin %>
-      </li>
-
-      <li>
-        <%= f.label :garaged_location %>
-        <%= f.text_field :garaged_location %>
-      </li>
-
-      <li>
-        <%= f.label :active %>
-        <%= f.select :active, [["Yes", "true"], ["No", "false"]], {:selected => @vehicle.active.to_s } %>
-      </li>
-    </ol>
-    
-    <ol class="section third">
-      <li>
-        <%= f.label :default_driver_id %>
-        <%= f.collection_select :default_driver_id, Driver.active.for_provider(current_user.current_provider_id), :id, :name, :include_blank => true %>
-      </li>
-
-      <li>
-        <%= f.label :reportable, "Vehicle should appear on vehicle report" %>
-        <%= f.select :reportable, [["Yes", "true"], ["No", "false"]], {:selected => @vehicle.reportable.to_s } %>
-      </li>
-    </ol>
-
-    <div class="actions">
-      <%= f.submit %>
-    </div>
-
-  </fieldset>
-
+  <% unless @readonly %>
+    <div class="row form-actions"><%= f.submit translate_helper("vehicle_form_submit"), class: "btn action-button" %></div>
+  <% end %>
 <% end %> 
+
+<%= render 'shared/hide_invisible_form_fields_js', model_name: "vehicle", table_name: 'vehicles', provider_id:  current_provider.try(:id) %>
+
+<%= render 'shared/modal_dialog', modal_id: "modal-dialog" %>
+
+<%= javascript_tag do %>
+  $(document).ready(function(){
+    // TODO
+  });
+<% end %>

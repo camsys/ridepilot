@@ -1,0 +1,39 @@
+<td>
+  <%= link_to(translate_helper("view"), trip_path(trip)) %>
+</td>
+<td>
+  <%= link_to trip.customer.name, trip.customer, :title => translate_helper("view_customer_record_link_text") %>
+</td>
+<td>
+  <%= trip.pickup_address.try :address_text %>
+</td>
+<td>
+  <%= format_time_for_listing trip.pickup_time %>
+</td>
+<td>
+  <%= trip.dropoff_address.try :address_text %>
+</td>
+<td>
+  <%= format_time_for_listing trip.appointment_time %>
+</td>
+<td>
+  <%= trip.trip_purpose_name %>
+</td>
+<td>
+  <%= image_tag("tick-circle.png") if trip.round_trip %>
+</td>
+<% if trip.customer.group %>
+  <td>
+    Group size:
+  </td>
+  <td>
+    <%= trip.group_size %>
+  </td>
+<% else %>
+  <td>
+    <%= trip.guest_count %>
+  </td>
+  <td>
+    <%= trip.attendant_count %>
+  </td>
+<% end %>

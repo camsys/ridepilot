@@ -1,0 +1,26 @@
+<tr class="trip">
+  <td>
+    <input type='radio' name='trip_records' value="<%=trip.id%>"></input>
+  </td>
+  <td>
+    <%= link_to(translate_helper("view"), trip_path(trip)) %>
+  </td>
+  <td>
+    <%= format_time_for_listing trip.pickup_time %>
+  </td>
+  <td>
+    <%= format_time_for_listing trip.appointment_time %>
+  </td>
+  <td>
+    <%= link_to trip.customer.name, trip.customer, :title => translate_helper("view_customer_record_link_text") %>
+  </td>
+  <td>
+    <%= trip.pickup_address.try :address_text %>
+  </td>
+  <td>
+    <%= trip.dropoff_address.try :address_text %>
+  </td>
+  <td>
+    <%= render 'run_dropdown', trip: trip %>
+  </td>
+</tr>

@@ -12,7 +12,11 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery_nested_form
+//= require jquery.remotipart
+//= require dataTables/jquery.dataTables
 //= require jquery-ui
+//= require bootstrap-sprockets
 //= require autocomplete-rails
 //= require jquery.weekcalendar
 //= require jquery-ui-timepicker-addon
@@ -20,8 +24,10 @@
 //= require jquery.colorPicker
 //= require idletimeout
 //= require constants
+//= require fullcalendar
+//= require moment
 //= require_self
-
+  
 function ISODateFormatToDateObject(str) {
   if(str === null) return null;
 
@@ -33,7 +39,7 @@ function ISODateFormatToDateObject(str) {
   timeHours = Number(timeSubParts[0]),
   amPm = parts[3].toUpperCase();
 
-  _date = new Date();
+  var _date = new Date();
   _date.setFullYear( Number(dateParts[0]), (Number(dateParts[1])-1), Number(dateParts[2]) );
   
   _date.setHours(Number( amPm.slice(0,1) == "P" && timeHours != 12 ? timeHours + 12 : timeHours), Number(timeSubParts[1]), 0, 0);
@@ -45,10 +51,10 @@ function supports_history_api() {
   return !!(window.history && history.pushState);
 }
 
-MS_in_a_minute = 60000;
-MS_in_a_day    = 86400000;
-MS_in_an_hour  = 3600000;
-MS_in_a_week   = 604800000;
+var MS_in_a_minute = 60000;
+var MS_in_a_day    = 86400000;
+var MS_in_an_hour  = 3600000;
+var MS_in_a_week   = 604800000;
 
 // does time fall within the current week ? 
 function week_differs (time) {
@@ -65,15 +71,58 @@ function set_calendar_time(time) {
     date.getSeconds() * 1000 - 
     date.getMilliseconds() ;
   
-  $("#calendar").data("start-time", start_time)
+  $("#calendar").data("start-time", start_time);
+}
+
+function addHelperTooltip(label_id, tooltip_str) {
+  $(label_id).append("<i class='fa fa-question-circle pull-right label-help' style='margin-top:-4px;' title data-original-title='" + tooltip_str + "' aria-label='" + tooltip_str + "' tabindex='0'></i>");
+}
+
+function createPopover(node_id) {
+  $(node_id).popover({
+      'html': true,
+      'container': 'body',
+      'template': '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p></p></div></div></div>',
+      'trigger': 'manual focus',
+      'animation': false,
+      'placement': 'auto'
+  })
+  .on("show.bs.popover", function () {
+    $(node_id).not(this).popover('hide');
+  })
+  .on("mouseenter", function () {
+    var _this = this;
+    $(this).popover("show");
+    $(".popover").on("mouseleave", function () {
+        $(_this).popover('hide');
+    });
+  })
+  .on("mouseleave", function () {
+    var _this = this;
+    setTimeout(function () {
+        if (!$(".popover:hover").length) {
+            $(_this).popover("hide");
+        }
+    }, 0);
+  });
+}
+
+// Displays an alert
+function show_alert(message) {
+    $('#messages').html('<div class="alert alert-danger fade in"><a class="close" data-dismiss="alert">x</a><div id="flash_notice">' + message + '</div></div>');
+}
+
+function hide_alert () {
+  $('#flash_notice').parents('.alert').hide();
 }
 
 $(function() {
+  createPopover(".label-help");
 
   $("tr:odd").addClass("odd");
   
   // delete a customer from the show page
-  $("body.customers.show .profile-actions .delete, body.addresses.edit .profile-actions .delete").click( function(event){
+  $("body.customers.show .profile-actions .delete, body.addresses.edit .profile-actions .delete, #customer_merge").click( function(event){
     event.preventDefault();
 
     var link = $(this);
@@ -114,26 +163,20 @@ $(function() {
     $("#trip_driver_id").val( $(this).find("option[value=" + $(this).val() + "]").data("driver-id") );
   });
 
-  // hide middle/last names for group customer
-  var updateGroupField = function() {
-    if ( $('input#customer_group').is(':checked') ){
-      $('li.middlename, li.lastname, li.ethnicity, li.birth_date').hide();
-      $('li.firstname label').html("Group Name:");
-    } else {
-      $('li.middlename, li.lastname, li.ethnicity, li.birth_date').show();
-      $('li.firstname label').html("First Name:");
-    }
-  };
-  updateGroupField();
-  $('input#customer_group').click(updateGroupField);
-
+  // Setting z-index to 999 ensures the calendar appears over bootstrap input group components
   $('#new_monthly #monthly_start_date, #new_monthly #monthly_end_date, input.datepicker').datepicker({
-		dateFormat: 'yy-mm-dd'    		
+		dateFormat: 'yy-mm-dd',
+    showButtonPanel: true
+  }).css('z-index', 999);
+  
+  // Support for bootstrap style input groups for datepickers
+  $('body').on('click', '.datepicker-icon .btn', function(e) {
+    $(e.currentTarget).closest('.datepicker-icon').find('.datepicker').datepicker('show');
   });
   
   // when trip pickup time is changed, update appointment time and displayed week
   $("body").on('change', '#trip_pickup_time', function() {
-    var pickupTimeDate      = ISODateFormatToDateObject( $('#trip_pickup_time').attr("value") );
+    var pickupTimeDate      = ISODateFormatToDateObject( $('#trip_pickup_time').val());
     var appointmentTimeDate = new Date(pickupTimeDate.getTime() + (1000 * 60 * 30));
 
     $('#trip_appointment_time').attr( "value", appointmentTimeDate.format("ddd yyyy-mm-dd hh:MM tt"));
@@ -145,7 +188,7 @@ $(function() {
   });
   
   // needs to be -1 for field nulling
-  $("#trip_vehicle_id option:contains(cab)").attr("value", "-1")
+  $("#trip_vehicle_id option:contains(cab)").attr("value", "-1");
   
   $("body").on('change', "#trip_run_id", function(){
     $("#trip_vehicle_id").val("");
@@ -168,7 +211,7 @@ $(function() {
       table.find("tr.day").remove();
       $.each(data.rows, function(i, row){
         table.append(row);
-      })
+      });
       $("tr:odd").addClass("odd");
     }, "json");
   });
@@ -197,8 +240,8 @@ $(function() {
   }
 
   function load_index_runs(range, push_state) {
-    var new_start = new Date(parseInt(range['start']) * 1000);
-    var new_end   = new Date(parseInt(range['end']) * 1000);
+    var new_start = new Date(parseInt(range.start) * 1000);
+    var new_end   = new Date(parseInt(range.end) * 1000);
      
     $.get(window.location.href, range, function(data) {
       $("#runs tr, #cab_trips tr").not(".head").remove();
@@ -212,15 +255,15 @@ $(function() {
 
   window.onpopstate = function(event) {
     if (event.state) {
-      if (event.state['index']) {
-        load_index_runs(event.state['index'], false);
+      if (event.state.index) {
+        load_index_runs(event.state.index, false);
       } 
     } else {
-      new_start = parseInt($(".wc-nav").attr("data-current-week-start"))/1000
-      new_end = new Date(new_start * 1000);
+      var new_start = parseInt($(".wc-nav").attr("data-current-week-start"))/1000;
+      var new_end = new Date(new_start * 1000);
       new_end.setDate(new_end.getDate() + 6);
       if (new_start && new_end) {
-        range = {start: new_start, end: new_end.getTime()/1000};
+        var range = {start: new_start, end: new_end.getTime()/1000};
         load_index_runs(range, false);
       }
     }
@@ -249,7 +292,7 @@ $(function() {
         new_end.setDate(new_end.getDate() + 13);
       }
     }
-    range = {start: new_start.getTime()/1000, end: new_end.getTime()/1000};
+    var range = {start: new_start.getTime()/1000, end: new_end.getTime()/1000};
     load_index_runs(range,true);
     
   });
@@ -384,87 +427,36 @@ function hinted_field(f) {
   }
 }
 
-/* Display a map region in the given jQuery object. */
-function display_region(object, bounds) {
-  // Validate bounds
-  errors = validate_bounds(bounds);
-  if (errors.length > 0)
-    return errors;
+/*
+ * show loading mask
+ */
+(function($) {
+    $.fn.overlayMask = function(action) {
+        var mask = this.find('.overlay-mask');
+        var maskSpinner = this.find('.overlay-mask-spinner');
 
-  // Create map view
-  var map = new google.maps.Map(object.get(0), {
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-  });
-  var nw = new google.maps.LatLng(bounds.north, bounds.west);
-  var se = new google.maps.LatLng(bounds.south, bounds.east);
-  var bounds = new google.maps.LatLngBounds(nw, se);
-  map.fitBounds(bounds);
+        // Create the required mask
 
-  rectangle = new google.maps.Rectangle();
-  google.maps.event.addListener(map, 'zoom_changed', function() {
+        if (!mask.length) {
+            this.css({
+                position: 'relative'
+            });
+            this.append('<i class="fa fa-spinner fa-spin overlay-mask-spinner"></i><div class="overlay-mask"></div>');
+        }
 
-    // Get the current bounds, which reflect the bounds before the zoom.
-    var rectOptions = {
-      strokeColor: "#598FEF",
-      strokeOpacity: 1,
-      strokeWeight: 2,
-      fillColor: "#E5F2FF",
-      fillOpacity: 0.3,
-      map: map,
-      bounds: bounds
+        // Act based on params
+
+        if (!action || action === 'show') {
+            mask.show();
+            maskSpinner.show();
+        } else if (action === 'hide') {
+            mask.hide();
+            maskSpinner.hide();
+        } else if (action === 'remove') {
+            mask.remove();
+            maskSpinner.remove();
+        }
+
+        return this;
     };
-    rectangle.setOptions(rectOptions);
-  });
-
-  return null;
-}
-
-function validate_bounds(bounds) {
-  errors = []
-  if (bounds.north < bounds.south)
-    errors.push('North latitude must be greater than south.');
-  if (bounds.east < bounds.west)
-    errors.push('East longitude must be greater than west.');
-  if (Math.abs(bounds.north) > 90)
-    errors.push('North latitude is invalid.');
-  if (Math.abs(bounds.west) > 180)
-    errors.push('West longitude is invalid.');
-  if (Math.abs(bounds.south) > 90)
-    errors.push('South latitude is invalid.');
-  if (Math.abs(bounds.east) > 180)
-    errors.push('East longitude is invalid.');
-  return errors;
-}
-
-function display_viewport(object, viewport) {
-  errors = validate_viewport(viewport);
-  if (errors.length > 0)
-    return errors;
-
-  // Create map view
-  center = new google.maps.LatLng(viewport.center_lat, viewport.center_lng);
-  var map = new google.maps.Map(object.get(0), {
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-    center:    center,
-    zoom:      viewport.zoom
-  });
-
-  // Mark the center
-  var marker = new google.maps.Marker({
-    map: map,
-    position: center
-  });
-
-  return null;
-}
-
-function validate_viewport(viewport) {
-  errors = []
-  if (Math.abs(viewport.center_lat) > 90)
-    errors.push('Center latitude is invalid.')
-  if (Math.abs(viewport.center_lng) > 180)
-    errors.push('Center longitude is invalid.')
-  if (viewport.zoom < 0 || viewport.zoom >= 20)
-    errors.push('Zoom must be between 0 and 19.');
-  return errors;
-}
+})(jQuery);

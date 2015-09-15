@@ -1,72 +1,43 @@
-<% if @run.errors.any? %>
-  <div id="error_explanation">
-    <h2><%= pluralize(@run.errors.count, "error") %> prohibited this run from being saved:</h2>
+<%= render 'shared/highlight_active_tab_js', is_primary_nav: true, tab_class: 'runs' %>
+<% edit_mode = :edit if !defined? edit_mode%>
+<%= form_for @run, :html => (@remote ? {"data-remote" => true, class: 'run_form'} : {class: 'run_form'} ) do |f| %>
+  <%= render 'form_header', edit_mode: edit_mode, f: f %>
+  <% if @run.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= translate_helper("run_form_error_message", count: @run.errors.count)%></h2>
 
-    <ul>
-    <% @run.errors.full_messages.each do |msg| %>
-      <li><%= msg %></li>
-    <% end %>
-    </ul>
+      <ul>
+      <% @run.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="col-sm-12">
+    <div class="col-sm-12 col-md-6 form-group">
+      <div class="col-sm-3">
+        <%= f.label :name, translate_helper("name") %>
+      </div>
+      <div class="col-sm-9">
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+    </div>
   </div>
+
+  <div class="col-sm-12 col-md-6">
+    <%= render 'date_time_panel', f: f, edit_mode: edit_mode %>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <%= render 'repetition_panel', f: f %>
+    <%= render 'vehicle_panel', f: f %>
+    <%= render 'driver_panel', f: f %>
+  </div>
+  <div class="col-sm-12">
+    <% if edit_mode != :new %>
+      <%= render 'trip_list', f: f, edit_mode: edit_mode %>
+    <% end %>
+  </div>
+  
 <% end %>
 
-<fieldset>
-  <ol class="section first">
-    <% if @run.new_record? %>
-      <li>
-        <%= f.label :date %>
-        <%= f.text_field :date, :size => 10, :class => "datepicker" %>
-      </li>
-    <% end %>
-    <li>
-      <%= f.label :vehicle %>
-      <%= f.collection_select :vehicle_id, @vehicles, :id, :name %>
-    </li>
-    <li>
-      <%= f.label :driver %>
-      <%= f.collection_select :driver_id, @drivers, :id, :name %>
-    </li>
-  </ol>
-  <ol class="section second">
-    <li>
-      <%= f.label :scheduled_start_time %>
-      <%= f.text_field :scheduled_start_time, :size => 8, 
-          :value => @run.scheduled_start_time.try(:to_s, :time_only), "data-behavior" => "time-picker" %>
-    </li>
-    <li>
-      <%= f.label :scheduled_end_time %>
-      <%= f.text_field :scheduled_end_time, :size => 8, 
-          :value => @run.scheduled_end_time.try(:to_s, :time_only), "data-behavior" => "time-picker" %>
-    </li>
-    <li>
-      <%= f.label :actual_start_time %>
-      <%= f.text_field :actual_start_time, :size => 8, 
-          :value => @run.actual_start_time.try(:to_s, :time_only), "data-behavior" => "time-picker" %>
-    </li>
-    <li>
-      <%= f.label :actual_end_time %>
-      <%= f.text_field :actual_end_time, :size => 8, 
-          :value => @run.actual_end_time.try(:to_s, :time_only), "data-behavior" => "time-picker" %>
-    </li>
-  </ol>
-  <ol class="section third">
-    <li>
-      <%= f.label :start_odometer %>
-      <%= f.text_field :start_odometer %>
-    </li>
-    <li>
-      <%= f.label :end_odometer %>
-      <%= f.text_field :end_odometer %>
-    </li>
-    <li>
-      <%= f.label :unpaid_driver_break_time %>
-      <%= f.text_field :unpaid_driver_break_time %>
-    </li>
-    <li>
-      <%= f.label :paid %>
-      <%= f.select :paid, [["Yes", "true"], ["No", "false"]], {:selected => @run.paid.to_s } %>
-    </li>
-  </ol>
-
-  <%= link_to('Delete Run (does not delete trips)', @run, :confirm => 'Are you sure?', :method => :delete, :id => 'run_delete', :class=>'delete') if !@run.new_record? && can?(:destroy, @run) %>
-</fieldset>
+<%= render 'shared/hide_invisible_form_fields_js', model_name: "run", table_name: 'runs', provider_id:  current_provider.try(:id) %>

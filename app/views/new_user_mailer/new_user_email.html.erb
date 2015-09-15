@@ -1,7 +1,1 @@
-Hi, <%= @user.email %><br/>
-<br/>
-You have been added as a user to RidePilot.  You can set your password at<br/>
-<%= @url %><br/>
-<br/>
-You will be asked to change it when you log in.<br/>
-
+<%= translate_helper("new_user_email", email: @user.email, link: @url) %>

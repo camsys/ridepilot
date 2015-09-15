@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :run do
-    date { Time.now }
+    name { Faker::Lorem.words(2).join(' ') }
+    date { Date.today }
     vehicle
     driver
     provider

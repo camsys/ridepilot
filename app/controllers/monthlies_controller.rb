@@ -13,7 +13,7 @@ class MonthliesController < ApplicationController
   def update
     @monthly.update_attributes(monthly_params)
     if @monthly.save
-      flash[:notice] = "Monthly report updated"
+      flash.now[:notice] = "Monthly report updated"
       redirect_to monthlies_path
     else
       render :edit
@@ -23,7 +23,7 @@ class MonthliesController < ApplicationController
   def create
     @monthly.provider = current_provider
     if @monthly.save
-      flash[:notice] = "Monthly report created"
+      flash.now[:notice] = "Monthly report created"
       redirect_to monthlies_path
     else
       render :new
