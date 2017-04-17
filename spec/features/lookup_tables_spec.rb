@@ -66,7 +66,7 @@ RSpec.describe "Lookup Tables" do
             expect(page).to have_css('#editLookupTableValue:disabled')
           end
 
-          skip "can see enabled Edit Value button after selecting a row", js: true do
+          it "can see enabled Edit Value button after selecting a row", js: true do
             within '#lookupTable' do 
               find('tbody tr:first-child').click
             end
@@ -75,7 +75,7 @@ RSpec.describe "Lookup Tables" do
           end
         end
 
-        skip "edits an exiting value", js: true do 
+        it "edits an exiting value", js: true do 
           within '#lookupTable' do 
             find('tbody tr:first-child').click
           end
@@ -95,7 +95,7 @@ RSpec.describe "Lookup Tables" do
             expect(page).to have_css('#deleteLookupTableValue:disabled')
           end
 
-          skip "can see enabled Delete Value button after selecting a row", js: true do
+          it "can see enabled Delete Value button after selecting a row", js: true do
             within '#lookupTable' do 
               find('tbody tr:first-child').click
             end
@@ -104,7 +104,7 @@ RSpec.describe "Lookup Tables" do
           end
         end
 
-        skip "deletes an exiting value", js: true do 
+        it "deletes an exiting value", js: true do 
           within '#lookupTable' do 
             find('tbody tr:first-child').click
           end
