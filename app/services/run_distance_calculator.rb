@@ -113,8 +113,10 @@ class RunDistanceCalculator
       occupancy += delta
       itin[:capacity] = occupancy
 
-      if itin[:leg_flag] == 1
-        delta = trip.trip_size unless TripResult::NON_DISPATCHABLE_CODES.include?(trip.trip_result.try(:code))
+      if TripResult::NON_DISPATCHABLE_CODES.include?(trip.trip_result.try(:code))
+        delta = 0
+      elsif itin[:leg_flag] == 1
+        delta = trip.trip_size 
       elsif itin[:leg_flag] == 2
         delta = -1 * trip.trip_size
       end
