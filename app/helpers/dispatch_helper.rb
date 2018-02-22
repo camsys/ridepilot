@@ -145,7 +145,7 @@ module DispatchHelper
 
       # log the occupancy change in this leg for occupancy calculation in next leg
       if TripResult::NON_DISPATCHABLE_CODES.include?(trip.try(:trip_result).try(:code))
-        delta = 0
+        delta = nil
         delta_unit = 0
       elsif itin[:leg_flag] == 1 
         delta = trip_capacities[trip.id]
