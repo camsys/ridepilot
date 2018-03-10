@@ -17,7 +17,7 @@
       %th= translate_helper(:run_table_header_trips)
       %th= translate_helper(:run_table_header_actions)
   %tbody
-    - @runs.each do |run|
+    - @runs.sort_by{|r| [r.date, r.scheduled_start_time - r.scheduled_start_time.beginning_of_day, r.name]}.each do |run|
       %tr{data: {run_id: run.id}}
         %td
           = link_to run.name, '#', data: {run_id: run.id}, class: 'run_name_link non_jump_top', title: 'Click to open manifest'

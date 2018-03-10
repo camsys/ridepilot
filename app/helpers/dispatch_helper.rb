@@ -66,7 +66,7 @@ module DispatchHelper
         comments: trip.notes,
         result: is_recurring ? nil : (trip.trip_result.try(:name) || 'Pending')
       }
-      
+
       pickup_sort_key = time_portion(trip.pickup_time)
       itin_id = "trip_#{trip.id}_leg_1"
       itins << trip_data.merge(

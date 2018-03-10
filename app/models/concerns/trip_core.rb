@@ -26,7 +26,6 @@ module TripCore
     validates :pickup_address, associated: true, presence: true
     validates :trip_purpose_id, presence: true
     validates_datetime :pickup_time, presence: true
-
     validates_datetime :appointment_time, allow_nil: true, on_or_after: :pickup_time, on_or_after_message: "should be no earlier than pickup time", unless: :no_appointment_time?
 
     accepts_nested_attributes_for :customer

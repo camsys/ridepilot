@@ -73,7 +73,7 @@ class RunDistanceCalculator
       trip_data = {
         trip: trip
       }
-      
+
       pickup_sort_key = time_portion(trip.pickup_time)
       itin_id = "trip_#{trip.id}_leg_1"
       itins << trip_data.merge(
@@ -104,7 +104,6 @@ class RunDistanceCalculator
     else
       itins.sort_by { |itin| [itin[:sort_key], itin[:leg_flag]] }
     end
-
     # calculate occupancy
     occupancy = 0
     delta = 0
