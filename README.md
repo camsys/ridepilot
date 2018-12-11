@@ -20,7 +20,7 @@ Dependencies
 
 This application requires:
 
-- Ruby 2.5
+- Ruby 2.4.5
 - Rails 5.2
 - Postgresql 9.3+
 - PostGIS 2.1+
