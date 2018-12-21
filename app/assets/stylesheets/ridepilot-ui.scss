@@ -78,7 +78,7 @@ fieldset {
 	&:hover, &:focus, &:active {
 		color: $brand-primary;
 		background-color: $white;
-		@include box-shadow($blur: 0px, $spread: 1px, $opacity: 1, $color: currentColor, $inset: inset);
+		@include button-hover-shadow;
 	}
 	&.btn-danger {
 	  color: $red;
@@ -142,24 +142,24 @@ fieldset {
 	}
 }
 
-.panel-primary {
+.panel-primary, .panel-success {
 	border-radius: 0;
 	padding: $object-pad;
-	border: 1px solid $gray-3;
+	border: 1px solid $gray-2;
 	position: relative;
 	margin: .375em 0 $object-pad 0;
 	transition: border .25s ease-in-out;
-	&::before {
-		content: '';
-		position: absolute;
-		background: $gray-3;
-		width: 100%;
-		height: 100%;
-		top: -.375em;
-		left: -.375em;
-		z-index: -1000;
-		transition: background .25s ease-in-out;
-	}
+	// &::before {
+	// 	content: '';
+	// 	position: absolute;
+	// 	background: $gray-3;
+	// 	width: 100%;
+	// 	height: 100%;
+	// 	top: -.375em;
+	// 	left: -.375em;
+	// 	z-index: -1000;
+	// 	transition: background .25s ease-in-out;
+	// }
 	&.focused {
 		border-color: $brand-primary;
 		&::before {
@@ -174,7 +174,7 @@ fieldset {
 		color: $brand-primary;
 		background-color: transparent;
 		border: none;
-		text-transform: uppercase;
+		// text-transform: uppercase;
 		font-weight: 600;
 		padding-bottom: $object-pad;
 		font-size: 14px;
@@ -261,7 +261,7 @@ fieldset {
 	}
 }
 
-.table, table {
+.table, table, .table-striped {
 	width: 100%;
 	background: $white;
 	thead, tbody, tfoot {
@@ -288,7 +288,7 @@ fieldset {
 			}
 		}
 		> tr {
-      > td.danger,
+	    > td.danger,
 			> th.danger, 
 			&.danger > td, 
 			&.danger > th,
@@ -312,6 +312,7 @@ fieldset {
 		tr {
       td, th {
 				background-color: $gray-2;
+				border: 1px solid $gray-2;
 				color: $white;
 				font-weight: 600;
 				font-size: .875em;
@@ -324,14 +325,23 @@ fieldset {
 		border: 1px solid $gray-2;
 		border-collapse: separate;
 		tr {
+			&:not(:last-of-type) {
+				border-bottom: 1px solid $gray-4
+			}
 			td {
 				font-weight: 600;
 				vertical-align: top;
 				padding: 1rem;
+				&:not(:last-of-type) {
+					border-right: 1px solid $gray-3
+				}
+			}
+			&:nth-of-type(2n+1) {
+				background: mix($white, $gray-4, 40)
 			}
 		}
 		.panel & {
-			border: none;
+			// border: none;
 		}
 	}
 	&.basic-table, &.basic-table.dataTable {
@@ -369,15 +379,15 @@ fieldset {
 	}
 }
 
-.table-striped {
-	tbody {
-		tr {
-			&:nth-of-type(2n+1) {
-				background: mix($white, $gray-4, 50)
-			}
-		}
-	}
-}
+// .table-striped {
+// 	tbody {
+// 		tr {
+// 			&:nth-of-type(2n+1) {
+// 				background: mix($white, $gray-4, 50)
+// 			}
+// 		}
+// 	}
+// }
 
 .no-gutters {
   @include no-gutters-parent;
@@ -401,22 +411,14 @@ fieldset {
   color: $blue-raw !important;
 }
 
-.panel-success {
-  border-color: transparent;
+.panel-success, .panel-success.expandable {
   > .panel-heading {
-	  color: $white;
-	  background-color: $green;
-	  border-color: $white;
+	  background-color: $brand-primary;
+	  color: #fff;
+	  border-radius: 0;
+	  border-color: $brand-primary;
 	  a {
-	    color: $white;
-	  }
-	  .dropdown-menu {
-	  	li {
-	  		width: 100%;
-	  	}
-	  	a {
-	  		color: $black;
-	  	}
+	  	color: currentColor;
 	  }
 	}
 }
@@ -659,7 +661,7 @@ fieldset {
 	}
 }
 
-.panel-primary {
+.panel-primary, .panel-success {
 	.table {
 		margin: 0;
 	}
@@ -729,6 +731,7 @@ fieldset {
 }
 
 .filters-panel {
+  background-color: $gray-4;
   .panel-heading, .panel-title {
   	font-weight: 600!important;
   }
@@ -752,6 +755,13 @@ fieldset {
   }
   .filter-checks {
     @include form-label;
+  }
+  form input[type="text"], input[type="password"], textarea, .form-control {
+  	background-color: #fff
+  }
+  .datepicker-icon .btn, #weekday_select .btn {
+  	background-color: $gray-3!important;
+  	color: $brand-primary!important;
   }
 }
 
@@ -777,6 +787,9 @@ fieldset {
 		  &.active {
 		  	opacity: 1;
 		  	font-weight: 600;
+		  }
+		  &:hover {
+		  	@include button-hover-shadow;
 		  }
 		  #page-header & {
 				padding-right: 1em;
@@ -854,28 +867,32 @@ body.sessions.new {
 #dispatch_runs_trips {
 	padding: 0;
 	#unassigned_trips_container {
-		padding: 0;
-		border-right: 1px solid $brand-primary;
-		border-left: 1px solid $brand-primary;
+		padding: 0 $content-pad;
+		border-right: 1px solid $gray-1;
+		border-left: 1px solid $gray-1;
 		@include box-shadow($blur: .5rem, $spread: 0px, $opacity: 0.5);
 		#unassigned_trips_panel {
 			border: none;
-			table {
-				border: none;
-			}
+			overflow-y: visible;
 		}
 		.panel-heading {
-			background-color: $brand-primary;
+			background-color: $gray-1;
 			padding: 1em $object-pad;
 			color: $white;
+			margin-right: -$content-pad;
+			margin-left: -$content-pad;
+			margin-bottom: $content-pad/2;
+			a {
+				color: currentColor;
+			}
 		}
 		
 	}
 	.hsplitter {
-		background-color: $brand-primary;
+		background-color: $gray-1;
 		height: 2em;
 		padding-top: .25em;
-		border-radius: 6px 6px 0 0;
+		// border-radius: 6px 6px 0 0;
 		text-align: center;
 		border-bottom: 1px solid $white;
 		@include box-shadow($blur: .5rem, $spread: 0px, $opacity: .75);
@@ -885,6 +902,20 @@ body.sessions.new {
 			display: inline-block;
 			height: 1em;
 			color: $white;
+		}
+	}
+}
+
+#dispatch_runs_container {
+	.panel-success.expandable {
+		.panel-body {
+			padding: 0;
+			.slack_chart {
+				padding: $object-pad;
+			}
+		}
+		.run-manifest-table {
+
 		}
 	}
 }

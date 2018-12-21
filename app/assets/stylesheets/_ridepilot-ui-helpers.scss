@@ -70,7 +70,7 @@ $layout-pad: 4rem;
 $content-pad: 3rem;
 $object-pad: 2.5rem;
 
-$button-radius: 6px;
+$button-radius: 0px;
 
 $input-height: 34px;
 
@@ -170,7 +170,7 @@ $input-height: 34px;
   font-weight: 400;
   padding: 0;
   margin: 0;
-  text-transform: uppercase;
+  // text-transform: uppercase;
 }
 
 @mixin smaller-button {
@@ -251,5 +251,9 @@ img {
   margin-left: 0;
   padding-right: 0;
   padding-left: 0;
+}
+
+@mixin button-hover-shadow {
+  @include box-shadow($blur: 0px, $spread: 1px, $opacity: 1, $color: currentColor, $inset: inset);
 }
 
