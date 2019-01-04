@@ -383,6 +383,15 @@ fieldset {
 			}
 		}
 	}
+	&.schedule-chart {
+		thead, tbody, tfoot {
+			tr {
+				td, th {
+					border: none;
+				}
+			}
+		}
+	}
 }
 
 // .table-striped {
@@ -1097,11 +1106,11 @@ body.availability-forecast {
 
 			margin-bottom: 0px;
 	    border-collapse: separate !important;
-	    border-spacing: 0 1em !important;
+	    // border-spacing: 0 1em !important;
 		
 			td {
-		    padding: 0px 5px !important;
-		  }
+			    padding: .5em !important;
+			  }
 
 		  td.disabled {
 		    color: $gray-4;
