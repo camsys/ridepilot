@@ -911,7 +911,12 @@ body.sessions.new {
 		.panel-body {
 			padding: 0;
 			.slack_chart {
-				padding: $object-pad;
+				.label_container {
+					padding: $object-pad $object-pad 0 $object-pad;
+				}
+				.chart_container {
+					padding: 0 $object-pad $object-pad $object-pad;
+				}
 			}
 		}
 		.run-manifest-table {
