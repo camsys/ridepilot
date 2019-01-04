@@ -931,7 +931,7 @@ body.sessions.new {
 	}
 }
 
-body.dispatchers.index {
+body.dispatchers.index, body.recurring-dispatchers.index {
 	#main {
 		padding-left: 0;
 		padding-right: 0;
@@ -943,7 +943,7 @@ body.dispatchers.index {
 	.panel-heading {
 		.pull-right {
 			* {
-				font-size: 1.25rem;
+				font-size: 1.375rem;
 			}
 		}
 	}

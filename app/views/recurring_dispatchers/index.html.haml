@@ -9,10 +9,10 @@
     = link_to translate_helper(:daily_scheduling), dispatchers_path, class: 'btn action-button'
   = render :partial => 'filters'
 %hr
-#dispatch_runs_trips.col-sm-12{style: 'padding: 0px;'}
-  .col-sm-12.dispatch-main#dispatch_runs_container{style: 'padding: 0px;'}
+#dispatch_runs_trips.col-sm-12
+  .col-sm-12.dispatch-main#dispatch_runs_container
     = render 'runs_panel'
-  .col-sm-12#unassigned_trips_container{style: 'padding: 0px; overflow: hidden;'}
+  .col-sm-12#unassigned_trips_container
     = render 'unassigned_trips_panel'
 
 :javascript
