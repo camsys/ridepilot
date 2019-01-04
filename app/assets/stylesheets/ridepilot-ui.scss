@@ -276,13 +276,19 @@ fieldset {
 						padding: 0;
 					}
 				}
-				.label {
+				.label, .badge {
 					display: inline-block;
 					border-radius: 0px;
 					background-color: $gray-2;
 					text-transform: uppercase;
+					font-size: 1rem;
+					padding: 2px 4px;
+					vertical-align: middle;
 					&.label-danger {
 						background-color: $red;
+					}
+					&.new-trip-badge {
+						background-color: $green;
 					}
 				}
 			}
@@ -877,7 +883,7 @@ body.sessions.new {
 		}
 		.panel-heading {
 			background-color: $gray-1;
-			padding: 1em $object-pad;
+			padding: $object-pad;
 			color: $white;
 			margin-right: -$content-pad;
 			margin-left: -$content-pad;
@@ -933,6 +939,13 @@ body.dispatchers.index {
 	#page-header, #dispatch_runs_container {
 		padding-left: $content-pad;
 		padding-right: $content-pad;
+	}
+	.panel-heading {
+		.pull-right {
+			* {
+				font-size: 1.25rem;
+			}
+		}
 	}
 }
 

@@ -7,9 +7,9 @@
   when Run::CAB_RUN_ID
     @cab_trips
   end
-.panel.panel-warning#unassigned_trips_panel{style: 'margin: 0px;'}
+.panel.expandable.panel-warning#unassigned_trips_panel{style: 'margin: 0px;'}
   .panel-heading
-    .pull-right{style: 'padding-right: 0px;'}
+    .pull-right
       = render 'unassigned_trip_type_dropdown'
       = render 'unassigned_trips_schedule_dropdown'
       - if can?(:new, Trip)
