@@ -1,8 +1,8 @@
 .panel.panel-primary.planned_leaves_panel
   .panel-heading
-    .pull-right{style: 'padding-right: 0px;'}
+    .pull-right
       %span.panel-expand-collapse{title: 'Collapse/expand'}
         %i.fa.fa-chevron-up
     = translate_helper("driver_form_planned_leaves_heading")
-  .panel-body.form-horizontal{style: 'padding:0px;'}
+  .panel-body.form-horizontal
     = render 'shared/planned_leaves_table', leavable: @driver

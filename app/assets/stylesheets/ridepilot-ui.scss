@@ -383,26 +383,117 @@ fieldset {
 			}
 		}
 	}
+	&.availability-table {
+    margin-bottom: 0px;
+    border-collapse: separate !important;
+    // border-spacing: 0 1em !important;
+    tr.odd {
+	    background: transparent;
+	  }
+	  td {
+	    border-top: none !important;
+	    padding: 0px 5px !important;
+	    &.disabled {
+		    color: lightgray;
+		  }
+		  &.is_disabled {
+		    background-color: lightgray;
+		  }
+
+		  &.is_on_leave {
+		    background-color: #ffe664;
+		  }
+
+		  &.is_filled, .is_all_day_filled {
+		    background-color: #3eb76a;
+		  }
+	  }
+	  .hour_tick_label {
+	    display: inline-block;
+	    padding: 0px;
+	    margin: 0px 0px 0px -5px;
+	  }
+  }
 	&.schedule-chart {
+		margin-bottom: 0px;
+		border-collapse: separate !important;
 		thead, tbody, tfoot {
 			tr {
+				background-color: #fff;
 				td, th {
 					border: none;
+					a.link_disabled {
+				    pointer-events: none;
+				    cursor: default;
+				    i {
+					    color: $gray-4;
+					  }
+				  }
 				}
+				td {
+					border-bottom: 2px solid $gray-4;
+					padding: .5em !important;
+					&.is_disabled, &.is_filled, &.is_run_filled {
+						border-color: #fff;
+					}
+					&.disabled {
+				    color: $gray-4;
+				  }
+				  &.is_disabled {
+				    background-color: $gray-4;
+				  }
+					&.pull-right {
+						float: none!important;
+						text-align: right;
+						padding-right: 0px!important;
+						button {
+							font-size: .875em;
+							padding: .5em .75em;
+						}
+						.fa {
+							font-size: 1.25em!important;
+						}
+					}
+					&.chart_cell {
+				  	white-space: nowrap !important; 
+				  	color: white;
+					  &.driver_not_available {
+					    background-color: $blue;
+					  }
+					}
+				}
+				&:last-child {
+					td, th {
+						border: none;
+					}
+				}
+			}
+		}
+		&.run-availability-table {
+			td.chart_cell {
+				&.is_filled {
+					background-color: $purple-3;
+				}
+				&.is_driver_filled {
+					background-color: $purple;
+				}
+			}
+		}
+		&.driver-availability-table {
+			td.chart_cell {
+				&.is_filled {
+			    background-color: $green-3;
+			  }
+			  &.is_run_filled {
+			    background-color: $green;
+			  }
+			  &.driver_not_available {
+			    background-color: $blue;
+			  }
 			}
 		}
 	}
 }
-
-// .table-striped {
-// 	tbody {
-// 		tr {
-// 			&:nth-of-type(2n+1) {
-// 				background: mix($white, $gray-4, 50)
-// 			}
-// 		}
-// 	}
-// }
 
 .no-gutters {
   @include no-gutters-parent;
@@ -1100,72 +1191,6 @@ body.availability-forecast {
 	  .pull-right a[class*="unassign_"] {
 	  	padding: 1em;
 	  }
-
-		
-		.run-availability-table, .driver-availability-table {
-
-			margin-bottom: 0px;
-	    border-collapse: separate !important;
-	    // border-spacing: 0 1em !important;
-		
-			td {
-			    padding: .5em !important;
-			  }
-
-		  td.disabled {
-		    color: $gray-4;
-		  }
-
-		  td.chart_cell {
-		  	white-space: nowrap !important; 
-			  &.driver_not_available {
-			    background-color: $blue;
-			  }
-		  }
-
-		  a.link_disabled {
-		    pointer-events: none;
-		    cursor: default;
-		    i {
-			    color: $gray-4;
-			  }
-		  }
-
-		}
-		.run-availability-table {
-
-		  td.chart_cell {
-		  	white-space: nowrap !important; 
-		  	color: white;
-				&.is_filled {
-			    background-color: $purple-3;
-			  }
-
-			  &.is_driver_filled {
-			    background-color: $purple;
-			  }
-			}
-		}
-		.driver-availability-table {
-
-		  td.chart_cell {
-		  	white-space: nowrap !important; 
-		  	color: white;
-			  &.is_filled {
-			    background-color: $green-3;
-			  }
-			  &.is_run_filled {
-			    background-color: $green;
-			  }
-			  &.driver_not_available {
-			    background-color: $blue;
-			  }
-			  &.is_disabled {
-			    background-color: $gray-4;
-			  }
-			}
-		}
-
 	  
   }
 
