@@ -4,8 +4,8 @@
   }
 
 .table-responsive#planned_leave_table
-  .pull-right
-    - if can?(:edit, leavable)
+  - if can?(:edit, leavable)
+    .table-action-buttons
       = link_to translate_helper(:new_planned_leave_link_text), new_planned_leave_path(leavable_id: leavable.id, leavable_type: leavable.class.name), remote: true, class: 'btn action-button'
   %table.table.table-condensed
     %thead

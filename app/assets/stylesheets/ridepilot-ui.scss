@@ -846,7 +846,6 @@ fieldset {
   	.btn {
   		@include smaller-button;
       @include grouped-button;
-      text-transform: uppercase;
       color: $white;
       border-color: $gray-1;
       background: $gray-2;
@@ -1017,11 +1016,18 @@ body.sessions.new {
 		.panel-body {
 			padding: 0;
 			.slack_chart {
-				.label_container {
-					padding: $object-pad $object-pad 0 $object-pad;
+				.chart_container, .label_container {
+					padding: $object-pad/2 $object-pad;
 				}
-				.chart_container {
-					padding: 0 $object-pad $object-pad $object-pad;
+				.label_container {
+					position: absolute;
+					color: #fff;
+					.slack_label_div {
+						padding: 0 1em;
+						font-weight: bold;
+						text-shadow: 0px 0px 3px rgba($black, .75);
+						line-height: 1.5
+					}
 				}
 			}
 		}
