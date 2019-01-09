@@ -142,10 +142,10 @@ fieldset {
 	}
 }
 
-.panel-primary, .panel-success {
+.panel-primary, .panel-success, .panel-warning {
 	border-radius: 0;
 	padding: $object-pad;
-	border: 1px solid $gray-2;
+	border: $panel-border;
 	position: relative;
 	margin: .375em 0 $object-pad 0;
 	transition: border .25s ease-in-out;
@@ -980,13 +980,18 @@ body.sessions.new {
 			border: none;
 			overflow-y: visible;
 		}
+		.panel-body {
+			border: $panel-border
+		}
 		.panel-heading {
 			background-color: $gray-1;
 			padding: $object-pad;
 			color: $white;
-			margin-right: -$content-pad;
-			margin-left: -$content-pad;
-			margin-bottom: $content-pad/2;
+			margin-top: $content-pad;
+			border-radius: 0;
+			// margin-right: -$content-pad;
+			// margin-left: -$content-pad;
+			// margin-bottom: $content-pad/2;
 			a {
 				color: currentColor;
 			}
