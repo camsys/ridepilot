@@ -171,13 +171,10 @@ fieldset {
 		width: 100%;
 	}
 	.panel-heading {
-		color: $brand-primary;
+		@include panel-heading;
 		background-color: transparent;
-		border: none;
-		// text-transform: uppercase;
-		font-weight: 600;
-		padding-bottom: $object-pad;
-		font-size: 14px;
+	  border: none;
+	  padding-bottom: $object-pad;
 		h1, h2, h3, h4, h5, h6 {
 			font-weight: 600;
 		}
@@ -360,6 +357,26 @@ fieldset {
 			th {
 				border: none;
 				padding: .5rem 1rem;
+				&[class*="sorting"] {
+					background-image: none;
+					&::after {
+						@include font-awesome;
+						display: inline-block;
+						margin-left: .375em;
+					}
+				}
+				&.sorting::after {
+					content: '\f0dc';
+
+				}
+				&.sorting_asc::after {
+					content: '\f0de';
+
+				}
+				&.sorting_desc::after {
+					content: '\f0dd';
+
+				}
 			}
 		}
 		tbody {
@@ -1291,4 +1308,22 @@ form.customer-search {
 		font-weight: 600;
 
 	}
+}
+
+#run_options_panel {
+	.run_list, .select_all {
+		@include form-label;
+	}
+}
+
+body.runs {
+  .form-group.name {
+		.form-label label {
+			@include panel-heading
+		}
+		.form-field {
+			font-size: 16px;
+			font-weight: 600;
+		}
+  }
 }
