@@ -83,7 +83,7 @@
   .panel-body.form-horizontal
     .table-responsive
       - if @total_available_drivers.any?
-        %table.table.table-condensed.driver-availability-table#driver_availability_table
+        %table.table.table-condensed.schedule-chart.driver-availability-table#driver_availability_table
           %thead
             %th
             - tick_count = ticks.size

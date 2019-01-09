@@ -70,9 +70,11 @@ $layout-pad: 4rem;
 $content-pad: 3rem;
 $object-pad: 2.5rem;
 
-$button-radius: 6px;
+$button-radius: 0px;
 
 $input-height: 34px;
+
+$panel-border: 1px solid $gray-2;
 
 
 // ---------------------
@@ -166,11 +168,11 @@ $input-height: 34px;
 }
 
 @mixin form-label {
-  font-size: .875em;
+  font-size: .95em;
   font-weight: 400;
   padding: 0;
   margin: 0;
-  text-transform: uppercase;
+  // text-transform: uppercase;
 }
 
 @mixin smaller-button {
@@ -253,3 +255,12 @@ img {
   padding-left: 0;
 }
 
+@mixin button-hover-shadow {
+  @include box-shadow($blur: 0px, $spread: 1px, $opacity: 1, $color: currentColor, $inset: inset);
+}
+
+@mixin panel-heading {
+  color: $brand-primary;
+  font-weight: 600;
+  font-size: 16px;
+}

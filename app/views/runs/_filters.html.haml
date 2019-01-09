@@ -2,35 +2,35 @@
   .panel-heading
     %h3.panel-title
       = translate_helper(:run_filter)
-  .panel-body{style: 'padding: 5px;'}
+  .panel-body
     = form_for :run_filters, url: runs_path, html: { :id => "run_filter_form" }, :method => :get do |f|
       =f.hidden_field :days_of_week, class: 'days_of_week_hidden_field'
       .btns
         = f.submit  translate_helper(:ok), id: 'runFilters', class: 'btn action-button', role: 'button'
         = button_tag  translate_helper(:reset), id: 'resetFilters', class: 'btn action-button', role: 'button'
-      .col-sm-12{style: 'padding: 5px;'}
+      .col-sm-12
         = f.label :start, translate_helper("from_date")
         .input-group.datepicker-icon
           = f.text_field :start, :value => format_time_for_listing_day(@start_pickup_date), class: 'form-control datepicker', readonly: true
           .input-group-btn
             %button.btn.btn-default{:type => "button"}
               = image_tag "calendar-clock.png"
-      .col-sm-12{style: 'padding: 5px;'}
+      .col-sm-12
         = f.label :end, translate_helper("to_date")
         .input-group.datepicker-icon
           = f.text_field :end, :value => format_time_for_listing_day(@end_pickup_date), class: 'datepicker form-control', readonly: true
           .input-group-btn
             %button.btn.btn-default{:type => "button"}
               = image_tag "calendar-clock.png"
-      .col-sm-12{style: 'padding: 5px;'}
+      .col-sm-12
         = render partial: 'shared/weekday_select'
-      .col-sm-12{style: 'padding: 5px;'}
+      .col-sm-12
         = f.label :vehicle_id, translate_helper(:vehicle)
         = f.select :vehicle_id, options_from_collection_for_select( @vehicles, :id, :name, session[:runs_vehicle_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
-      .col-sm-12{style: 'padding: 5px;'}
+      .col-sm-12
         = f.label :driver_id, translate_helper(:driver)
         = f.select :driver_id, options_from_collection_for_select( @drivers, :id, :user_name, session[:runs_driver_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
-      .col-sm-12{style: 'padding: 5px;'}
+      .col-sm-12
         = f.label :run_result_id, translate_helper(:run_result)
         = f.select :run_result_id, options_for_select( [[translate_helper(:complete), 1], [translate_helper(:incomplete), 2]], session[:runs_run_result_id]), {:include_blank => translate_helper(:all) }, { :class => 'form-control' }
 

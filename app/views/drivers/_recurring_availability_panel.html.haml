@@ -1,8 +1,8 @@
 .panel.panel-primary.recurring_availability_panel
   .panel-heading
-    .pull-right{style: 'padding-right: 0px;'}
+    .pull-right
       %span.panel-expand-collapse{title: 'Collapse/expand'}
         %i.fa.fa-chevron-up
     = translate_helper("driver_form_recurring_availability_heading")
-  .panel-body.form-horizontal{style: 'padding:0px;'}
+  .panel-body.form-horizontal
     = render 'shared/availability_table', is_daily: false, operatable: @driver

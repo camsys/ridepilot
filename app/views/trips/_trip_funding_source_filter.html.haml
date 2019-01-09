@@ -2,7 +2,7 @@
 .trip_funding_source-filter
   = f.label :funding_source_id, translate_helper(:funding_source)
   = f.collection_check_boxes :funding_source_id, trip_funding_source_codes, :first, :last, { checked: session[:trips_funding_source_id] }, {class: 'trip-funding-source-filter', style: 'vertical-align: initial;'} do |b|
-    .col-sm-12
+    .col-sm-12.filter-checks
       = b.check_box + " " + b.text
 
 :javascript

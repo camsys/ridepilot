@@ -78,7 +78,7 @@ fieldset {
 	&:hover, &:focus, &:active {
 		color: $brand-primary;
 		background-color: $white;
-		@include box-shadow($blur: 0px, $spread: 1px, $opacity: 1, $color: currentColor, $inset: inset);
+		@include button-hover-shadow;
 	}
 	&.btn-danger {
 	  color: $red;
@@ -142,24 +142,24 @@ fieldset {
 	}
 }
 
-.panel-primary {
+.panel-primary, .panel-success, .panel-warning {
 	border-radius: 0;
 	padding: $object-pad;
-	border: 1px solid $gray-3;
+	border: $panel-border;
 	position: relative;
 	margin: .375em 0 $object-pad 0;
 	transition: border .25s ease-in-out;
-	&::before {
-		content: '';
-		position: absolute;
-		background: $gray-3;
-		width: 100%;
-		height: 100%;
-		top: -.375em;
-		left: -.375em;
-		z-index: -1000;
-		transition: background .25s ease-in-out;
-	}
+	// &::before {
+	// 	content: '';
+	// 	position: absolute;
+	// 	background: $gray-3;
+	// 	width: 100%;
+	// 	height: 100%;
+	// 	top: -.375em;
+	// 	left: -.375em;
+	// 	z-index: -1000;
+	// 	transition: background .25s ease-in-out;
+	// }
 	&.focused {
 		border-color: $brand-primary;
 		&::before {
@@ -171,13 +171,10 @@ fieldset {
 		width: 100%;
 	}
 	.panel-heading {
-		color: $brand-primary;
+		@include panel-heading;
 		background-color: transparent;
-		border: none;
-		text-transform: uppercase;
-		font-weight: 600;
-		padding-bottom: $object-pad;
-		font-size: 14px;
+	  border: none;
+	  padding-bottom: $object-pad;
 		h1, h2, h3, h4, h5, h6 {
 			font-weight: 600;
 		}
@@ -261,7 +258,7 @@ fieldset {
 	}
 }
 
-.table, table {
+.table, table, .table-striped {
 	width: 100%;
 	background: $white;
 	thead, tbody, tfoot {
@@ -276,19 +273,25 @@ fieldset {
 						padding: 0;
 					}
 				}
-				.label {
+				.label, .badge {
 					display: inline-block;
 					border-radius: 0px;
 					background-color: $gray-2;
 					text-transform: uppercase;
+					font-size: 1rem;
+					padding: 2px 4px;
+					vertical-align: middle;
 					&.label-danger {
 						background-color: $red;
+					}
+					&.new-trip-badge {
+						background-color: $green;
 					}
 				}
 			}
 		}
 		> tr {
-      > td.danger,
+	    > td.danger,
 			> th.danger, 
 			&.danger > td, 
 			&.danger > th,
@@ -312,6 +315,7 @@ fieldset {
 		tr {
       td, th {
 				background-color: $gray-2;
+				border: 1px solid $gray-2;
 				color: $white;
 				font-weight: 600;
 				font-size: .875em;
@@ -324,14 +328,23 @@ fieldset {
 		border: 1px solid $gray-2;
 		border-collapse: separate;
 		tr {
+			&:not(:last-of-type) {
+				border-bottom: 1px solid $gray-4
+			}
 			td {
 				font-weight: 600;
 				vertical-align: top;
 				padding: 1rem;
+				&:not(:last-of-type) {
+					border-right: 1px solid $gray-3
+				}
+			}
+			&:nth-of-type(2n+1) {
+				background: mix($white, $gray-4, 40)
 			}
 		}
 		.panel & {
-			border: none;
+			// border: none;
 		}
 	}
 	&.basic-table, &.basic-table.dataTable {
@@ -344,6 +357,26 @@ fieldset {
 			th {
 				border: none;
 				padding: .5rem 1rem;
+				&[class*="sorting"] {
+					background-image: none;
+					&::after {
+						@include font-awesome;
+						display: inline-block;
+						margin-left: .375em;
+					}
+				}
+				&.sorting::after {
+					content: '\f0dc';
+
+				}
+				&.sorting_asc::after {
+					content: '\f0de';
+
+				}
+				&.sorting_desc::after {
+					content: '\f0dd';
+
+				}
 			}
 		}
 		tbody {
@@ -367,13 +400,113 @@ fieldset {
 			}
 		}
 	}
-}
+	&.availability-table {
+    margin-bottom: 0px;
+    border-collapse: separate !important;
+    // border-spacing: 0 1em !important;
+    tr.odd {
+	    background: transparent;
+	  }
+	  td {
+	    border-top: none !important;
+	    padding: 0px 5px !important;
+	    &.disabled {
+		    color: lightgray;
+		  }
+		  &.is_disabled {
+		    background-color: lightgray;
+		  }
 
-.table-striped {
-	tbody {
-		tr {
-			&:nth-of-type(2n+1) {
-				background: mix($white, $gray-4, 50)
+		  &.is_on_leave {
+		    background-color: #ffe664;
+		  }
+
+		  &.is_filled, .is_all_day_filled {
+		    background-color: #3eb76a;
+		  }
+	  }
+	  .hour_tick_label {
+	    display: inline-block;
+	    padding: 0px;
+	    margin: 0px 0px 0px -5px;
+	  }
+  }
+	&.schedule-chart {
+		margin-bottom: 0px;
+		border-collapse: separate !important;
+		thead, tbody, tfoot {
+			tr {
+				background-color: #fff;
+				td, th {
+					border: none;
+					a.link_disabled {
+				    pointer-events: none;
+				    cursor: default;
+				    i {
+					    color: $gray-4;
+					  }
+				  }
+				}
+				td {
+					border-bottom: 2px solid $gray-4;
+					padding: .5em !important;
+					&.is_disabled, &.is_filled, &.is_run_filled {
+						border-color: #fff;
+					}
+					&.disabled {
+				    color: $gray-4;
+				  }
+				  &.is_disabled {
+				    background-color: $gray-4;
+				  }
+					&.pull-right {
+						float: none!important;
+						text-align: right;
+						padding-right: 0px!important;
+						button {
+							font-size: .875em;
+							padding: .5em .75em;
+						}
+						.fa {
+							font-size: 1.25em!important;
+						}
+					}
+					&.chart_cell {
+				  	white-space: nowrap !important; 
+				  	color: white;
+					  &.driver_not_available {
+					    background-color: $blue;
+					  }
+					}
+				}
+				&:last-child {
+					td, th {
+						border: none;
+					}
+				}
+			}
+		}
+		&.run-availability-table {
+			td.chart_cell {
+				&.is_filled {
+					background-color: $purple-3;
+				}
+				&.is_driver_filled {
+					background-color: $purple;
+				}
+			}
+		}
+		&.driver-availability-table {
+			td.chart_cell {
+				&.is_filled {
+			    background-color: $green-3;
+			  }
+			  &.is_run_filled {
+			    background-color: $green;
+			  }
+			  &.driver_not_available {
+			    background-color: $blue;
+			  }
 			}
 		}
 	}
@@ -401,22 +534,14 @@ fieldset {
   color: $blue-raw !important;
 }
 
-.panel-success {
-  border-color: transparent;
+.panel-success, .panel-success.expandable {
   > .panel-heading {
-	  color: $white;
-	  background-color: $green;
-	  border-color: $white;
+	  background-color: $brand-primary;
+	  color: #fff;
+	  border-radius: 0;
+	  border-color: $brand-primary;
 	  a {
-	    color: $white;
-	  }
-	  .dropdown-menu {
-	  	li {
-	  		width: 100%;
-	  	}
-	  	a {
-	  		color: $black;
-	  	}
+	  	color: currentColor;
 	  }
 	}
 }
@@ -659,7 +784,7 @@ fieldset {
 	}
 }
 
-.panel-primary {
+.panel-primary, .panel-success {
 	.table {
 		margin: 0;
 	}
@@ -729,6 +854,7 @@ fieldset {
 }
 
 .filters-panel {
+  background-color: $gray-4;
   .panel-heading, .panel-title {
   	font-weight: 600!important;
   }
@@ -737,7 +863,6 @@ fieldset {
   	.btn {
   		@include smaller-button;
       @include grouped-button;
-      text-transform: uppercase;
       color: $white;
       border-color: $gray-1;
       background: $gray-2;
@@ -752,6 +877,13 @@ fieldset {
   }
   .filter-checks {
     @include form-label;
+  }
+  form input[type="text"], input[type="password"], textarea, .form-control {
+  	background-color: #fff
+  }
+  .datepicker-icon .btn, #weekday_select .btn {
+  	background-color: $gray-3!important;
+  	color: $brand-primary!important;
   }
 }
 
@@ -777,6 +909,9 @@ fieldset {
 		  &.active {
 		  	opacity: 1;
 		  	font-weight: 600;
+		  }
+		  &:hover {
+		  	@include button-hover-shadow;
 		  }
 		  #page-header & {
 				padding-right: 1em;
@@ -854,28 +989,37 @@ body.sessions.new {
 #dispatch_runs_trips {
 	padding: 0;
 	#unassigned_trips_container {
-		padding: 0;
-		border-right: 1px solid $brand-primary;
-		border-left: 1px solid $brand-primary;
+		padding: 0 $content-pad;
+		border-right: 1px solid $gray-1;
+		border-left: 1px solid $gray-1;
 		@include box-shadow($blur: .5rem, $spread: 0px, $opacity: 0.5);
 		#unassigned_trips_panel {
 			border: none;
-			table {
-				border: none;
-			}
+			overflow-y: visible;
+		}
+		.panel-body {
+			border: $panel-border
 		}
 		.panel-heading {
-			background-color: $brand-primary;
-			padding: 1em $object-pad;
+			background-color: $gray-1;
+			padding: $object-pad;
 			color: $white;
+			margin-top: $content-pad;
+			border-radius: 0;
+			// margin-right: -$content-pad;
+			// margin-left: -$content-pad;
+			// margin-bottom: $content-pad/2;
+			a {
+				color: currentColor;
+			}
 		}
 		
 	}
 	.hsplitter {
-		background-color: $brand-primary;
+		background-color: $gray-1;
 		height: 2em;
 		padding-top: .25em;
-		border-radius: 6px 6px 0 0;
+		// border-radius: 6px 6px 0 0;
 		text-align: center;
 		border-bottom: 1px solid $white;
 		@include box-shadow($blur: .5rem, $spread: 0px, $opacity: .75);
@@ -889,7 +1033,33 @@ body.sessions.new {
 	}
 }
 
-body.dispatchers.index {
+#dispatch_runs_container {
+	.panel-success.expandable {
+		.panel-body {
+			padding: 0;
+			.slack_chart {
+				.chart_container, .label_container {
+					padding: $object-pad/2 $object-pad;
+				}
+				.label_container {
+					position: absolute;
+					color: #fff;
+					.slack_label_div {
+						padding: 0 1em;
+						font-weight: bold;
+						text-shadow: 0px 0px 3px rgba($black, .75);
+						line-height: 1.5
+					}
+				}
+			}
+		}
+		.run-manifest-table {
+
+		}
+	}
+}
+
+body.dispatchers.index, body.recurring-dispatchers.index {
 	#main {
 		padding-left: 0;
 		padding-right: 0;
@@ -897,6 +1067,13 @@ body.dispatchers.index {
 	#page-header, #dispatch_runs_container {
 		padding-left: $content-pad;
 		padding-right: $content-pad;
+	}
+	.panel-heading {
+		.pull-right {
+			* {
+				font-size: 1.375rem;
+			}
+		}
 	}
 }
 
@@ -1042,72 +1219,6 @@ body.availability-forecast {
 	  .pull-right a[class*="unassign_"] {
 	  	padding: 1em;
 	  }
-
-		
-		.run-availability-table, .driver-availability-table {
-
-			margin-bottom: 0px;
-	    border-collapse: separate !important;
-	    border-spacing: 0 1em !important;
-		
-			td {
-		    padding: 0px 5px !important;
-		  }
-
-		  td.disabled {
-		    color: $gray-4;
-		  }
-
-		  td.chart_cell {
-		  	white-space: nowrap !important; 
-			  &.driver_not_available {
-			    background-color: $blue;
-			  }
-		  }
-
-		  a.link_disabled {
-		    pointer-events: none;
-		    cursor: default;
-		    i {
-			    color: $gray-4;
-			  }
-		  }
-
-		}
-		.run-availability-table {
-
-		  td.chart_cell {
-		  	white-space: nowrap !important; 
-		  	color: white;
-				&.is_filled {
-			    background-color: $purple-3;
-			  }
-
-			  &.is_driver_filled {
-			    background-color: $purple;
-			  }
-			}
-		}
-		.driver-availability-table {
-
-		  td.chart_cell {
-		  	white-space: nowrap !important; 
-		  	color: white;
-			  &.is_filled {
-			    background-color: $green-3;
-			  }
-			  &.is_run_filled {
-			    background-color: $green;
-			  }
-			  &.driver_not_available {
-			    background-color: $blue;
-			  }
-			  &.is_disabled {
-			    background-color: $gray-4;
-			  }
-			}
-		}
-
 	  
   }
 
@@ -1197,4 +1308,22 @@ form.customer-search {
 		font-weight: 600;
 
 	}
+}
+
+#run_options_panel {
+	.run_list, .select_all {
+		@include form-label;
+	}
+}
+
+body.runs {
+  .form-group.name {
+		.form-label label {
+			@include panel-heading
+		}
+		.form-field {
+			font-size: 16px;
+			font-weight: 600;
+		}
+  }
 }

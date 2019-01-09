@@ -29,7 +29,7 @@
   .panel-body.form-horizontal
     .table-responsive
       - if @runs.any?
-        %table.table.table-condensed.run-availability-table#run_availability_table
+        %table.table.table-condensed.schedule-chart.run-availability-table#run_availability_table
           %thead
             %th
             - tick_count = ticks.size

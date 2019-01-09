@@ -82,59 +82,18 @@
     end
   end
 
-:css
-  .availability-table {
-    margin-bottom: 0px;
-    border-collapse: separate !important;
-    border-spacing: 0 1em !important;
-  }
-
-  .availability-table tr.odd {
-    background: transparent;
-  }
-
-  .availability-table td {
-    border-top: none !important;
-  }
-
-  .availability-table td.disabled {
-    color: lightgray;
-  }
-
-  .availability-table td {
-    padding: 0px 5px !important;
-  }
-
-  .is_disabled {
-    background-color: lightgray;
-  }
-
-  .is_on_leave {
-    background-color: #ffe664;
-  }
-
-  .is_filled, .is_all_day_filled {
-    background-color: #3eb76a;
-  }
-
-  .hour_tick_label {
-    display: inline-block;
-    padding: 0px;
-    margin: 0px 0px 0px -5px;
-  }
-
 
 - table_css_class = is_daily ? "daily_availability" : "recur_availability"
 - table_id = is_daily ? "daily_availability_table" : "recur_availability_table"
 .table-responsive{style: 'max-height: 350px; overflow-y: auto;'}
-  %table.table.table-condensed.availability-table{class: table_css_class, id: table_id}
+  %table.table.table-condensed.availability-table.schedule-chart{class: table_css_class, id: table_id}
     %thead
       %th
-      %th All Day
+      %th All&nbsp;Day
       - tick_count = ticks.size
       - if tick_count > 0
-        %th{colspan: tick_count, style: 'padding: 0px;'}
-          %div{style: 'width: 100%; white-space:nowrap;'}
+        %th{colspan: tick_count}
+          %div
             - label_tick_count = ticks.select{|x| !x[1].blank?}.size
             - last_label_tick = ticks.reverse.select{|x| !x[1].blank?}.first
             - divided_by = label_tick_count - 1 + (max_hour - last_label_tick[0]).to_f / get_availability_tick_hour_gap
@@ -177,15 +136,15 @@
               - unless is_disabled
                 .pull-right
                   = link_to '#', title: 'New hours' do 
-                    %i.fa.fa-plus.new_hour{style: 'font-size: 1.5em;'}
+                    %i.fa.fa-plus.new_hour
                   - if is_daily
                     = link_to '#', title: 'Clear settings' do 
-                      %i.fa.fa-remove.is_unavailable{style: 'color: red; font-size: 1.5em;'}
+                      %i.fa.fa-remove.is_unavailable{style: 'color: red;'}
                     = link_to '#', title: 'Restore recurring settings' do 
-                      %i.fa.fa-undo.clear_hours{style: 'font-size: 1.5em;'}
+                      %i.fa.fa-undo.clear_hours
                   - else
                     = link_to '#', title: 'Clear settings' do 
-                      %i.fa.fa-remove.clear_hours{style: 'color: red; font-size: 1.5em;'}
+                      %i.fa.fa-remove.clear_hours{style: 'color: red;'}
 
 :javascript
   $(function() {
