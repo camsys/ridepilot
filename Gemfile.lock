@@ -21,10 +21,10 @@ GIT
 
 GIT
   remote: https://github.com/camsys/ridepilot_cad_avl.git
-  revision: 4e6f6533918aa0b573e73319e9f2547230c91a91
-  branch: v0.0.11
+  revision: d839aba633d26b2a452a007dc04a3a63637c424c
+  branch: develop
   specs:
-    ridepilot_cad_avl (0.0.11)
+    ridepilot_cad_avl (0.0.12)
       fast_jsonapi
       pg
       rails (~> 5.2.0)
@@ -586,4 +586,4 @@ RUBY VERSION
    ruby 2.4.5p335
 
 BUNDLED WITH
-   1.17.2
+   2.0.1
