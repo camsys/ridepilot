@@ -173,8 +173,8 @@ fieldset {
 	.panel-heading {
 		@include panel-heading;
 		background-color: transparent;
-	  border: none;
-	  padding-bottom: $object-pad;
+		border: none;
+		padding-bottom: $object-pad;
 		h1, h2, h3, h4, h5, h6 {
 			font-weight: 600;
 		}
@@ -188,6 +188,15 @@ fieldset {
 				display: inline-block;
 			}
 		}
+		.dropdown-menu {
+		  	color: $brand-primary;
+		  	li {
+		  		width: 100%;
+		  		a {
+		  			display: block;
+		  		}
+		  	}
+		  }
 	}
 	.panel-body {
 		// overflow: scroll auto;
