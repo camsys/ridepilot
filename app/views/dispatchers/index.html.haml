@@ -301,7 +301,8 @@
   // window height changes, then need to update splitter position and container height
   function on_window_resize() {
     var prev_height = $('#dispatch_runs_trips').height();
-    var new_height = $(window).innerHeight() - 180; // exclude page nav bar and footer height
+    // var new_height = $(window).innerHeight() - 180; // exclude page nav bar and footer height
+    var new_height = $(window).innerHeight() - $('#dispatch_runs_container').offset().top; // exclude height of everything above runs container
     $('#dispatch_runs_trips').height(new_height);
     if(splitter) {
       var prev_pos = splitter.position();
@@ -333,7 +334,7 @@
   // page main entry point
   $(function() {  
     // init the splitter between Runs section and Trips section
-    var splitter_height = $(window).innerHeight() - 200;
+    var splitter_height = $(window).innerHeight() - $('#dispatch_runs_container').offset().top;
     splitter = $('#dispatch_runs_trips').height(splitter_height).split({
       position: '80%',
       limit: 40,
