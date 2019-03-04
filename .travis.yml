@@ -14,6 +14,7 @@ before_install:
 before_script:
 - cp config/database.yml.travis config/database.yml
 - psql -U postgres -c "create extension postgis"
+- psql -c 'create database ridepilot_test;' -U postgres
 script:
 - bundle exec /usr/bin/env RAILS_ENV=test rails db:test:prepare
 - bundle exec /usr/bin/env RAILS_ENV=test rspec
