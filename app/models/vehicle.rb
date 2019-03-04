@@ -46,6 +46,7 @@ class Vehicle < ApplicationRecord
   
   scope :for_provider,  -> (provider_id) { where(provider_id: provider_id) }
   scope :reportable,    -> { where(reportable: true) }
+  scope :is_5310_reportable,    -> { where(is_5310_reportable: true) }
   scope :default_order, -> { order(Arel.sql("lower(name)")) }
 
   after_initialize :set_defaults
@@ -90,6 +91,7 @@ class Vehicle < ApplicationRecord
 
   def set_defaults
     self.active = true if self.active.nil?
+    self.is_5310_reportable = true if self.is_5310_reportable.nil?
   end
 
   def valid_phone_number

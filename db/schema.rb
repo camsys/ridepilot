@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180818025821) do
+ActiveRecord::Schema.define(version: 2019_03_02_211128) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "fuzzystrmatch"
   enable_extension "plpgsql"
   enable_extension "postgis"
   enable_extension "postgis_topology"
-  enable_extension "fuzzystrmatch"
   enable_extension "uuid-ossp"
 
   create_table "activities", id: :serial, force: :cascade do |t|
@@ -1362,6 +1362,7 @@ ActiveRecord::Schema.define(version: 20180818025821) do
     t.text "active_status_changed_reason"
     t.integer "vehicle_maintenance_schedule_type_id"
     t.integer "vehicle_type_id"
+    t.boolean "is_5310_reportable", default: true
     t.index ["default_driver_id"], name: "index_vehicles_on_default_driver_id"
     t.index ["deleted_at"], name: "index_vehicles_on_deleted_at"
     t.index ["garage_address_id"], name: "index_vehicles_on_garage_address_id"

@@ -162,6 +162,7 @@ class VehiclesController < ApplicationController
       :license_plate, 
       :vin, 
       :reportable, 
+      :is_5310_reportable, 
       :insurance_coverage_details, 
       :ownership, 
       :responsible_party, 

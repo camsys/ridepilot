@@ -46,6 +46,11 @@
         = f.select :reportable, [["Yes", true], ["No", false]], {:selected => @vehicle.reportable }, class: "form-control", disabled: @readonly
     .form-group
       .form-label
+        = f.label :is_5310_reportable, translate_helper("vehicle_form_5310_reportable_label")
+      .form-field
+        = f.select :is_5310_reportable, [["Yes", true], ["No", false]], {:selected => @vehicle.is_5310_reportable }, class: "form-control", disabled: @readonly
+    .form-group
+      .form-label
         = label_tag nil, translate_helper("vehicle_form_initial_mileage")
       .form-field
         - if @vehicle.new_record?

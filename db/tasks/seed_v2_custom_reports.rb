@@ -32,6 +32,10 @@
     title: 'Vehicle Report'
   },
   {
+    name: 'vehicle_5310_report',
+    title: 'FTA 5310 Vehicle Report'
+  },
+  {
     name: 'provider_common_location_report',
     title: 'Provider Common Location Report'
   },

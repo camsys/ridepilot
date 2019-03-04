@@ -1,0 +1,90 @@
+- # common
+= render 'reports/common_csv_header.csv.haml'
+
+= CSV.generate_line(['Number of Passengers Summary', 'Count'], {:row_sep => nil}).html_safe
+= CSV.generate_line(['Senior', @total_senior_passengers_count], {:row_sep => nil}).html_safe
+= CSV.generate_line(['Low Income', @total_low_income_passengers_count], {:row_sep => nil}).html_safe
+= CSV.generate_line(['Disabled', @total_disabled_passengers_count], {:row_sep => nil}).html_safe
+= CSV.generate_line(['Total', @total_passengers_count], {:row_sep => nil}).html_safe
+
+- unless @is_summary_report
+  - if @vehicles
+    - compliance_headers = [translate_helper("vehicle_compliance_form_due_date"), translate_helper("vehicle_compliance_form_event"), translate_helper("vehicle_compliance_form_compliance_date")]
+    - repair_headers = [translate_helper("service_date"), translate_helper("invoice_date"), translate_helper("odometer"), translate_helper("vendor_name"), translate_helper("invoice_amount"), translate_helper("services_performed")]
+    - maintenance_headers = [translate_helper("vehicle_maintenance_compliance_form_due_string"), translate_helper("vehicle_maintenance_compliance_form_event"), translate_helper("vehicle_maintenance_compliance_form_compliance_date"), translate_helper("vehicle_maintenance_compliance_form_compliance_mileage")]
+    - warranty_headers = [translate_helper("vehicle_warranty_form_expiration_date"), translate_helper("vehicle_warranty_form_description")]
+    
+    - @vehicles.each do |vehicle|
+      - # basic info
+      = CSV.generate_line([""], {:row_sep => nil}).html_safe
+      = CSV.generate_line(["Vehicle Name", vehicle.name, !vehicle.active_for_date?(Date.today) ? vehicle.active_status_text : ""], {:row_sep => nil}).html_safe
+      = CSV.generate_line(['VIN', vehicle.vin], {:row_sep => nil}).html_safe
+      = CSV.generate_line(['Vehicle Location', vehicle.garage_address.try(:one_line_text) ], {:row_sep => nil}).html_safe
+      = CSV.generate_line(['Current Mileage', vehicle.last_odometer_reading], {:row_sep => nil}).html_safe
+      - dist = @miles_by_vehicle[vehicle.id]
+      = CSV.generate_line(['Vehicle Mileage for the Date Range', dist && dist > 0 ? dist : '(Empty)'], {:row_sep => nil}).html_safe  
+      - last_complete_date = @run_last_complete_dates[vehicle.id]
+      = CSV.generate_line(['Date for the last completed Run', last_complete_date ? format_date(last_complete_date) : '(Empty)'], {:row_sep => nil}).html_safe  
+      - if !vehicle.active_for_date?(Date.today)  
+        = CSV.generate_line(['Inactivated Reason', vehicle.active_status_changed_reason], {:row_sep => nil}).html_safe  
+
+      = CSV.generate_line(['Number of Passengers', 'Count'], {:row_sep => nil}).html_safe
+      = CSV.generate_line(['Senior', @senior_passengers_count[vehicle.id]], {:row_sep => nil}).html_safe
+      = CSV.generate_line(['Low Income', @low_income_passengers_count[vehicle.id]], {:row_sep => nil}).html_safe
+      = CSV.generate_line(['Disabled', @disabled_passengers_count[vehicle.id]], {:row_sep => nil}).html_safe
+      = CSV.generate_line(['Total', @passengers_count[vehicle.id]], {:row_sep => nil}).html_safe
+
+      - # legal compliances
+      = CSV.generate_line([""], {:row_sep => nil}).html_safe
+      - legal_compliances = @legal_compliances[vehicle.id]
+      = CSV.generate_line([translate_helper("legal_vehicle_compliances_heading") ], {:row_sep => nil}).html_safe
+      = CSV.generate_line(compliance_headers, {:row_sep => nil}).html_safe
+      - unless legal_compliances.blank?
+        - legal_compliances.each do |c|
+          = CSV.generate_line([format_date(c.due_date), c.event, format_date(c.compliance_date)], {:row_sep => nil}).html_safe  
+      - else
+        = CSV.generate_line(["No record"], {:row_sep => nil}).html_safe
+
+      - # non legal compliances
+      = CSV.generate_line([""], {:row_sep => nil}).html_safe
+      - non_legal_compliances = @non_legal_compliances[vehicle.id]
+      = CSV.generate_line([translate_helper("vehicle_compliances_heading") ], {:row_sep => nil}).html_safe
+      = CSV.generate_line(compliance_headers, {:row_sep => nil}).html_safe
+      - unless non_legal_compliances.blank?
+        - non_legal_compliances.each do |c|
+          = CSV.generate_line([format_date(c.due_date), c.event, format_date(c.compliance_date)], {:row_sep => nil}).html_safe  
+      - else
+        = CSV.generate_line(["No record"], {:row_sep => nil}).html_safe
+
+      - # repairs
+      = CSV.generate_line([""], {:row_sep => nil}).html_safe
+      - repair_events = @repair_events[vehicle.id]
+      = CSV.generate_line([translate_helper("vehicle_maintenance_events_heading") ], {:row_sep => nil}).html_safe
+      = CSV.generate_line(repair_headers, {:row_sep => nil}).html_safe
+      - unless repair_events.blank?
+        - repair_events.each do |c|
+          = CSV.generate_line([format_date(c.service_date), format_date(c.invoice_date), c.odometer, c.vendor_name, number_to_currency(c.invoice_amount), c.services_performed], {:row_sep => nil}).html_safe  
+      - else
+        = CSV.generate_line(["No record"], {:row_sep => nil}).html_safe
+
+      - # maintenances
+      = CSV.generate_line([""], {:row_sep => nil}).html_safe
+      - vehicle_maintenance_compliances = @vehicle_maintenance_compliances[vehicle.id]
+      = CSV.generate_line([translate_helper("vehicle_maintenance_compliances_heading") ], {:row_sep => nil}).html_safe
+      = CSV.generate_line(maintenance_headers, {:row_sep => nil}).html_safe
+      - unless vehicle_maintenance_compliances.blank?
+        - vehicle_maintenance_compliances.each do |c|
+          = CSV.generate_line([due_string(c), c.event, format_date(c.compliance_date), c.compliance_mileage.blank? ? "" : number_with_delimiter(c.compliance_mileage)], {:row_sep => nil}).html_safe  
+      - else
+        = CSV.generate_line(["No record"], {:row_sep => nil}).html_safe
+
+      - # warranties
+      = CSV.generate_line([""], {:row_sep => nil}).html_safe
+      - vehicle_warranties = @vehicle_warranties[vehicle.id]
+      = CSV.generate_line([translate_helper("vehicle_warranties_heading") ], {:row_sep => nil}).html_safe
+      = CSV.generate_line(warranty_headers, {:row_sep => nil}).html_safe
+      - unless vehicle_warranties.blank?
+        - vehicle_warranties.each do |c|
+          = CSV.generate_line([format_date(c.expiration_date), c.description], {:row_sep => nil}).html_safe  
+      - else
+        = CSV.generate_line(["No record"], {:row_sep => nil}).html_safe

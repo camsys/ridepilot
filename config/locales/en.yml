@@ -1455,6 +1455,7 @@ en:
   vehicle_form_details_heading: "Details"
   vehicle_form_information_heading: "Additional Information"
   vehicle_form_reportable_label: "Vehicle Should Appear on Vehicle Report"
+  vehicle_form_5310_reportable_label: "Is FTA 5310 Vehicle?"
   ntd_reportable_label: "Appear on NTD Report?"
   vehicle_form_last_odometer_reading: "Last Reported Mileage"
   vehicle_form_initial_mileage: "Initial Mileage"

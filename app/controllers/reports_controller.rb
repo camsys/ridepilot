@@ -1050,6 +1050,57 @@ class ReportsController < ApplicationController
     apply_v2_response
   end
 
+  def vehicle_5310_report
+    query_params = params[:query] || {start_date: Date.today, end_date: Date.today + 1}
+    @query = Query.new(query_params)
+    @active_vehicles = Vehicle.is_5310_reportable.for_provider(current_provider_id).active.default_order
+
+    if params[:query]
+      @report_params = [["Provider", current_provider.name]]
+      @report_params << ["Date Range", "#{@query.start_date.strftime('%m/%d/%Y')} - #{@query.before_end_date.strftime('%m/%d/%Y')}"]
+      
+      unless @query.vehicle_id.blank?
+        @vehicles = Vehicle.where(id: @query.vehicle_id)
+      else
+        @vehicles = @active_vehicles
+      end
+      vehicle_ids = @vehicles.pluck(:id)
+
+      # Only past runs with odometers
+      @runs = Run.with_odometer_readings.today_and_prior.for_provider(current_provider_id).for_vehicle(@vehicles.pluck(:id)).for_date_range(@query.start_date, @query.end_date)
+      run_trips = @runs.joins(:trips).where("trips.trip_result_id is NULL or trips.trip_result_id = ?", TripResult.find_by_code('COMP').try(:id))
+      # Total passenger count
+      @total_passengers_count = run_trips.sum("customer_space_count + guest_count + attendant_count")
+      @total_senior_passengers_count = run_trips.sum(:number_of_senior_passengers_served)
+      @total_disabled_passengers_count = run_trips.sum(:number_of_disabled_passengers_served)
+      @total_low_income_passengers_count = run_trips.sum(:number_of_low_income_passengers_served)
+
+      if query_params[:report_type] == 'summary'
+        @is_summary_report = true
+      else
+        # stats
+        @passengers_count = run_trips.group(:vehicle_id).sum("customer_space_count + guest_count + attendant_count")
+        @senior_passengers_count = run_trips.group(:vehicle_id).sum(:number_of_senior_passengers_served)
+        @disabled_passengers_count = run_trips.group(:vehicle_id).sum(:number_of_disabled_passengers_served)
+        @low_income_passengers_count = run_trips.group(:vehicle_id).sum(:number_of_low_income_passengers_served)
+        @miles_by_vehicle = @runs.group(:vehicle_id).sum("(end_odometer - start_odometer)")
+        @run_last_complete_dates = @runs.group(:vehicle_id).pluck(:vehicle_id, "max(runs.date)").to_h
+
+        # compliances
+        base_compliances = VehicleCompliance.for_vehicle(vehicle_ids).due_date_range(@query.start_date, @query.end_date).default_order
+
+        @vehicle_maintenance_compliances = VehicleMaintenanceCompliance.for_vehicle(vehicle_ids).default_order.group_by{|c| c.vehicle_id}
+        @vehicle_warranties = VehicleWarranty.for_vehicle(vehicle_ids).default_order.group_by{|c| c.vehicle_id}
+        @repair_events = VehicleMaintenanceEvent.for_vehicle(vehicle_ids).default_order.group_by{|c| c.vehicle_id}
+
+        @legal_compliances = base_compliances.legal.group_by{|c| c.vehicle_id}
+        @non_legal_compliances = base_compliances.non_legal.group_by{|c| c.vehicle_id}
+      end
+    end
+
+    apply_v2_response
+  end
+
   def vehicle_monthly_service_report
     query_params = params[:query] || {start_date: Date.today.prev_month + 1, end_date: Date.today + 1}
     @query = Query.new(query_params)

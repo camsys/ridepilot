@@ -1,0 +1,186 @@
+
+%h2 Number of Passengers Summary
+%table.table.table-bordered
+  %thead
+    %tr
+      %th.col-sm-3
+      %th Count
+  %tbody
+    %tr
+      %td Senior
+      %td= @total_senior_passengers_count
+    %tr
+      %td Low Income
+      %td= @total_low_income_passengers_count
+    %tr
+      %td Disabled
+      %td= @total_disabled_passengers_count
+    %tr
+      %td Total
+      %td= @total_passengers_count
+
+- unless @is_summary_report
+  - @vehicles.each do |vehicle|
+    %h2
+      %span{style: "text-decoration: underline;"}= vehicle.name
+      - if !vehicle.active_for_date?(Date.today)
+        %span{style: "font-size: small;"}
+          = "(#{vehicle.active_status_text})"
+    %ul
+      %li
+        %b
+          VIN
+        = vehicle.vin
+      
+      %li
+        %b
+          Vehicle Location
+        = vehicle.garage_address.try(:one_line_text) 
+      
+      %li
+        %b
+          Current Mileage
+        = number_with_delimiter(vehicle.last_odometer_reading)
+        mi.
+      
+      %li
+        %b
+          Vehicle Mileage for the Date Range 
+        - dist = @miles_by_vehicle[vehicle.id]
+        - if dist && dist > 0
+          = number_with_delimiter dist
+          mi.
+        - else
+          (Empty)
+
+      - last_complete_date = @run_last_complete_dates[vehicle.id]
+      %li{style: (!last_complete_date ?  "color: red;" : "")}
+        %b
+          Date for the last completed Run
+        = last_complete_date ? format_date(last_complete_date) : '(Empty)'
+
+      - if !vehicle.active_for_date?(Date.today)  
+        %li
+          %b
+            Inactivated Reason
+          = vehicle.active_status_changed_reason
+
+  
+    %h4 Number of Passengers
+    %table.table.table-bordered
+      %thead
+        %tr
+          %th.col-sm-3
+          %th Count
+      %tbody
+        %tr
+          %td Senior
+          %td= @senior_passengers_count[vehicle.id]
+        %tr
+          %td Low Income
+          %td= @low_income_passengers_count[vehicle.id]
+        %tr
+          %td Disabled
+          %td= @disabled_passengers_count[vehicle.id]
+        %tr
+          %td Total
+          %td= @passengers_count[vehicle.id]
+
+    - legal_compliances = @legal_compliances[vehicle.id]
+    %h4= translate_helper("legal_vehicle_compliances_heading") 
+    - unless legal_compliances.blank?
+      %table.table.table-bordered
+        %thead
+          %tr
+            %th.col-sm-3= translate_helper("vehicle_compliance_form_due_date")
+            %th= translate_helper("vehicle_compliance_form_event")
+            %th.col-sm-3= translate_helper("vehicle_compliance_form_compliance_date")
+        %tbody
+          - legal_compliances.each do |c|
+            %tr
+              %td= format_date(c.due_date)
+              %td= c.event
+              %td= format_date(c.compliance_date)
+    - else
+      %p No record
+
+    - non_legal_compliances = @non_legal_compliances[vehicle.id]
+    %h4= translate_helper("vehicle_compliances_heading")
+    - unless non_legal_compliances.blank?
+      %table.table.table-bordered
+        %thead
+          %tr
+            %th.col-sm-3= translate_helper("vehicle_compliance_form_due_date")
+            %th= translate_helper("vehicle_compliance_form_event")
+            %th.col-sm-3= translate_helper("vehicle_compliance_form_compliance_date")
+        %tbody
+          - non_legal_compliances.each do |c|
+            %tr
+              %td= format_date(c.due_date)
+              %td= c.event
+              %td= format_date(c.compliance_date)
+    - else
+      %p No record
+
+  
+    - repair_events = @repair_events[vehicle.id]
+    %h4= translate_helper("vehicle_maintenance_events_heading")
+    - unless repair_events.blank?
+      %table.table.table-bordered
+        %thead
+          %tr
+            %th.col-sm-1= translate_helper("service_date")
+            %th.col-sm-1= translate_helper("invoice_date")
+            %th.col-sm-1= translate_helper("odometer")
+            %th.col-sm-1= translate_helper("vendor_name")
+            %th.col-sm-1= translate_helper("invoice_amount")
+            %th= translate_helper("services_performed")
+        %tbody
+          - repair_events.each do |c|
+            %tr
+              %td= format_date(c.service_date)
+              %td= format_date(c.invoice_date)
+              %td= c.odometer
+              %td= c.vendor_name
+              %td= number_to_currency(c.invoice_amount)
+              %td= c.services_performed
+    - else
+      %p No record
+
+    - vehicle_maintenance_compliances = @vehicle_maintenance_compliances[vehicle.id]
+    %h4= translate_helper("vehicle_maintenance_compliances_heading")
+    - unless vehicle_maintenance_compliances.blank?
+      %table.table.table-bordered
+        %thead
+          %tr
+            %th.col-sm-3= translate_helper("vehicle_maintenance_compliance_form_due_string")
+            %th= translate_helper("vehicle_maintenance_compliance_form_event")
+            %th.col-sm-3= translate_helper("vehicle_maintenance_compliance_form_compliance_date")
+            %th.col-sm-3= translate_helper("vehicle_maintenance_compliance_form_compliance_mileage")
+        %tbody
+          - vehicle_maintenance_compliances.each do |c|
+            %tr
+              %td= due_string c
+              %td= c.event
+              %td= format_date(c.compliance_date)
+              %td= number_with_delimiter c.compliance_mileage unless c.compliance_mileage.blank?
+    - else
+      %p No record
+
+    - vehicle_warranties = @vehicle_warranties[vehicle.id]
+    %h4= translate_helper("vehicle_warranties_heading")
+    - unless vehicle_warranties.blank?
+      %table.table.table-bordered
+        %thead
+          %tr
+            %th.col-sm-3= translate_helper("vehicle_warranty_form_expiration_date")
+            %th= translate_helper("vehicle_warranty_form_description")
+        %tbody
+          - vehicle_warranties.each do |c|
+            %tr
+              %td= format_date(c.expiration_date)
+              %td= c.description
+    - else
+      %p No record
+
+  %hr

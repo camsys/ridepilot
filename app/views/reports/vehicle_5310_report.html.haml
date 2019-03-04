@@ -1,0 +1,8 @@
+= render 'custom_report_header'
+
+- if @query
+  .filter-form 
+    = render "reports/forms/#{@custom_report.name}"
+
+  - if @vehicles 
+    = render "reports/#{@custom_report.name}/table"
