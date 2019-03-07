@@ -351,6 +351,9 @@ fieldset {
 			&:nth-of-type(2n+1) {
 				background: mix($white, $gray-4, 40)
 			}
+			&.ui-sortable-placeholder {
+				box-sizing: content-box;
+			}
 		}
 		.panel & {
 			// border: none;
@@ -1336,3 +1339,4 @@ body.runs {
 		}
   }
 }
+
