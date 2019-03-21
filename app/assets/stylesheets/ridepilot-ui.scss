@@ -462,7 +462,7 @@ fieldset {
 				td {
 					border-bottom: 2px solid $gray-4;
 					padding: .5em !important;
-					&.is_disabled, &.is_filled, &.is_run_filled {
+					&.is_disabled, &.is_filled, &.is_all_day_filled, &.is_run_filled {
 						border-color: #fff;
 					}
 					&.disabled {
@@ -500,7 +500,7 @@ fieldset {
 		}
 		&.run-availability-table {
 			td.chart_cell {
-				&.is_filled {
+				&.is_filled, &.is_all_day_filled {
 					background-color: $purple-3;
 				}
 				&.is_driver_filled {
@@ -510,7 +510,7 @@ fieldset {
 		}
 		&.driver-availability-table {
 			td.chart_cell {
-				&.is_filled {
+				&.is_filled, &.is_all_day_filled {
 			    background-color: $green-3;
 			  }
 			  &.is_run_filled {
