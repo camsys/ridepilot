@@ -11,7 +11,7 @@ class AbstractDistanceDurationService
     @from_lon = from_lon
     @to_lat = to_lat
     @to_lon = to_lon
-    @trip_datetime = trip_datetime
+    @trip_datetime = trip_datetime || DateTime.now
   end
 
   def get_drive_itineraries(try_count=3)
