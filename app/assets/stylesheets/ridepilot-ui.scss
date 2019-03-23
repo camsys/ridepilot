@@ -433,7 +433,7 @@ fieldset {
 		    background-color: #ffe664;
 		  }
 
-		  &.is_filled, .is_all_day_filled {
+		  &.is_filled, &.is_all_day_filled {
 		    background-color: #3eb76a;
 		  }
 	  }

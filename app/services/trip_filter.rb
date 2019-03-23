@@ -115,7 +115,9 @@ class TripFilter
     if @filters[:funding_source_id].present?
       funding_source_ids = @filters[:funding_source_id].dup
 
-      if funding_source_ids.include?(FundingSource::SHOW_ALL_ID.to_s)
+      if funding_source_ids.include?(FundingSource::SHOW_ALL_ID)
+        funding_source_ids[funding_source_ids.index(FundingSource::SHOW_ALL_ID)] = nil
+      elsif funding_source_ids.include?(FundingSource::SHOW_ALL_ID.to_s)
         funding_source_ids[funding_source_ids.index(FundingSource::SHOW_ALL_ID.to_s)] = nil
       end
 
