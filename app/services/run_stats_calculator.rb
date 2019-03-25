@@ -54,8 +54,11 @@ class RunStatsCalculator
         non_revenue_miles += dist
       end    
 
-      if itin.ntd_capacity.to_f > 0    
+      if itin.ntd_capacity.to_f > 0 || itin.trip.try(:ntd_reportable?)  
         ntd_revenue_miles += dist
+      end
+
+      if itin.ntd_capacity.to_f > 0 
         ntd_passenger_miles += dist * itin.ntd_capacity.to_f
       end
     end
