@@ -335,19 +335,28 @@ class Run < ApplicationRecord
 
       is_run_end_included = manifest_order_array.last == 'run_end'
       last_itin_spot = is_run_end_included ? (manifest_order_array.size - 1) : manifest_order_array.size
+      
+      is_pickup_included = manifest_order_array.include?("trip_#{trip_id}_leg_1")
+      is_dropoff_included = manifest_order_array.include?("trip_#{trip_id}_leg_2")
 
-      unless pickup_index
+      if (!pickup_index && !is_pickup_included)
         pickup_index = last_itin_spot
         appt_index = last_itin_spot + 1
-      else 
-        unless appt_index
+      elsif !appt_index && !is_dropoff_included
+        if is_pickup_included
+          appt_index = manifest_order_array.index("trip_#{trip_id}_leg_1") + 1
+        else
           appt_index = last_itin_spot + 1
         end
       end
 
       # Injert at certain index
-      manifest_order_array.insert pickup_index, "trip_#{trip_id}_leg_1" if pickup_index && pickup_index <= manifest_order_array.size
-      manifest_order_array.insert appt_index, "trip_#{trip_id}_leg_2" if appt_index && appt_index <= manifest_order_array.size
+      unless is_pickup_included
+        manifest_order_array.insert pickup_index, "trip_#{trip_id}_leg_1" if pickup_index && pickup_index <= manifest_order_array.size
+      end
+      unless is_dropoff_included
+        manifest_order_array.insert appt_index, "trip_#{trip_id}_leg_2" if appt_index && appt_index <= manifest_order_array.size
+      end
       self.manifest_order = manifest_order_array
       self.save(validate: false)
     end
@@ -435,13 +444,19 @@ class Run < ApplicationRecord
   end
 
   def add_trip_itineraries!(trip_id)
-    if self.itineraries.where(trip_id: trip_id).empty?
-      trip = Trip.find_by_id(trip_id) 
-      if trip 
+    trip = Trip.find_by_id(trip_id) 
+    if trip 
+      itin_id_flags = self.itineraries.pluck(:trip_id, :leg_flag)
+      unless itin_id_flags.include?([trip_id, 1])
+        is_changed = true
         build_itinerary(trip.pickup_time, trip.pickup_address, trip_id, 1).save
-        build_itinerary(trip.appointment_time, trip.dropoff_address, trip_id, 2).save
-        self.itineraries.clear_times! #clear other itins times
       end
+      unless itin_id_flags.include?([trip_id, 2])
+        is_changed = true
+        build_itinerary(trip.appointment_time, trip.dropoff_address, trip_id, 2).save
+      end
+
+      self.itineraries.clear_times! if is_changed #clear other itins times
     end
   end
 
