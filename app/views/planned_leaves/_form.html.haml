@@ -10,24 +10,29 @@
         %ul
           - @planned_leave.errors.full_messages.each do |msg|
             %li= msg
-  .row
-    .form-group.col-sm-12
-      = f.label :start_date, translate_helper("planned_leave_start_date"), class: "col-md-3 control-label"
-      .col-md-9
+  .row.col-sm-12
+    .form-group
+      .form-label
+        = f.label :start_date, translate_helper("planned_leave_start_date")
+      .form-field
         .input-group.datepicker-icon
           = f.text_field :start_date, class: "form-control datepicker", required: true
           .input-group-btn
             %button.btn.btn-default{:type => "button"}
               = image_tag "calendar-clock.png"
-    .form-group.col-sm-12
-      = f.label :end_date, translate_helper("planned_leave_end_date"), class: "col-md-3 control-label"
-      .col-md-9
+    
+    .form-group
+      .form-label
+        = f.label :end_date, translate_helper("planned_leave_end_date")
+      .form-field
         .input-group.datepicker-icon
           = f.text_field :end_date, class: "form-control datepicker", required: true
           .input-group-btn
             %button.btn.btn-default{:type => "button"}
               = image_tag "calendar-clock.png"
-    .form-group.col-sm-12
-      = f.label :reason, translate_helper("planned_leave_form_reason"), class: "col-md-3 control-label"
-      .col-md-9
-        = f.text_area :reason, class: "form-control" 
+    
+    .form-group
+      .form-label
+        = f.label :reason, translate_helper("planned_leave_form_reason")
+      .form-field
+        = f.text_area :reason

@@ -112,7 +112,7 @@ fieldset {
 
 .alert-info, .alert, .alert-danger {
 	background: $brand-primary;
-	@include gradient-horiz($brand-primary);
+	@include gradient-horiz($brand-primary, $brand-primary, 1, 0.2);
 	border: none;
 	border-radius: 0px;
 	color: $white;
