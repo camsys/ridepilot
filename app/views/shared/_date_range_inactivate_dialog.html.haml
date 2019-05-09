@@ -16,41 +16,39 @@
           #inactivation_errors.colm-sm-12{style:"display: none;"}
             %p.alert.alert-danger
           .col-sm-12
-            .col-sm-12{style: 'padding: 0px;'}
-              %label.col-sm-12
-                = translate_helper('permanent_inactive')
+            %label
+              = translate_helper('permanent_inactive')
+            .form-group.col-sm-12
+              .form-label
+                %span= translate_helper(:inactive)
+              .form-field
+                = f.hidden_field :active, id: 'resource_active'
+                = check_box_tag :permanent_inactive, !resource.active, !resource.active
+          .col-sm-12
+            %label
+              = translate_helper('date_range_inactive')
+            .date_range
               .form-group.col-sm-12
-                .col-sm-3
-                  %span= translate_helper(:inactive)
-                .col-sm-9
-                  = f.hidden_field :active, id: 'resource_active'
-                  = check_box_tag :permanent_inactive, !resource.active, !resource.active
-              %label.col-sm-12
-                = translate_helper('date_range_inactive')
-              .date_range
-                .form-group.col-sm-12
-                  .col-sm-3
-                    %span= translate_helper(:inactivated_start_date)
-                  .col-sm-9
-                    .input-group.datepicker-icon
-                      = f.text_field :inactivated_start_date, value: format_time_for_listing_day(resource.inactivated_start_date), class: 'datepicker form-control', readonly: true, id: 'resource_inactivated_start_date'
-                      .input-group-btn
-                        %button.btn.btn-default{:type => "button"}
-                          = image_tag "calendar-clock.png"
-                .form-group.col-sm-12
-                  .col-sm-3
-                    %span= translate_helper(:inactivated_end_date)
-                  .col-sm-9
-                    .input-group.datepicker-icon
-                      = f.text_field :inactivated_end_date, value: format_time_for_listing_day(resource.inactivated_end_date), class: 'datepicker form-control', readonly: true, id: 'resource_inactivated_end_date'
-                      .input-group-btn
-                        %button.btn.btn-default{:type => "button"}
-                          = image_tag "calendar-clock.png"
-            .form-group.col-sm-12{style: 'padding-left: 0px;'}
-              .col-sm-3
-                = f.label :active_status_changed_reason, translate_helper(:active_status_change_reason) 
-              .col-sm-9
-                = f.text_area :active_status_changed_reason, class: 'form-control', maxlength: 30
+                .form-label
+                  %span= translate_helper(:inactivated_start_date)
+                .form-field
+                  .input-group.datepicker-icon
+                    = f.text_field :inactivated_start_date, value: format_time_for_listing_day(resource.inactivated_start_date), class: 'datepicker form-control', readonly: true, id: 'resource_inactivated_start_date'
+                    .input-group-btn
+                      %button.btn.btn-default{:type => "button"}
+              .form-group.col-sm-12
+                .form-label
+                  %span= translate_helper(:inactivated_end_date)
+                .form-field
+                  .input-group.datepicker-icon
+                    = f.text_field :inactivated_end_date, value: format_time_for_listing_day(resource.inactivated_end_date), class: 'datepicker form-control', readonly: true, id: 'resource_inactivated_end_date'
+                    .input-group-btn
+                      %button.btn.btn-default{:type => "button"}
+          .col-sm-12 
+            %label= translate_helper(:active_status_change_reason)
+            .form-group.col-sm-12 
+              .form-field
+                = f.text_area :active_status_changed_reason, maxlength: 30
 
 = render 'shared/date_time_picker_javascript'
 
