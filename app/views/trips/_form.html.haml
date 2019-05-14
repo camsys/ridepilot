@@ -63,24 +63,24 @@
           - if logs.any?
             = render 'shared/action_log_panel', logs: logs
 
-  - if edit_mode != :show
-    = render 'trips/customer_trip_summary_dialog'
-    - if @is_repeating_trip
-      :javascript
-        $(function() {
-          $('body').on('dblclick', '#customerTripSummaryTable td', function() {
-            var trip_id = $(this).parents('tr').data('trip-id');
-            window.location.href = "#{clone_from_daily_trip_repeating_trips_path}?trip_id=" + trip_id;
-          });
+- if edit_mode != :show
+  = render 'trips/customer_trip_summary_dialog'
+  - if @is_repeating_trip
+    :javascript
+      $(function() {
+        $('body').on('dblclick', '#customerTripSummaryTable td', function() {
+          var trip_id = $(this).parents('tr').data('trip-id');
+          window.location.href = "#{clone_from_daily_trip_repeating_trips_path}?trip_id=" + trip_id;
         });
-    - else
-      :javascript
-        $(function() {
-          $('body').on('dblclick', '#customerTripSummaryTable td', function() {
-            var trip_id = $(this).parents('tr').data('trip-id');
-            window.location.href = "#{clone_trip_path('xxx')}".replace('xxx', trip_id);
-          });
+      });
+  - else
+    :javascript
+      $(function() {
+        $('body').on('dblclick', '#customerTripSummaryTable td', function() {
+          var trip_id = $(this).parents('tr').data('trip-id');
+          window.location.href = "#{clone_trip_path('xxx')}".replace('xxx', trip_id);
         });
+      });
 
 = render 'trips/customer_message_dialog'
 
