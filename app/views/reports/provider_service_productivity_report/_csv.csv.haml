@@ -11,13 +11,28 @@
   = CSV.generate_line([translate_helper(:total_passengers), "#{@total_passengers_count.to_i} passengers, #{@total_trips_count.to_i} trips"], {:row_sep => nil}).html_safe
 
   = CSV.generate_line([""], {:row_sep => nil}).html_safe
-  = CSV.generate_line([translate_helper(:funding_source), translate_helper(:number_of_trips)], {:row_sep => nil}).html_safe
+  = CSV.generate_line([translate_helper(:funding_source), translate_helper(:number_of_trips), translate_helper(:total_passengers)], {:row_sep => nil}).html_safe
   - funding_sources = FundingSource.by_provider(current_provider).where(id: @trip_count_by_funding_source.keys)
   - if funding_sources.empty?
     = CSV.generate_line(["No funding source for trips."], {:row_sep => nil}).html_safe
   - else
     - funding_sources.each do |source|
-      = CSV.generate_line([source.name, @trip_count_by_funding_source[source.id].to_i], {:row_sep => nil}).html_safe
+      - passenger_counts_by_funding_source = []
+      - total_passenger_count = 0
+      - if @customer_count_by_funding_source[source.id] && @customer_count_by_funding_source[source.id] > 0
+        - total_passenger_count += @customer_count_by_funding_source[source.id]
+        - passenger_counts_by_funding_source << "#{@customer_count_by_funding_source[source.id]} Customer"
+      - if @guest_count_by_funding_source[source.id] && @guest_count_by_funding_source[source.id] > 0
+        - total_passenger_count += @guest_count_by_funding_source[source.id]
+        - passenger_counts_by_funding_source << "#{@guest_count_by_funding_source[source.id]} Guest"
+      - if @attendant_count_by_funding_source[source.id] && @attendant_count_by_funding_source[source.id] > 0
+        - total_passenger_count += @attendant_count_by_funding_source[source.id]
+        - passenger_counts_by_funding_source << "#{@attendant_count_by_funding_source[source.id]} Attendant"
+      - if @service_animal_count_by_funding_source[source.id] && @service_animal_count_by_funding_source[source.id] > 0
+        - total_passenger_count += @service_animal_count_by_funding_source[source.id]
+        - passenger_counts_by_funding_source << "#{@service_animal_count_by_funding_source[source.id]} Service Animal"
+      - passenger_by_funding_source_summary = total_passenger_count > 0 ? "#{total_passenger_count} total: #{passenger_counts_by_funding_source.join(', ')}" : ""
+      = CSV.generate_line([source.name, @trip_count_by_funding_source[source.id].to_i, passenger_by_funding_source_summary], {:row_sep => nil}).html_safe
 
   = CSV.generate_line([""], {:row_sep => nil}).html_safe
   - if @run_dates
