@@ -1209,7 +1209,12 @@ class ReportsController < ApplicationController
       @total_passengers_count = @total_customer_count + @total_guest_count + @total_attendant_count + @total_service_animal_count
 
       # Trips by funding source
-      @trip_count_by_funding_source = run_trips.group("trips.funding_source_id").count
+      run_trips_group_by_funding_source = run_trips.group("trips.funding_source_id")
+      @trip_count_by_funding_source = run_trips_group_by_funding_source.count
+      @customer_count_by_funding_source = run_trips_group_by_funding_source.sum("customer_space_count")
+      @guest_count_by_funding_source = run_trips_group_by_funding_source.sum("guest_count")
+      @attendant_count_by_funding_source = run_trips_group_by_funding_source.sum("attendant_count")
+      @service_animal_count_by_funding_source = run_trips_group_by_funding_source.sum("service_animal_space_count")
 
       if query_params[:report_type] == 'summary'
         @is_summary_report = true
