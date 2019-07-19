@@ -55,10 +55,17 @@ class Ability
     end
 
     provider = user.current_provider
-    role = Role.where("provider_id = ? and user_id = ?", provider.id, user.id).first
-    if not role
+    if provider
+      role = Role.where("provider_id = ? and user_id = ?", provider.id, user.id).first
+    else
+      role = user.roles.first
+      provider = role&.provider
+    end
+
+    unless role && provider
       return
     end
+
     if provider.active? && role.editor? 
       action = :manage
     else
