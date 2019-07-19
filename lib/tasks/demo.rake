@@ -88,8 +88,8 @@ namespace :demo do
       driver.password = "Welcome1!"
       driver.password_confirmation = "Welcome1!"
     end
-    editor.current_provider = provider
-    editor.save
+    driver.current_provider = provider
+    driver.save
     Role.create(provider: provider, user: driver, level: Role::USER_LEVEL)
   end
 
